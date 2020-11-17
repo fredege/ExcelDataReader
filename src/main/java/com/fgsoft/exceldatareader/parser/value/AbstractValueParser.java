@@ -15,7 +15,6 @@
  */
 package com.fgsoft.exceldatareader.parser.value;
 
-import com.fgsoft.exceldatareader.exception.ExcelReaderErrorCode;
 import com.fgsoft.exceldatareader.exception.ExcelReaderException;
 import lombok.Getter;
 import lombok.NonNull;
@@ -25,6 +24,8 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellValue;
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.usermodel.Sheet;
+
+import static com.fgsoft.exceldatareader.exception.ExcelReaderErrorCode.UNEXPECTED_VALUE;
 
 /**
  * Generic value parser. This class contains the common code to the different types of value parser.
@@ -159,7 +160,7 @@ abstract class AbstractValueParser<T> {
 
     private void reportError(final int rowIndex, final int colIndex, final Sheet worksheet) {
         final String name = worksheet.getSheetName();
-        throw new ExcelReaderException(ExcelReaderErrorCode.UNEXPECTED_VALUE, rowIndex, colIndex, name);
+        throw new ExcelReaderException(UNEXPECTED_VALUE, rowIndex, colIndex, name);
     }
 
 }

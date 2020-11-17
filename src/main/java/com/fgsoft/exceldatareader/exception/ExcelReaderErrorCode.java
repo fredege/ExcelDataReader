@@ -15,7 +15,8 @@
 package com.fgsoft.exceldatareader.exception;
 
 public enum ExcelReaderErrorCode {
-    UNEXPECTED_VALUE("Unexpected value in cell (%d, %d) of sheet %s"),
+    INCORRECT_VALUE_FOR_TYPE("Incorrect value '%s' for type '%s' in cell (%d, %d) of sheet '%s'" ),
+    UNEXPECTED_VALUE("Unexpected value in cell (%d, %d) of sheet '%s'"),
     ;
 
     private final String message;
