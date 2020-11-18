@@ -19,7 +19,20 @@ import org.apache.poi.ss.usermodel.Sheet;
 
 import static com.fgsoft.exceldatareader.exception.ExcelReaderErrorCode.INCORRECT_VALUE_FOR_TYPE;
 
-public class DoubleValueParser extends AbstractValueParser<Double> {
+/**
+ * Single cell value parser in charge of returning a Double. The Double to be returned can be defined
+ * from some types of cell content:
+ * <ul>
+ *     <li>STRING type cell content is returned as the string parsing of the cell content. In case of
+ *     inappropriate string format, a @see com.fgsoft.exceldatareader.exception.ExcelReaderException
+ *     is raised </li>
+ *     <li>NUMERIC type cell content is directly returned</li>
+ *     <li>For BOOLEAN type cell content a @see com.fgsoft.exceldatareader.exception.ExcelReaderException
+ *     is raised</li>
+ *     <li>For BLANK type cell, a null value is returned</li>
+ * </ul>
+ */
+public class DoubleValueParser extends AbstractSingleCellValueParser<Double> {
     @Override
     protected Double getValueForEmptyCell(int rowIndex, int colIndex, Sheet worksheet) {
         return null;
@@ -46,10 +59,5 @@ public class DoubleValueParser extends AbstractValueParser<Double> {
                     rowIndex, colIndex, worksheet.getSheetName());
         }
         return retVal;
-    }
-
-    @Override
-    protected Double getValueForNullCell() {
-        return null;
     }
 }

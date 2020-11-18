@@ -16,7 +16,17 @@ package com.fgsoft.exceldatareader.parser.value;
 
 import org.apache.poi.ss.usermodel.Sheet;
 
-public class StringValueParser extends AbstractValueParser<String> {
+/**
+ * Single cell value parser in charge of returning a String. The String to be returned can be defined
+ * from any type of cell content:
+ * <ul>
+ *     <li>STRING type cell content is directly returned</li>
+ *     <li>NUMERIC type cell content is returned as the string representation of the cell content</li>
+ *     <li>BOOLEAN type cell content is returned as the string representation of the cell content</li>
+ *     <li>For BLANK type cell, a null value is returned</li>
+ * </ul>
+ */
+public class StringValueParser extends AbstractSingleCellValueParser<String> {
     @Override
     protected String getValueForEmptyCell(int rowIndex, int colIndex, Sheet worksheet) {
         return null;
@@ -37,8 +47,4 @@ public class StringValueParser extends AbstractValueParser<String> {
         return value;
     }
 
-    @Override
-    protected String getValueForNullCell() {
-        return null;
-    }
 }

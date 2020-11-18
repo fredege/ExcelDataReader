@@ -14,8 +14,16 @@
  */
 
 /**
- * This package contains the definition of the parsers expected to return values taht can be read from
- * a unique excel cell.
+ * This package contains the definition of the parsers expected to return values that can be read from
+ * a unique excel cell. Typically this covers (non exclusive):
+ * <ul>
+ *     <li>Java primitive data types</li>
+ *     <li>String</li>
+ *     <li>enums</li>
+ *     <li>date and time</li>
+ * </ul>
+ * From this package, it is also possible to add custom types that can be represented by a single cell
+ * such as currency, country, etc.
  */
 package com.fgsoft.exceldatareader.parser.value;
 

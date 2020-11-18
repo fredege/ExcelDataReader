@@ -28,14 +28,15 @@ import org.apache.poi.ss.usermodel.Sheet;
 import static com.fgsoft.exceldatareader.exception.ExcelReaderErrorCode.UNEXPECTED_VALUE;
 
 /**
- * Generic value parser. This class contains the common code to the different types of value parser.
+ * Generic single cell value parser. This class contains the common code for parsing the different types
+ * of values that are represented using a single cell.
  *
  * @param <T> type of data to be parsed
  */
 @Slf4j
 @RequiredArgsConstructor
 @Getter
-abstract class AbstractValueParser<T> {
+abstract class AbstractSingleCellValueParser<T> {
     /**
      * Parse the value for a given cell
      *
@@ -45,6 +46,7 @@ abstract class AbstractValueParser<T> {
     public T getValue(final Cell cell, @NonNull FormulaEvaluator evaluator) {
         T value;
         if (cell == null) {
+            log.warn("Null cell has been given, returning null");
             value = getValueForNullCell();
         } else {
             final int rowIndex = cell.getRowIndex();
@@ -112,7 +114,7 @@ abstract class AbstractValueParser<T> {
      */
     protected abstract T getValueForCell(String value, int rowIndex, int colIndex, Sheet worksheet);
 
-    protected abstract T getValueForNullCell();
+    private T getValueForNullCell() {return null;}
 
     private T getValueFromFormula(Cell cell, FormulaEvaluator evaluator) {
         T value;
