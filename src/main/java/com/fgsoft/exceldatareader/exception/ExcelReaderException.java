@@ -19,12 +19,12 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class ExcelReaderException extends RuntimeException {
-    public ExcelReaderException(@NonNull final ExcelReaderErrorCode code, final Object ... args) {
+    public ExcelReaderException(@NonNull final ExcelReaderErrorCode code, final Object... args) {
         this(null, code, args);
     }
 
     public ExcelReaderException(final Throwable cause, final ExcelReaderErrorCode code,
-                                final Object ... args) {
+                                final Object... args) {
         super(String.format(code.getMessage(), args));
         if (cause != null) {
             this.initCause(cause);

@@ -1,2 +1,3 @@
 # ExcelDataReader
-Reader of data from excel file
+
+Reader of data from Excel file

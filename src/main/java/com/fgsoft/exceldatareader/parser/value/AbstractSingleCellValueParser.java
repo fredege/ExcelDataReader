@@ -114,7 +114,9 @@ abstract class AbstractSingleCellValueParser<T> {
      */
     protected abstract T getValueForCell(String value, int rowIndex, int colIndex, Sheet worksheet);
 
-    private T getValueForNullCell() {return null;}
+    private T getValueForNullCell() {
+        return null;
+    }
 
     private T getValueFromFormula(Cell cell, FormulaEvaluator evaluator) {
         T value;
@@ -152,7 +154,7 @@ abstract class AbstractSingleCellValueParser<T> {
         final T value;
         final T tmpDblValue = getValueForCell(cellValue.getNumberValue(),
                 rowIndex, colIndex, worksheet);
-        if (tmpDblValue instanceof String && "0.0".equals(tmpDblValue)) {
+        if ("0.0".equals(tmpDblValue)) {
             value = null;
         } else {
             value = tmpDblValue;

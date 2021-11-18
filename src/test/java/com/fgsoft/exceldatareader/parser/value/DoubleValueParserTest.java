@@ -20,7 +20,6 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.usermodel.Sheet;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -40,10 +39,6 @@ class DoubleValueParserTest {
     private Sheet sheet;
     @Mock
     private FormulaEvaluator evaluator;
-
-    @BeforeEach
-    final void initialize() {
-    }
 
     @Test
     final void testParseStringValueOK() {

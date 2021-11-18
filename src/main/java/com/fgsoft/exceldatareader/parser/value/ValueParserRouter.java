@@ -56,11 +56,13 @@ public final class ValueParserRouter {
     /**
      * Prevent instanciation.
      */
-    private ValueParserRouter() {}
+    private ValueParserRouter() {
+    }
 
 
     /**
      * Return the appropriate parser for the given class
+     *
      * @param type type of value to get from parsing
      * @return fond parser
      */

@@ -19,7 +19,7 @@ import org.apache.poi.ss.usermodel.Sheet;
 public class IntegerValueParser extends AbstractSingleCellValueParser<Integer> {
     @Override
     protected Integer getValueForEmptyCell(int rowIndex, int colIndex, Sheet worksheet) {
-        return null;
+        return 0;
     }
 
     @Override
