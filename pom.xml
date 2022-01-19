@@ -10,18 +10,18 @@
     <packaging>jar</packaging>
     <name>Excel data reader</name>
     <description>
-        Utility library to be used in order to read data from excel files and map it to java objects
+        Utility library to be used in order to read data from Excel files and map it to java objects
     </description>
 
     <properties>
         <java.version>11</java.version>
         <lombok.version>1.18.22</lombok.version>
         <slf4j.version>1.7.32</slf4j.version>
-        <log4j.version>2.14.1</log4j.version>
+        <log4j.version>2.17.0</log4j.version>
         <apache.poi.version>5.0.0</apache.poi.version>
         <junit.version>5.7.0</junit.version>
-        <mockito.version>4.0.0</mockito.version>
-        <assertj.version>3.21.0</assertj.version>
+        <mockito.version>4.2.0</mockito.version>
+        <assertj.version>3.22.0</assertj.version>
     </properties>
 
     <dependencyManagement>
