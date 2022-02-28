@@ -15,8 +15,10 @@
 package com.fgsoft.exceldatareader.exception;
 
 public enum ExcelReaderErrorCode {
+    FILE_NOT_FOUND("file '%s' not found"),
     INCORRECT_VALUE_FOR_TYPE("Incorrect value '%s' for type '%s' in cell (%d, %d) of sheet '%s'"),
     INVALID_TYPE("Unable to find a single cell value parser for type '%s'"),
+    UNABLE_TO_OPEN_FILE("Unable to open file %s"),
     UNEXPECTED_VALUE("Unexpected value in cell (%d, %d) of sheet '%s'"),
     UNKNOWN("Unknown error code");
 
