@@ -17,7 +17,7 @@
         <java.version>11</java.version>
         <lombok.version>1.18.22</lombok.version>
         <slf4j.version>1.7.36</slf4j.version>
-        <log4j.version>2.17.0</log4j.version>
+        <log4j.version>2.17.1</log4j.version>
         <apache.poi.version>5.0.0</apache.poi.version>
         <junit.version>5.7.0</junit.version>
         <mockito.version>4.3.1</mockito.version>
