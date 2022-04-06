@@ -14,10 +14,8 @@
  */
 package com.fgsoft.exceldatareader.parser.value;
 
-import com.fgsoft.exceldatareader.exception.ExcelReaderException;
+import com.fgsoft.exceldatareader.exception.IncorrectValueForTypeException;
 import org.apache.poi.ss.usermodel.Sheet;
-
-import static com.fgsoft.exceldatareader.exception.ExcelReaderErrorCode.INCORRECT_VALUE_FOR_TYPE;
 
 /**
  * Single cell value parser in charge of returning a Double. The Double to be returned can be defined
@@ -45,7 +43,7 @@ public class DoubleValueParser extends AbstractSingleCellValueParser<Double> {
 
     @Override
     protected Double getValueForCell(boolean value, int rowIndex, int colIndex, Sheet worksheet) {
-        throw new ExcelReaderException(INCORRECT_VALUE_FOR_TYPE, value, Double.class.getName(),
+        throw new IncorrectValueForTypeException(value, Double.class.getName(),
                 rowIndex, colIndex, worksheet.getSheetName());
     }
 
@@ -55,7 +53,7 @@ public class DoubleValueParser extends AbstractSingleCellValueParser<Double> {
         try {
             retVal = Double.parseDouble(value);
         } catch (NumberFormatException exc) {
-            throw new ExcelReaderException(exc, INCORRECT_VALUE_FOR_TYPE, value, Double.class.getName(),
+            throw new IncorrectValueForTypeException(value, Double.class.getName(),
                     rowIndex, colIndex, worksheet.getSheetName());
         }
         return retVal;
