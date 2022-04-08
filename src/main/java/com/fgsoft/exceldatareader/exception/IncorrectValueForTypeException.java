@@ -17,7 +17,7 @@ package com.fgsoft.exceldatareader.exception;
 import static com.fgsoft.exceldatareader.exception.ExcelReaderErrorCode.INCORRECT_VALUE_FOR_TYPE;
 
 public class IncorrectValueForTypeException extends ExcelReaderException{
-    public IncorrectValueForTypeException(Object... args) {
-        super(INCORRECT_VALUE_FOR_TYPE, args);
+    public IncorrectValueForTypeException(Throwable exc, Object... args) {
+        super(exc, INCORRECT_VALUE_FOR_TYPE, args);
     }
 }

@@ -14,26 +14,35 @@
  */
 package com.fgsoft.exceldatareader.parser.value;
 
+import com.fgsoft.exceldatareader.exception.IncorrectValueForTypeException;
 import org.apache.poi.ss.usermodel.Sheet;
 
 public class IntegerValueParser extends AbstractSingleCellValueParser<Integer> {
     @Override
     protected Integer getValueForEmptyCell(int rowIndex, int colIndex, Sheet worksheet) {
-        return 0;
+        return null;
     }
 
     @Override
     protected Integer getValueForCell(double value, int rowIndex, int colIndex, Sheet worksheet) {
-        return null;
+        return (int) value;
     }
 
     @Override
     protected Integer getValueForCell(boolean value, int rowIndex, int colIndex, Sheet worksheet) {
-        return null;
+        throw new IncorrectValueForTypeException(null, value, Integer.class.getName(),
+                rowIndex, colIndex, worksheet.getSheetName());
     }
 
     @Override
-    protected Integer getValueForCell(String value, int rowIndex, int colIndex, Sheet worksheet) {
-        return null;
+    protected Integer getValueForCell(String strValue, int rowIndex, int colIndex, Sheet worksheet) {
+        final int intValue;
+        try {
+            intValue = Integer.parseInt(strValue);
+        } catch (NumberFormatException exc){
+            throw new IncorrectValueForTypeException(exc, strValue, Integer.class.getName(),
+                    rowIndex, colIndex, worksheet.getSheetName());
+        }
+        return intValue;
     }
 }

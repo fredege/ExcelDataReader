@@ -43,7 +43,7 @@ public class DoubleValueParser extends AbstractSingleCellValueParser<Double> {
 
     @Override
     protected Double getValueForCell(boolean value, int rowIndex, int colIndex, Sheet worksheet) {
-        throw new IncorrectValueForTypeException(value, Double.class.getName(),
+        throw new IncorrectValueForTypeException(null, value, Double.class.getName(),
                 rowIndex, colIndex, worksheet.getSheetName());
     }
 
@@ -53,7 +53,7 @@ public class DoubleValueParser extends AbstractSingleCellValueParser<Double> {
         try {
             retVal = Double.parseDouble(value);
         } catch (NumberFormatException exc) {
-            throw new IncorrectValueForTypeException(value, Double.class.getName(),
+            throw new IncorrectValueForTypeException(null, value, Double.class.getName(),
                     rowIndex, colIndex, worksheet.getSheetName());
         }
         return retVal;

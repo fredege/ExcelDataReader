@@ -47,7 +47,7 @@ public class BigDecimalValueParser extends AbstractSingleCellValueParser<BigDeci
 
     @Override
     protected BigDecimal getValueForCell(boolean value, int rowIndex, int colIndex, Sheet worksheet) {
-        throw new IncorrectValueForTypeException(value, BigDecimal.class.getName(),
+        throw new IncorrectValueForTypeException(null, value, BigDecimal.class.getName(),
                 rowIndex, colIndex, worksheet.getSheetName());
     }
 
@@ -57,7 +57,7 @@ public class BigDecimalValueParser extends AbstractSingleCellValueParser<BigDeci
             final Double doubleValue = doubleValueParser.getValueForCell(value, rowIndex, colIndex, worksheet);
             return transformToBigDecimal(doubleValue);
         } catch (IncorrectValueForTypeException exc) {
-            throw new IncorrectValueForTypeException(value, BigDecimal.class.getName(),
+            throw new IncorrectValueForTypeException(null, value, BigDecimal.class.getName(),
                     rowIndex, colIndex, worksheet.getSheetName());
         }
     }
