@@ -16,6 +16,7 @@ package com.fgsoft.exceldatareader.parser.value;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
+import org.apache.poi.ss.usermodel.CellValue;
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -23,6 +24,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -91,5 +93,19 @@ class StringValueParserTest {
         final String value = parser.getValue(cell, evaluator);
         // Then
         assertThat(value).isNull();
+    }
+
+    @Test
+    final void testFormula() {
+        // Given
+        final String strValue = "Sample string value";
+        final CellValue cellValue = new CellValue(strValue);
+        final StringValueParser parser = new StringValueParser();
+        when(cell.getCellType()).thenReturn(CellType.FORMULA);
+        when(evaluator.evaluate(cell)).thenReturn(cellValue);
+        // When
+        final String value = parser.getValue(cell, evaluator);
+        // Then
+        assertThat(value).isEqualTo(strValue);
     }
 }

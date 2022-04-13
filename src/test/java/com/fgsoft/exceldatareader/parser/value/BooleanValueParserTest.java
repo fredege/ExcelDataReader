@@ -18,8 +18,11 @@ import com.fgsoft.exceldatareader.exception.ExcelReaderErrorCode;
 import com.fgsoft.exceldatareader.exception.ExcelReaderException;
 import com.fgsoft.exceldatareader.exception.IncorrectValueForTypeException;
 import org.apache.poi.ss.usermodel.*;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -29,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class DoubleValueParserTest {
+class BooleanValueParserTest {
     @Mock
     private Cell cell;
     @Mock
@@ -37,35 +40,40 @@ class DoubleValueParserTest {
     @Mock
     private FormulaEvaluator evaluator;
 
-    @Test
-    final void testParseStringValueOK() {
+    @BeforeEach
+    final void initialize() {
+    }
+
+    @ParameterizedTest
+    @CsvSource({"YES, true", "NO, false",
+            "Y, true", "N, false",
+            "Yes, true", "No, false",
+            "true, true", "false, false"
+    })
+    final void testParseStringValueOK(String strValue, Boolean expected) {
         // Given
-        final String strValue = "1.0";
-        final DoubleValueParser parser = new DoubleValueParser();
+        final BooleanValueParser parser = new BooleanValueParser();
         when(cell.getStringCellValue()).thenReturn(strValue);
         when(cell.getCellType()).thenReturn(CellType.STRING);
-        when(cell.getSheet()).thenReturn(sheet);
-        when(cell.getRowIndex()).thenReturn(0);
-        when(cell.getColumnIndex()).thenReturn(0);
         // When
-        final Double value = parser.getValue(cell, evaluator);
+        final Boolean value = parser.getValue(cell, evaluator);
         // Then
-        assertThat(value).isNotNull().isEqualTo(Double.parseDouble(strValue));
+        assertThat(value).isEqualTo(expected);
     }
 
     @Test
     final void testParseStringValueKO() {
         // Given
-        final String strValue = "Sample string";
-        final DoubleValueParser parser = new DoubleValueParser();
-        when(sheet.getSheetName()).thenReturn(SHEET_NAME);
-        when(cell.getStringCellValue()).thenReturn(strValue);
+        final String strValue = "Not good";
+        final BooleanValueParser parser = new BooleanValueParser();
         when(cell.getCellType()).thenReturn(CellType.STRING);
+        when(cell.getStringCellValue()).thenReturn(strValue);
+        when(sheet.getSheetName()).thenReturn(SHEET_NAME);
         when(cell.getSheet()).thenReturn(sheet);
         when(cell.getRowIndex()).thenReturn(0);
         when(cell.getColumnIndex()).thenReturn(0);
         final String message = String.format(ExcelReaderErrorCode.INCORRECT_VALUE_FOR_TYPE.getMessage(),
-                strValue, Double.class.getName(), 0, 0, SHEET_NAME);
+                strValue, Boolean.class.getName(), 0, 0, SHEET_NAME);
         // When
         Throwable exception = assertThrows(ExcelReaderException.class,
                 () -> parser.getValue(cell, evaluator));
@@ -75,48 +83,46 @@ class DoubleValueParserTest {
     }
 
     @Test
-    final void testParseDoubleValueOK() {
+    final void testDoubleValue() {
         // Given
         final double dblValue = 1.0;
-        final DoubleValueParser parser = new DoubleValueParser();
+        final BooleanValueParser parser = new BooleanValueParser();
         when(cell.getNumericCellValue()).thenReturn(dblValue);
         when(cell.getCellType()).thenReturn(CellType.NUMERIC);
-        when(cell.getSheet()).thenReturn(sheet);
-        when(cell.getRowIndex()).thenReturn(0);
-        when(cell.getColumnIndex()).thenReturn(0);
-        // When
-        final Double value = parser.getValue(cell, evaluator);
-        // Then
-        assertThat(value).isNotNull().isEqualTo(dblValue);
-    }
-
-    @Test
-    final void testParseBooleanValueKO() {
-        // Given
-        final boolean boolValue = true;
-        final DoubleValueParser parser = new DoubleValueParser();
-        when(cell.getBooleanCellValue()).thenReturn(boolValue);
-        when(cell.getCellType()).thenReturn(CellType.BOOLEAN);
         when(sheet.getSheetName()).thenReturn(SHEET_NAME);
         when(cell.getSheet()).thenReturn(sheet);
         when(cell.getRowIndex()).thenReturn(0);
         when(cell.getColumnIndex()).thenReturn(0);
         final String message = String.format(ExcelReaderErrorCode.INCORRECT_VALUE_FOR_TYPE.getMessage(),
-                "true", Double.class.getName(), 0, 0, SHEET_NAME);
+                dblValue, Boolean.class.getName(), 0, 0, SHEET_NAME);
         // When
-        // Then
         Throwable exception = assertThrows(ExcelReaderException.class,
                 () -> parser.getValue(cell, evaluator));
+        // Then
+        assertThat(exception).isInstanceOf(IncorrectValueForTypeException.class);
         assertThat(exception.getMessage()).isEqualTo(message);
+    }
+
+    @Test
+    final void testBooleanValueOK() {
+        // Given
+        final boolean boolValue = true;
+        final BooleanValueParser parser = new BooleanValueParser();
+        when(cell.getBooleanCellValue()).thenReturn(boolValue);
+        when(cell.getCellType()).thenReturn(CellType.BOOLEAN);
+        // When
+        final Boolean value = parser.getValue(cell, evaluator);
+        // Then
+        assertThat(value).isEqualTo(boolValue);
     }
 
     @Test
     final void testBlankValueOK() {
         // Given
-        final DoubleValueParser parser = new DoubleValueParser();
+        final BooleanValueParser parser = new BooleanValueParser();
         when(cell.getCellType()).thenReturn(CellType.BLANK);
         // When
-        final Double value = parser.getValue(cell, evaluator);
+        final Boolean value = parser.getValue(cell, evaluator);
         // Then
         assertThat(value).isNull();
     }
@@ -124,24 +130,39 @@ class DoubleValueParserTest {
     @Test
     final void testNullValueOK() {
         // Given
-        final DoubleValueParser parser = new DoubleValueParser();
+        final BooleanValueParser parser = new BooleanValueParser();
+        cell = null;
         // When
-        final Double value = parser.getValue(null, evaluator);
+        final Boolean value = parser.getValue(cell, evaluator);
         // Then
         assertThat(value).isNull();
     }
 
     @Test
-    final void testFormula() {
+    final void testFormulaReturningAString() {
         // Given
-        final double dblValue = 1.0;
-        final CellValue cellValue = new CellValue(dblValue);
-        final DoubleValueParser parser = new DoubleValueParser();
+        final String strValue = "YES";
+        final CellValue cellValue = new CellValue(strValue);
+        final BooleanValueParser parser = new BooleanValueParser();
         when(cell.getCellType()).thenReturn(CellType.FORMULA);
         when(evaluator.evaluate(cell)).thenReturn(cellValue);
         // When
-        final double value = parser.getValue(cell, evaluator);
+        final Boolean value = parser.getValue(cell, evaluator);
         // Then
-        assertThat(value).isEqualTo(dblValue);
+        assertThat(value).isTrue();
+    }
+
+    @Test
+    final void testFormulaReturningADouble() {
+        // Given
+        final double dblValue = 0.0;
+        final CellValue cellValue = new CellValue(dblValue);
+        final BooleanValueParser parser = new BooleanValueParser();
+        when(cell.getCellType()).thenReturn(CellType.FORMULA);
+        when(evaluator.evaluate(cell)).thenReturn(cellValue);
+        // When
+        final Boolean value = parser.getValue(cell, evaluator);
+        // Then
+        assertThat(value).isNull();
     }
 }

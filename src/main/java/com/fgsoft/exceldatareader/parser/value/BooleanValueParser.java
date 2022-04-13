@@ -14,26 +14,52 @@
  */
 package com.fgsoft.exceldatareader.parser.value;
 
+import com.fgsoft.exceldatareader.exception.IncorrectValueForTypeException;
 import org.apache.poi.ss.usermodel.Sheet;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class BooleanValueParser extends AbstractSingleCellValueParser<Boolean> {
+    private static final Map<String, Boolean> mapValues = new HashMap<>();
+    static {
+        mapValues.put("YES", true);
+        mapValues.put("NO", false);
+        mapValues.put("Y", true);
+        mapValues.put("N", false);
+        mapValues.put("Yes", true);
+        mapValues.put("No", false);
+        mapValues.put("true", true);
+        mapValues.put("false", false);
+    }
     @Override
     protected Boolean getValueForEmptyCell(int rowIndex, int colIndex, Sheet worksheet) {
-        return null;
+        return null; //NOSONAR
     }
 
     @Override
     protected Boolean getValueForCell(double value, int rowIndex, int colIndex, Sheet worksheet) {
-        return null;
+        if (value == 0.0) {
+            // Case of formula return
+            return null; //NOSONAR
+        } else {
+            throw new IncorrectValueForTypeException(null, String.valueOf(value), Boolean.class.getName(),
+                    rowIndex, colIndex, worksheet.getSheetName());
+        }
     }
 
     @Override
     protected Boolean getValueForCell(boolean value, int rowIndex, int colIndex, Sheet worksheet) {
-        return null;
+        return value;
     }
 
     @Override
     protected Boolean getValueForCell(String value, int rowIndex, int colIndex, Sheet worksheet) {
-        return null;
+        if (mapValues.containsKey(value)) {
+            return mapValues.get(value);
+        } else {
+            throw new IncorrectValueForTypeException(null, value, Boolean.class.getName(),
+                    rowIndex, colIndex, worksheet.getSheetName());
+        }
     }
 }
