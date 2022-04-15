@@ -1,4 +1,4 @@
-/* Copyright 2020 Frederic GEDIN
+/* Copyright 2022 Frederic GEDIN
  *
  *       Licensed under the Apache License,Version2.0(the"License");
  *       you may not use this file except in compliance with the License.
@@ -12,18 +12,12 @@
  *       See the License for the specific language governing permissions and
  *       limitations under the License.
  */
+package com.fgsoft.exceldatareader.exception;
 
-/**
- * This package contains the definition of the parsers expected to return values that can be read from
- * a unique Excel cell. Typically, this covers (non-exclusive):
- * <ul>
- *     <li>Java primitive data types</li>
- *     <li>String</li>
- *     <li>enums</li>
- *     <li>date and time</li>
- * </ul>
- * From this package, it is also possible to add custom types that can be represented by a single cell
- * such as currency, country, etc.
- */
-package com.fgsoft.exceldatareader.parser.value;
+import static com.fgsoft.exceldatareader.exception.ExcelReaderErrorCode.INVALID_TYPE;
 
+public class InvalidTypeException extends ExcelReaderException{
+    public InvalidTypeException(Object... args) {
+        super(null, INVALID_TYPE, args);
+    }
+}

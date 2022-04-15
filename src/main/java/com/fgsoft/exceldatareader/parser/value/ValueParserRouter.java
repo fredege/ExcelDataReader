@@ -16,6 +16,7 @@ package com.fgsoft.exceldatareader.parser.value;
 
 import com.fgsoft.exceldatareader.exception.ExcelReaderErrorCode;
 import com.fgsoft.exceldatareader.exception.ExcelReaderException;
+import com.fgsoft.exceldatareader.exception.InvalidTypeException;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -43,12 +44,11 @@ public final class ValueParserRouter {
         PARSERS.put(Long.class, LongValueParser.class);
         PARSERS.put(BigDecimal.class, BigDecimalValueParser.class);
         PARSERS.put(Boolean.class, BooleanValueParser.class);
-
         PARSERS.put(String.class, StringValueParser.class);
         PARSERS.put(Date.class, DateValueParser.class);
-        PARSERS.put(LocalDate.class, DateValueParser.class);
-        PARSERS.put(LocalTime.class, TimeValueParser.class);
-        PARSERS.put(LocalDateTime.class, DateTimeValueParser.class);
+        PARSERS.put(LocalDate.class, LocalDateValueParser.class);
+        PARSERS.put(LocalTime.class, LocalTimeValueParser.class);
+        PARSERS.put(LocalDateTime.class, LocalDateTimeValueParser.class);
         PARSERS.put(ZonedDateTime.class, ZonedDateTimeValueParser.class);
         PARSERS.put(OffsetDateTime.class, OffsetDateTimeValueParser.class);
     }
@@ -70,7 +70,7 @@ public final class ValueParserRouter {
     public static AbstractSingleCellValueParser<Object> getParser(Class<?> type) {
         final AbstractSingleCellValueParser<Object> parser;
         if (!PARSERS.containsKey(type)) {
-            throw new ExcelReaderException(ExcelReaderErrorCode.INVALID_TYPE, type.getName());
+            throw new InvalidTypeException(type.getName());
         } else {
             final Class<? extends AbstractSingleCellValueParser<?>> parserClass = PARSERS.get(type);
             try {

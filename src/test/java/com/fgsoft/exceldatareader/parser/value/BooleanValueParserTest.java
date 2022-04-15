@@ -139,6 +139,20 @@ class BooleanValueParserTest {
     }
 
     @Test
+    final void testFormulaReturningABoolean() {
+        // Given
+        final boolean aBoolean = true;
+        final CellValue cellValue = CellValue.TRUE;
+        final BooleanValueParser parser = new BooleanValueParser();
+        when(cell.getCellType()).thenReturn(CellType.FORMULA);
+        when(evaluator.evaluate(cell)).thenReturn(cellValue);
+        // When
+        final Boolean value = parser.getValue(cell, evaluator);
+        // Then
+        assertThat(value).isTrue();
+    }
+
+    @Test
     final void testFormulaReturningAString() {
         // Given
         final String strValue = "YES";

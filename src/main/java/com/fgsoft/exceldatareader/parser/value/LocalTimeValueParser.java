@@ -19,7 +19,7 @@ import org.apache.poi.ss.usermodel.Sheet;
 import java.time.LocalTime;
 
 
-public class TimeValueParser extends AbstractSingleCellValueParser<LocalTime> {
+public class LocalTimeValueParser extends AbstractSingleCellValueParser<LocalTime> {
     @Override
     protected LocalTime getValueForEmptyCell(int rowIndex, int colIndex, Sheet worksheet) {
         return null;

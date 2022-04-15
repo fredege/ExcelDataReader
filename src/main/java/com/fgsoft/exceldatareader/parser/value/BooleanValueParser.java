@@ -21,16 +21,16 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class BooleanValueParser extends AbstractSingleCellValueParser<Boolean> {
-    private static final Map<String, Boolean> mapValues = new HashMap<>();
+    private static final Map<String, Boolean> MAP_VALUES = new HashMap<>();
     static {
-        mapValues.put("YES", true);
-        mapValues.put("NO", false);
-        mapValues.put("Y", true);
-        mapValues.put("N", false);
-        mapValues.put("Yes", true);
-        mapValues.put("No", false);
-        mapValues.put("true", true);
-        mapValues.put("false", false);
+        MAP_VALUES.put("YES", true);
+        MAP_VALUES.put("NO", false);
+        MAP_VALUES.put("Y", true);
+        MAP_VALUES.put("N", false);
+        MAP_VALUES.put("Yes", true);
+        MAP_VALUES.put("No", false);
+        MAP_VALUES.put("true", true);
+        MAP_VALUES.put("false", false);
     }
     @Override
     protected Boolean getValueForEmptyCell(int rowIndex, int colIndex, Sheet worksheet) {
@@ -55,8 +55,8 @@ public class BooleanValueParser extends AbstractSingleCellValueParser<Boolean> {
 
     @Override
     protected Boolean getValueForCell(String value, int rowIndex, int colIndex, Sheet worksheet) {
-        if (mapValues.containsKey(value)) {
-            return mapValues.get(value);
+        if (MAP_VALUES.containsKey(value)) {
+            return MAP_VALUES.get(value);
         } else {
             throw new IncorrectValueForTypeException(null, value, Boolean.class.getName(),
                     rowIndex, colIndex, worksheet.getSheetName());
