@@ -39,6 +39,13 @@ import static org.mockito.Mockito.when;
 class LocalDateTimeValueParserTest {
     private static final int ROW_NUM = 0;
     private static final int COL_NUM = 0;
+    private static final int YEAR = 2022;
+    private static final int MONTH = 4;
+    private static final int DAY = 16;
+    private static final int HOURS = 11;
+    private static final int MINUTES = 2;
+    private static final int SECONDS = 25;
+    private static final int NANO = 320000000;
 
     @Mock
     private Cell cell;
@@ -188,7 +195,7 @@ class LocalDateTimeValueParserTest {
         // When
         final LocalDateTime actual = parser.getValue(cell, evaluator);
         // Then
-        assertThat(actual).isEqualTo(LocalDateTime.of(2022, 4,15, 0, 0,0));
+        assertThat(actual).isEqualTo(LocalDateTime.of(YEAR, MONTH,DAY, HOURS, MINUTES,SECONDS,NANO));
     }
 
     @Test
@@ -205,6 +212,6 @@ class LocalDateTimeValueParserTest {
         // When
         final LocalDateTime actual = parser.getValue(cell, evaluator);
         // Then
-        assertThat(actual).isEqualTo(LocalDateTime.of(2022, 4,15, 0, 0,0));
+        assertThat(actual).isEqualTo(LocalDateTime.of(YEAR, MONTH,DAY, HOURS, MINUTES,SECONDS,NANO));
     }
 }
