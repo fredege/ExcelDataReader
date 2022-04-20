@@ -14,11 +14,26 @@
  */
 package com.fgsoft.exceldatareader.parser.value;
 
+import com.fgsoft.exceldatareader.exception.IncorrectValueForTypeException;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.DateUtil;
+import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 
+import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.format.DateTimeParseException;
 
 
+/**
+ * Parseable cells for LocalTime should meet one of the following condition:
+ * <ul>
+ *     <li>The cell content is numeric formatted as a time</li>
+ *     <li>The cell content is the string representing a LocalTime formatted as per ISO format</li>
+ * </ul>
+ * Time in Excel is represented as double value but formatted as time. Therefore, only cells that  meet
+ * these criteria will be accepted.
+ */
 public class LocalTimeValueParser extends AbstractSingleCellValueParser<LocalTime> {
     @Override
     protected LocalTime getValueForEmptyCell(int rowIndex, int colIndex, Sheet worksheet) {
@@ -27,16 +42,34 @@ public class LocalTimeValueParser extends AbstractSingleCellValueParser<LocalTim
 
     @Override
     protected LocalTime getValueForCell(double value, int rowIndex, int colIndex, Sheet worksheet) {
-        return null;
+        final LocalTime localTime;
+        final Row row = worksheet.getRow(rowIndex);
+        final Cell cell = row.getCell(colIndex);
+        if (DateUtil.isCellDateFormatted(cell)) {
+            final LocalDateTime localDateTime = cell.getLocalDateTimeCellValue();
+            localTime = localDateTime.toLocalTime();
+        } else {
+            throw new IncorrectValueForTypeException(null, value, LocalTime.class.getName(),
+                    rowIndex, colIndex, worksheet.getSheetName());
+        }
+        return localTime;
     }
 
     @Override
     protected LocalTime getValueForCell(boolean value, int rowIndex, int colIndex, Sheet worksheet) {
-        return null;
+        throw new IncorrectValueForTypeException(null, value, LocalTime.class.getName(),
+                rowIndex, colIndex, worksheet.getSheetName());
     }
 
     @Override
     protected LocalTime getValueForCell(String value, int rowIndex, int colIndex, Sheet worksheet) {
-        return null;
+        final LocalTime localTime;
+        try {
+            localTime = LocalTime.parse(value);
+        } catch (DateTimeParseException exc) {
+            throw new IncorrectValueForTypeException(exc, value, LocalTime.class.getName(),
+                    rowIndex, colIndex, worksheet.getSheetName());
+        }
+        return localTime;
     }
 }
