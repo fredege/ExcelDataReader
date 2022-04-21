@@ -27,4 +27,9 @@ public class TestConstants {
     private TestConstants() {
         // Prevent instantiation
     }
+
+    public enum Sample {
+        ONE, TWO, THREE
+    }
+
 }

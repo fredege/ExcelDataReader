@@ -21,11 +21,7 @@ import com.fgsoft.exceldatareader.exception.InvalidTypeException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.OffsetDateTime;
-import java.time.ZonedDateTime;
+import java.time.*;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -66,10 +62,12 @@ public final class ValueParserRouter {
      * @param type type of value to get from parsing
      * @return fond parser
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"java:S1905", "unchecked"})
     public static AbstractSingleCellValueParser<Object> getParser(Class<?> type) {
         final AbstractSingleCellValueParser<Object> parser;
-        if (!PARSERS.containsKey(type)) {
+        if (type.isEnum()) {
+            parser = new EnumValueParser((Class<? extends Enum<?>>) type);
+        } else if (!PARSERS.containsKey(type)) {
             throw new InvalidTypeException(type.getName());
         } else {
             final Class<? extends AbstractSingleCellValueParser<?>> parserClass = PARSERS.get(type);
