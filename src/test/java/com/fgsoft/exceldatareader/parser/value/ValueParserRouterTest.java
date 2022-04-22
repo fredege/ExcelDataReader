@@ -21,8 +21,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
-import java.time.*;
-
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -38,8 +36,7 @@ class ValueParserRouterTest {
             "java.time.LocalDate, com.fgsoft.exceldatareader.parser.value.LocalDateValueParser",
             "java.time.LocalTime, com.fgsoft.exceldatareader.parser.value.LocalTimeValueParser",
             "java.time.LocalDateTime, com.fgsoft.exceldatareader.parser.value.LocalDateTimeValueParser",
-            "java.time.ZonedDateTime, com.fgsoft.exceldatareader.parser.value.ZonedDateTimeValueParser",
-            "java.time.OffsetDateTime, com.fgsoft.exceldatareader.parser.value.OffsetDateTimeValueParser",
+            "com.fgsoft.exceldatareader.util.Sample, com.fgsoft.exceldatareader.parser.value.EnumValueParser"
     })
     final void testSelectParser(String valueClassName, String parserClassName) throws ClassNotFoundException {
         // Given
@@ -49,15 +46,6 @@ class ValueParserRouterTest {
         final AbstractSingleCellValueParser<?> parser = ValueParserRouter.getParser(valueClass);
         // Then
         assertThat(parser).isInstanceOf(parserClass);
-    }
-
-    @Test
-    final void offsetDateTimeMustBeParsedByOffsetDateTimeValueParser() {
-        // Given
-        // When
-        final AbstractSingleCellValueParser<?> parser = ValueParserRouter.getParser(OffsetDateTime.class);
-        // Then
-        assertThat(parser).isInstanceOf(OffsetDateTimeValueParser.class);
     }
 
     @Test

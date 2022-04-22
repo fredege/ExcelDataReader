@@ -22,9 +22,8 @@ import java.util.Arrays;
 /**
  * Parser for Enum values.
  *
- * TODO find why I cannot use Enum<?> as class parameter
  */
-public class EnumValueParser extends AbstractSingleCellValueParser<Object> {
+public class EnumValueParser extends AbstractSingleCellValueParser<Enum<?>> {
     private final Class<? extends Enum<?>> enumType;
 
     public EnumValueParser(Class<? extends Enum<?>> type) {
@@ -39,8 +38,12 @@ public class EnumValueParser extends AbstractSingleCellValueParser<Object> {
 
     @Override
     protected Enum<?> getValueForCell(double value, int rowIndex, int colIndex, Sheet worksheet) {
-        throw new  IncorrectValueForTypeException(null, value, enumType.getName(),
-                rowIndex, colIndex, worksheet.getSheetName()) ;
+        if (value == 0.0) { // Case of formula return
+            return null;
+        } else {
+            throw new IncorrectValueForTypeException(null, value, enumType.getName(),
+                    rowIndex, colIndex, worksheet.getSheetName());
+        }
     }
 
     @Override

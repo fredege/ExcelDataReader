@@ -45,8 +45,6 @@ public final class ValueParserRouter {
         PARSERS.put(LocalDate.class, LocalDateValueParser.class);
         PARSERS.put(LocalTime.class, LocalTimeValueParser.class);
         PARSERS.put(LocalDateTime.class, LocalDateTimeValueParser.class);
-        PARSERS.put(ZonedDateTime.class, ZonedDateTimeValueParser.class);
-        PARSERS.put(OffsetDateTime.class, OffsetDateTimeValueParser.class);
     }
 
     /**
@@ -63,19 +61,19 @@ public final class ValueParserRouter {
      * @return fond parser
      */
     @SuppressWarnings({"java:S1905", "unchecked"})
-    public static AbstractSingleCellValueParser<Object> getParser(Class<?> type) {
-        final AbstractSingleCellValueParser<Object> parser;
+    public static <T> AbstractSingleCellValueParser<T> getParser(Class<T> type) {
+        final AbstractSingleCellValueParser<T> parser;
         if (type.isEnum()) {
-            parser = new EnumValueParser((Class<? extends Enum<?>>) type);
+            parser = (AbstractSingleCellValueParser<T>) new EnumValueParser((Class<? extends Enum<?>>) type);
         } else if (!PARSERS.containsKey(type)) {
             throw new InvalidTypeException(type.getName());
         } else {
             final Class<? extends AbstractSingleCellValueParser<?>> parserClass = PARSERS.get(type);
             try {
-                final Constructor<AbstractSingleCellValueParser<?>> constructor =
-                        (Constructor<AbstractSingleCellValueParser<?>>)
+                final Constructor<AbstractSingleCellValueParser<T>> constructor =
+                        (Constructor<AbstractSingleCellValueParser<T>>)
                                 parserClass.getDeclaredConstructor();
-                parser = (AbstractSingleCellValueParser<Object>) constructor.newInstance();
+                parser = constructor.newInstance();
             } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException exc) {
                 throw new ExcelReaderException(exc, ExcelReaderErrorCode.UNKNOWN);
             }
