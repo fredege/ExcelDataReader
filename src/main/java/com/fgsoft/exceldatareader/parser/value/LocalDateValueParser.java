@@ -14,11 +14,16 @@
  */
 package com.fgsoft.exceldatareader.parser.value;
 
+import com.fgsoft.exceldatareader.exception.IncorrectValueForTypeException;
 import org.apache.poi.ss.usermodel.Sheet;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeParseException;
 
-public class LocalDateValueParser extends AbstractSingleCellValueParser<LocalDate>{
+public class LocalDateValueParser extends AbstractSingleCellValueParser<LocalDate> {
+    final LocalDateTimeValueParser mainParser = new LocalDateTimeValueParser();
+
     @Override
     protected LocalDate getValueForEmptyCell(int rowIndex, int colIndex, Sheet worksheet) {
         return null;
@@ -26,16 +31,24 @@ public class LocalDateValueParser extends AbstractSingleCellValueParser<LocalDat
 
     @Override
     protected LocalDate getValueForCell(double value, int rowIndex, int colIndex, Sheet worksheet) {
-        return null;
+        return mainParser.getValueForCell(value, rowIndex, colIndex, worksheet).toLocalDate();
     }
 
     @Override
     protected LocalDate getValueForCell(boolean value, int rowIndex, int colIndex, Sheet worksheet) {
-        return null;
+        throw new IncorrectValueForTypeException(null, value, LocalDate.class.getName(),
+                rowIndex, colIndex, worksheet.getSheetName());
     }
 
     @Override
     protected LocalDate getValueForCell(String value, int rowIndex, int colIndex, Sheet worksheet) {
-        return null;
+        final LocalDate localDate;
+        try {
+            localDate = LocalDate.parse(value);
+        } catch (DateTimeParseException exc) {
+            throw new IncorrectValueForTypeException(exc, value, LocalDateTime.class.getName(),
+                    rowIndex, colIndex, worksheet.getSheetName());
+        }
+        return localDate;
     }
 }
