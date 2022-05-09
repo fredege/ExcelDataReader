@@ -14,6 +14,7 @@
  */
 package com.fgsoft.exceldatareader.parser.value;
 
+import com.fgsoft.exceldatareader.exception.IncorrectValueForTypeException;
 import org.apache.poi.ss.usermodel.Sheet;
 
 public class LongValueParser extends AbstractSingleCellValueParser<Long> {
@@ -24,16 +25,24 @@ public class LongValueParser extends AbstractSingleCellValueParser<Long> {
 
     @Override
     protected Long getValueForCell(double value, int rowIndex, int colIndex, Sheet worksheet) {
-        return null;
+        return (long) value;
     }
 
     @Override
     protected Long getValueForCell(boolean value, int rowIndex, int colIndex, Sheet worksheet) {
-        return null;
+        throw new IncorrectValueForTypeException(null, value, Long.class.getName(),
+                rowIndex, colIndex, worksheet.getSheetName());
     }
 
     @Override
-    protected Long getValueForCell(String value, int rowIndex, int colIndex, Sheet worksheet) {
-        return null;
+    protected Long getValueForCell(String strValue, int rowIndex, int colIndex, Sheet worksheet) {
+        final long longValue;
+        try {
+            longValue = Long.parseLong(strValue);
+        } catch (NumberFormatException exc){
+            throw new IncorrectValueForTypeException(exc, strValue, Long.class.getName(),
+                    rowIndex, colIndex, worksheet.getSheetName());
+        }
+        return longValue;
     }
 }
