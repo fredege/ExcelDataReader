@@ -14,8 +14,15 @@
  */
 package com.fgsoft.exceldatareader.parser.value;
 
+import com.fgsoft.exceldatareader.exception.IncorrectValueForTypeException;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.DateUtil;
+import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeParseException;
 import java.util.Date;
 
 public class DateValueParser extends AbstractSingleCellValueParser<Date> {
@@ -26,16 +33,34 @@ public class DateValueParser extends AbstractSingleCellValueParser<Date> {
 
     @Override
     protected Date getValueForCell(double value, int rowIndex, int colIndex, Sheet worksheet) {
-        return null;
+        final Date date;
+        final Row row = worksheet.getRow(rowIndex);
+        final Cell cell = row.getCell(colIndex);
+        if (DateUtil.isCellDateFormatted(cell)) {
+            date = cell.getDateCellValue();
+        } else {
+            throw new IncorrectValueForTypeException(null, value, Date.class.getName(),
+                    rowIndex, colIndex, worksheet.getSheetName());
+        }
+        return date;
     }
 
     @Override
     protected Date getValueForCell(boolean value, int rowIndex, int colIndex, Sheet worksheet) {
-        return null;
+        throw new IncorrectValueForTypeException(null, value, Date.class.getName(),
+                rowIndex, colIndex, worksheet.getSheetName());
     }
 
     @Override
     protected Date getValueForCell(String value, int rowIndex, int colIndex, Sheet worksheet) {
-        return null;
+        final Date date;
+        try {
+            final LocalDateTime localDateTime = LocalDateTime.parse(value);
+            date = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
+        } catch (DateTimeParseException exc) {
+            throw new IncorrectValueForTypeException(exc, value, Date.class.getName(),
+                    rowIndex, colIndex, worksheet.getSheetName());
+        }
+        return date;
     }
 }
