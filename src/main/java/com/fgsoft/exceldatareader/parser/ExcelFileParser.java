@@ -12,23 +12,24 @@
  *       See the License for the specific language governing permissions and
  *       limitations under the License.
  */
-package com.fgsoft.exceldatareader.util;
+package com.fgsoft.exceldatareader.parser;
 
-public class TestConstants {
-    public static final String SHEET_NAME = "Sheet name";
-    public static final int DATA_ROW_NUM = 2;
-    public static final int FORMULA_ROW_NUM = 3;
-    public static final int NULL_DATA_ROW_NUM = 4;
-    public static final int NULL_FORMULA_ROW_NUM = 5;
-    public static final int TIME_COL_NUM = 4;
+import java.util.List;
 
-    public static final int HOURS = 11;
-    public static final int MINUTES = 2;
-    public static final int SECONDS = 25;
+/**
+ * Common interface for all parsers
+ * @param <T> type of objet to be parsed
+ */
+public interface ExcelFileParser<T> {
+    /**
+     * Get an object value
+     * @param testName reference name as given in the first column of the worksheet
+     * @return object read from parsing
+     */
+    T getValue(String testName);
 
-    public static final String STRING_VALUE = "Sample string value";
-
-    private TestConstants() {
-        // Prevent instantiation
-    }
+    /**
+     * Get all the test names of the worksheet
+     */
+    List<String> getAllTestNames();
 }

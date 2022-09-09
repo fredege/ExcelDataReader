@@ -12,23 +12,17 @@
  *       See the License for the specific language governing permissions and
  *       limitations under the License.
  */
-package com.fgsoft.exceldatareader.util;
+package com.fgsoft.exceldatareader.parser.object;
 
-public class TestConstants {
-    public static final String SHEET_NAME = "Sheet name";
-    public static final int DATA_ROW_NUM = 2;
-    public static final int FORMULA_ROW_NUM = 3;
-    public static final int NULL_DATA_ROW_NUM = 4;
-    public static final int NULL_FORMULA_ROW_NUM = 5;
-    public static final int TIME_COL_NUM = 4;
-
-    public static final int HOURS = 11;
-    public static final int MINUTES = 2;
-    public static final int SECONDS = 25;
-
-    public static final String STRING_VALUE = "Sample string value";
-
-    private TestConstants() {
-        // Prevent instantiation
-    }
+/**
+ * This is the base code for automatically generate a java object based on the field names and class.
+ * In order to have a proper parsing, data has to be organized according to the following rules:
+ * <ul>
+ *     <li>All field values for a given object are organized horizontally</li>
+ *     <li>For each object, the first column contains a name that will be uses as a reference</li>
+ * </ul>
+ * Horizontal representation is convenient for representing lists. In such a case, any element of the list is
+ * represented on its own row.
+ */
+public abstract class AbstractObjectParser {
 }
