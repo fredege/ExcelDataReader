@@ -14,11 +14,7 @@
  */
 package com.fgsoft.exceldatareader.parser.object;
 
-import com.fgsoft.exceldatareader.util.Sample;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import com.fgsoft.exceldatareader.util.SampleInstancePrimaryOnly;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.junit.jupiter.api.Test;
@@ -26,12 +22,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 
 import static com.fgsoft.exceldatareader.util.TestConstants.STRING_VALUE;
@@ -56,35 +47,18 @@ class PrimaryValuesParserTest {
     @Test
     final void parseInstanceWithOnlyPrimaryFields() {
         // Given
-        final SampleInstance instance = new SampleInstance();
-        final SampleInstance expected = buildExpectedSampleInstance();
+        final SampleInstancePrimaryOnly instance = new SampleInstancePrimaryOnly();
+        final SampleInstancePrimaryOnly expected = buildExpectedSampleInstance();
         // When
         parser.parse(instance, HEADERS, BASE_HEADER, row);
         // Then
         assertThat(instance).isEqualTo(expected);
     }
 
-    private SampleInstance buildExpectedSampleInstance() {
-        return SampleInstance.builder()
+    private SampleInstancePrimaryOnly buildExpectedSampleInstance() {
+        return SampleInstancePrimaryOnly.builder()
                 .stringValue(STRING_VALUE)
                 .build();
     }
 
-    @Data
-    @Builder
-    @AllArgsConstructor
-    @NoArgsConstructor
-    private static class SampleInstance {
-        private BigDecimal bigDecimal;
-        private boolean booleanValue;
-        private Date date;
-        private double doubleValue;
-        private Sample sample;
-        private int intValue;
-        private LocalDateTime localDateTime;
-        private LocalDate localDate;
-        private LocalTime localTime;
-        private long longValue;
-        private String stringValue;
-    }
 }

@@ -74,7 +74,6 @@ class BeanAnalyzerTest {
         assertThat(beanAnalyzer.hasSingleCellValue(objectTwo)).isTrue();
     }
     @Test
-
     final void testIsDoubleOK() {
         // Given
         final Double objectOne = 100.0;
@@ -84,6 +83,7 @@ class BeanAnalyzerTest {
         assertThat(beanAnalyzer.hasSingleCellValue(objectTwo)).isTrue();
     }
 
+    @Test
     final void testIsBooleanOK() {
         // Given
         final Boolean objectOne = true;
@@ -93,6 +93,7 @@ class BeanAnalyzerTest {
         assertThat(beanAnalyzer.hasSingleCellValue(objectTwo)).isTrue();
     }
 
+    @Test
     final void testIsCharacterOK() {
         // Given
         final Character objectOne = 'A';
@@ -102,6 +103,7 @@ class BeanAnalyzerTest {
         assertThat(beanAnalyzer.hasSingleCellValue(objectTwo)).isTrue();
     }
 
+    @Test
     final void testIsStringOK() {
         // Given
         final String string = "A string";
