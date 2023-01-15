@@ -19,6 +19,8 @@ import com.fgsoft.exceldatareader.util.SampleInstancePrimaryOnly;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -26,6 +28,11 @@ import org.mockito.AdditionalAnswers;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -46,20 +53,39 @@ class WorksheetAnalyserTest {
     @BeforeEach
     final void initialize() {
         worksheetAnalyser = new WorksheetAnalyser(worksheet, headerDescriptor);
-        final Row rowZero = mock(Row.class);
-        final Iterator<Cell> rowZeroIterator = mockRowZero();
-        when(rowZero.iterator()).thenReturn(rowZeroIterator);
-        when(worksheet.getRow(0)).thenReturn(rowZero);
     }
 
     @Test
     final void getHeadersMap() {
         // Given
         final Map<String, Integer> expected = buildExpectedHeadersMap();
+        final Row rowZero = mock(Row.class);
+        final Iterator<Cell> rowZeroIterator = mockRowZero();
+        when(rowZero.iterator()).thenReturn(rowZeroIterator);
+        when(worksheet.getRow(0)).thenReturn(rowZero);
         // When
         final Map<String, Integer> actual = worksheetAnalyser.getHeadersMap(SampleInstancePrimaryOnly.class);
         // Then
         assertThat(actual).isEqualTo(expected);
+    }
+
+    @Test
+    final void getHeadersMapFromExcelFile() throws IOException, URISyntaxException {
+        // Given
+        final Map<String, Integer> expected = buildExpectedHeadersMap();
+        final HeaderDescriptor headerDescriptor = new HeaderDescriptor(0, 1, 1);
+        final URL url = this.getClass().getResource("/testData/SampleDataFile.xlsx");
+        assertThat(url).isNotNull();
+        try(FileInputStream file= new FileInputStream(new File(url.toURI()))) {
+            final XSSFWorkbook workbook = new XSSFWorkbook(file);
+            final XSSFSheet sheet = workbook.getSheet("SampleInstancePrimaryOnly");
+            final WorksheetAnalyser analyser = new WorksheetAnalyser(sheet, headerDescriptor);
+        // When
+        final Map<String, Integer> actual = analyser.getHeadersMap(SampleInstancePrimaryOnly.class);
+        // Then
+            assertThat(actual).isEqualTo(expected);
+        }
+
     }
 
     private Map<String, Integer> buildExpectedHeadersMap() {
