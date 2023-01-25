@@ -14,13 +14,17 @@
  */
 package com.fgsoft.exceldatareader.parser.util;
 
+import com.fgsoft.exceldatareader.exception.ExcelReaderErrorCode;
+import com.fgsoft.exceldatareader.exception.ExcelReaderException;
 import com.fgsoft.exceldatareader.parser.HeaderDescriptor;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.util.CellRangeAddress;
 
-import java.lang.reflect.Field;
 import java.util.*;
 
 /**
@@ -37,36 +41,78 @@ public class WorksheetAnalyser {
 
     /**
      * Scan the worksheet in order to get the map of headers and fields of the object to get value from parsing
-     * @param clazz class of the object to get value from parsing
      * @return Map of object fields headers and columns in worksheet.
      */
-    public Map<String, Integer> getHeadersMap(Class<?> clazz) {
+    public Map<String, Integer> getHeadersMap() {
         final Map<String, Integer> retMap = new HashMap<>();
-        final List<String> headerNames = parseHeaders();
-        for (final Field field : clazz.getDeclaredFields()) {
-            final String fieldName = field.getName();
-            if (headerNames.contains(fieldName)) {
-                retMap.put(fieldName, headerNames.indexOf(fieldName));
+        final List<Row> titleRows = buildTitleRows();
+        final Row largestTitleRow = findLargestTitleRow(titleRows);
+        for (Cell cell : largestTitleRow) {
+            final int columnIndex = cell.getColumnIndex();
+            if (columnIndex > 0) { // First column is assigned to the test name
+                final String headerValue = computeHeader(columnIndex, titleRows).trim();
+                retMap.put(headerValue, columnIndex);
             }
         }
         return retMap;
     }
 
-    private List<String> parseHeaders() {
-        final List<String> headerNames = new ArrayList<>();
-        for (int rowNum = headerDescriptor.getFirstTitleRow(); rowNum <= headerDescriptor.getLastTitleRow(); rowNum++) {
-            final Row row = worksheet.getRow(rowNum);
-            for (Cell cell : row) {
-                final String value = cell.getStringCellValue();
-                final int column = cell.getColumnIndex();
-                if (headerNames.size() <= column) {
-                    headerNames.add(column, value);
-                } else {
-                    final String previous = headerNames.get(column);
-                    headerNames.set(column, String.format("%s.%s", previous, value));
-                }
+    private List<Row> buildTitleRows() {
+        final int firstTitleRow = headerDescriptor.getFirstTitleRow();
+        final int lastTitleRow = headerDescriptor.getLastTitleRow();
+        final List<Row> titleRows = new ArrayList<>(lastTitleRow - firstTitleRow + 1);
+        for (int cnt = firstTitleRow; cnt <= lastTitleRow; cnt++) {
+            titleRows.add(worksheet.getRow(cnt));
+        }
+        Collections.reverse(titleRows);
+        return titleRows;
+    }
+
+    private Row findLargestTitleRow(List<Row> titleRows) {
+        final Optional<Row> largestRow = titleRows.stream().max(Comparator.comparingInt(Row::getPhysicalNumberOfCells));
+        if (largestRow.isPresent()) {
+            return largestRow.get();
+        } else {
+            throw new ExcelReaderException(ExcelReaderErrorCode.UNKNOWN);
+        }
+    }
+
+    private String computeHeader(int columnIndex, List<Row> titleRows) {
+        final List<String> tmpHeaders = new ArrayList<>(titleRows.size());
+        for (final Row row : titleRows) {
+            final Cell combinedCell = getCellWithMerge(row.getRowNum(), columnIndex);
+            if (combinedCell != null && CellType.BLANK != combinedCell.getCellType()) {
+                final String titleHeader = combinedCell.getStringCellValue();
+                tmpHeaders.add(0, titleHeader);
             }
         }
-        return headerNames;
+        return StringUtils.join(tmpHeaders, '.');
+    }
+
+    /**
+     * Returns the top left cell corresponding to the given coordinates. This allows to get the contents for coordinates
+     * even if it corresponds to a merged region.
+     * @param rowIndex index of the row
+     * @param columnIndex index of the column
+     * @return cell to get the value from
+     */
+    private Cell getCellWithMerge(int rowIndex, int columnIndex) {
+        final Cell cell;
+        if (rowIndex >= 0) {
+            int topRow = rowIndex;
+            int firstColumn = columnIndex;
+            final List<CellRangeAddress> merges = worksheet.getMergedRegions();
+            for  (CellRangeAddress merge : merges) {
+                if (merge.isInRange(rowIndex, columnIndex)) {
+                    topRow = merge.getFirstRow();
+                    firstColumn = merge.getFirstColumn();
+                    break;
+                }
+            }
+            cell = worksheet.getRow(topRow).getCell(firstColumn);
+        } else {
+            cell = null;
+        }
+        return  cell;
     }
 }

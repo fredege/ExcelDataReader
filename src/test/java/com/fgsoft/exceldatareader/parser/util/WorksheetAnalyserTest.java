@@ -15,17 +15,10 @@
 package com.fgsoft.exceldatareader.parser.util;
 
 import com.fgsoft.exceldatareader.parser.HeaderDescriptor;
-import com.fgsoft.exceldatareader.util.SampleInstancePrimaryOnly;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.AdditionalAnswers;
-import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.File;
@@ -33,81 +26,77 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class WorksheetAnalyserTest {
-    private final HeaderDescriptor headerDescriptor = new HeaderDescriptor(0, 0, 0);
-    @Mock
-    private Sheet worksheet;
-
-    private WorksheetAnalyser worksheetAnalyser;
-    private final List<String> rowZeroStringValues = Arrays.asList("testName", "bigDecimal", "booleanValue", "date",
+    private final List<String> PrimaryOnlyValues = Arrays.asList("testName","bigDecimal", "booleanValue", "date",
             "doubleValue", "intValue", "localDateTime", "localDate", "localTime", "longValue", "stringValue", "sample");
-
-    @BeforeEach
-    final void initialize() {
-        worksheetAnalyser = new WorksheetAnalyser(worksheet, headerDescriptor);
-    }
-
-    @Test
-    final void getHeadersMap() {
-        // Given
-        final Map<String, Integer> expected = buildExpectedHeadersMap();
-        final Row rowZero = mock(Row.class);
-        final Iterator<Cell> rowZeroIterator = mockRowZero();
-        when(rowZero.iterator()).thenReturn(rowZeroIterator);
-        when(worksheet.getRow(0)).thenReturn(rowZero);
-        // When
-        final Map<String, Integer> actual = worksheetAnalyser.getHeadersMap(SampleInstancePrimaryOnly.class);
-        // Then
-        assertThat(actual).isEqualTo(expected);
-    }
+    private final List<String> CompositeValues = Arrays.asList("testName","bigDecimal", "booleanValue", "date",
+            "doubleValue", "intValue", "localDateTime", "localDate", "localTime", "longValue", "stringValue", "sample",
+            "composite.bigDecimal", "composite.booleanValue", "composite.date", "composite.doubleValue",
+            "composite.intValue", "composite.localDateTime", "composite.localDate", "composite.localTime",
+            "composite.longValue", "composite.stringValue", "composite.sample", "listOfStrings",
+            "listOfComposites.bigDecimal", "listOfComposites.booleanValue", "listOfComposites.date",
+            "listOfComposites.doubleValue", "listOfComposites.intValue", "listOfComposites.localDateTime",
+            "listOfComposites.localDate", "listOfComposites.localTime", "listOfComposites.longValue",
+            "listOfComposites.stringValue", "listOfComposites.sample");
 
     @Test
-    final void getHeadersMapFromExcelFile() throws IOException, URISyntaxException {
+    final void getHeadersMapForSimpleClass() throws IOException, URISyntaxException {
         // Given
-        final Map<String, Integer> expected = buildExpectedHeadersMap();
+        final Map<String, Integer> expected = buildExpectedHeadersMapForPrimaryOnly();
         final HeaderDescriptor headerDescriptor = new HeaderDescriptor(0, 1, 1);
         final URL url = this.getClass().getResource("/testData/SampleDataFile.xlsx");
         assertThat(url).isNotNull();
-        try(FileInputStream file= new FileInputStream(new File(url.toURI()))) {
+        try (FileInputStream file = new FileInputStream(new File(url.toURI()))) {
             final XSSFWorkbook workbook = new XSSFWorkbook(file);
             final XSSFSheet sheet = workbook.getSheet("SampleInstancePrimaryOnly");
             final WorksheetAnalyser analyser = new WorksheetAnalyser(sheet, headerDescriptor);
-        // When
-        final Map<String, Integer> actual = analyser.getHeadersMap(SampleInstancePrimaryOnly.class);
-        // Then
+            // When
+            final Map<String, Integer> actual = analyser.getHeadersMap();
+            // Then
             assertThat(actual).isEqualTo(expected);
         }
-
     }
 
-    private Map<String, Integer> buildExpectedHeadersMap() {
-        return rowZeroStringValues.stream()
-                .filter((a) -> !"testName".equals(a))
-                .collect(Collectors.toMap(Function.identity(), rowZeroStringValues::indexOf));
-    }
-
-    private Iterator<Cell> mockRowZero() {
-        @SuppressWarnings("unchecked")
-        final Iterator<Cell> rowOneIterator = mock(Iterator.class);
-        final List<Boolean> hasNextValues = Arrays.asList(true, true, true, true, true, true, true, true, true, true,
-                true, true, false);
-        doAnswer(AdditionalAnswers.returnsElementsOf(hasNextValues)).when(rowOneIterator).hasNext();
-        final List<Cell> allCells = new ArrayList<>(rowZeroStringValues.size());
-        for (int cnt = 0; cnt  < rowZeroStringValues.size(); cnt++) {
-            final Cell cell = mock(Cell.class);
-            when(cell.getStringCellValue()).thenReturn(rowZeroStringValues.get(cnt));
-            when(cell.getColumnIndex()).thenReturn(cnt);
-            allCells.add(cell);
+    @Test
+    final void getHeadersMapForCompositeClass() throws URISyntaxException, IOException {
+        // Given
+        final Map<String, Integer> expected = buildExpectedHeadersMapForComposite();
+        final HeaderDescriptor headerDescriptor = new HeaderDescriptor(0, 1, 1);
+        final URL url = this.getClass().getResource("/testData/SampleDataFile.xlsx");
+        assertThat(url).isNotNull();
+        try (FileInputStream file = new FileInputStream(new File(url.toURI()))) {
+            final XSSFWorkbook workbook = new XSSFWorkbook(file);
+            final XSSFSheet sheet = workbook.getSheet("SampleInstanceComposite");
+            final WorksheetAnalyser analyser = new WorksheetAnalyser(sheet, headerDescriptor);
+            // When
+            final Map<String, Integer> actual = analyser.getHeadersMap();
+            // Then
+            assertThat(actual).hasSameSizeAs(expected);
+            for (Map.Entry<String, Integer> entry : actual.entrySet()) {
+                assertThat(entry.getValue()).isEqualTo(expected.get(entry.getKey()));
+            }
         }
-        doAnswer(AdditionalAnswers.returnsElementsOf(allCells)).when(rowOneIterator).next();
-        return rowOneIterator;
+    }
+
+
+    private Map<String, Integer> buildExpectedHeadersMapForPrimaryOnly() {
+        return PrimaryOnlyValues.stream()
+                .filter((a) -> !"testName".equals(a))
+                .collect(Collectors.toMap(Function.identity(), PrimaryOnlyValues::indexOf));
+    }
+
+    private Map<String, Integer> buildExpectedHeadersMapForComposite() {
+        return CompositeValues.stream()
+                .filter((a) -> !"testName".equals(a))
+                .collect(Collectors.toMap(Function.identity(), CompositeValues::indexOf));
     }
 }
