@@ -29,6 +29,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.io.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Objects;
 
 import static com.fgsoft.exceldatareader.util.TestConstants.SHEET_NAME;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
@@ -58,10 +59,11 @@ class LocalDateTimeValueParserTest {
     @Mock
     private FormulaEvaluator evaluator;
 
+    private final LocalDateTimeValueParser parser = new LocalDateTimeValueParser();
+
     @Test
     final void testParseStringOK() {
         // Given
-        final LocalDateTimeValueParser parser = new LocalDateTimeValueParser();
         final LocalDateTime dateTime = LocalDateTime.now();
         final String strValue = dateTime.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
         when(cell.getStringCellValue()).thenReturn(strValue);
@@ -77,7 +79,6 @@ class LocalDateTimeValueParserTest {
             "2022-05-15T17:05:65", "2022-05-15T17:65:15", "2022-05-15T32:05:15",
             "2022-05-32T17:05:15", "2022-13-15T17:05:15"})
     final void testParseStringKOAnyString(final String strValue) {
-        final LocalDateTimeValueParser parser = new LocalDateTimeValueParser();
         when(sheet.getSheetName()).thenReturn(SHEET_NAME);
         when(cell.getStringCellValue()).thenReturn(strValue);
         when(cell.getCellType()).thenReturn(CellType.STRING);
@@ -96,7 +97,6 @@ class LocalDateTimeValueParserTest {
 
     @Test
     final void testParseDoubleOK() {
-        final LocalDateTimeValueParser parser = new LocalDateTimeValueParser();
         final LocalDateTime dateTime = LocalDateTime.now();
         final double dblValue = 44693.0;
         when(cell.getSheet()).thenReturn(sheet);
@@ -118,7 +118,6 @@ class LocalDateTimeValueParserTest {
 
     @Test
     final void testParseDoubleKO() {
-        final LocalDateTimeValueParser parser = new LocalDateTimeValueParser();
         final double dblValue = 44693.0;
         when(cell.getSheet()).thenReturn(sheet);
         when(cell.getRowIndex()).thenReturn(ROW_NUM);
@@ -145,7 +144,6 @@ class LocalDateTimeValueParserTest {
     final void testParseBooleanValueKO() {
         // Given
         final boolean boolValue = true;
-        final LocalDateTimeValueParser parser = new LocalDateTimeValueParser();
         when(cell.getBooleanCellValue()).thenReturn(boolValue);
         when(cell.getCellType()).thenReturn(CellType.BOOLEAN);
         when(sheet.getSheetName()).thenReturn(SHEET_NAME);
@@ -164,7 +162,6 @@ class LocalDateTimeValueParserTest {
     @Test
     final void testBlankValueOK() {
         // Given
-        final LocalDateTimeValueParser parser = new LocalDateTimeValueParser();
         when(cell.getCellType()).thenReturn(CellType.BLANK);
         // When
         final LocalDateTime value = parser.getValue(cell, evaluator);
@@ -188,7 +185,7 @@ class LocalDateTimeValueParserTest {
         final String excelFilePath = "testData/SampleDataFile.xlsx";
         final InputStream inputStream = getClass().getClassLoader().getResourceAsStream(excelFilePath);
         assertThat(inputStream).isNotNull();
-        final Workbook workbook = new XSSFWorkbook(inputStream);
+        final Workbook workbook = new XSSFWorkbook(Objects.requireNonNull(inputStream));
         final Sheet dataSheet = workbook.getSheetAt(0);
         final Cell cell = dataSheet.getRow(2).getCell(2);
         final LocalDateTimeValueParser parser = new LocalDateTimeValueParser();
@@ -204,7 +201,7 @@ class LocalDateTimeValueParserTest {
         final String excelFilePath = "testData/SampleDataFile.xlsx";
         final InputStream inputStream = getClass().getClassLoader().getResourceAsStream(excelFilePath);
         assertThat(inputStream).isNotNull();
-        final Workbook workbook = new XSSFWorkbook(inputStream);
+        final Workbook workbook = new XSSFWorkbook(Objects.requireNonNull(inputStream));
         final FormulaEvaluator evaluator = workbook.getCreationHelper().createFormulaEvaluator();
         final Sheet dataSheet = workbook.getSheetAt(0);
         final Cell cell = dataSheet.getRow(3).getCell(2);

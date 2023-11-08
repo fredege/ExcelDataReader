@@ -25,7 +25,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.Arrays;
 import java.util.List;
 
-import static com.fgsoft.exceldatareader.util.TestConstants.STRING_VALUE;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @ExtendWith(MockitoExtension.class)
@@ -57,7 +56,6 @@ class PrimaryValuesParserTest {
 
     private SampleInstancePrimaryOnly buildExpectedSampleInstance() {
         return SampleInstancePrimaryOnly.builder()
-                .stringValue(STRING_VALUE)
                 .build();
     }
 
