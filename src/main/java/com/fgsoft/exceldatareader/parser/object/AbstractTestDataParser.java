@@ -24,5 +24,9 @@ package com.fgsoft.exceldatareader.parser.object;
  * Horizontal representation is convenient for representing lists. In such a case, any element of the list is
  * represented on its own row.
  */
-public abstract class AbstractObjectParser {
+public abstract class AbstractTestDataParser<T> implements TestDataParser<T> {
+    protected <V> TestDataParser<V> findParser(Class<V> type) {
+        return null;
+    }
+
 }

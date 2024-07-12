@@ -24,7 +24,7 @@ import org.junit.jupiter.params.provider.CsvSource;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-class ValueParserRouterTest {
+class SingleCellValueParserRouterTest {
     @ParameterizedTest
     @CsvSource({"java.lang.String, com.fgsoft.exceldatareader.parser.value.StringValueParser",
             "java.lang.Double, com.fgsoft.exceldatareader.parser.value.DoubleValueParser",
@@ -43,7 +43,7 @@ class ValueParserRouterTest {
         final Class<?> valueClass = Class.forName(valueClassName);
         final Class<?> parserClass = Class.forName(parserClassName);
         // When
-        final AbstractSingleCellValueParser<?> parser = ValueParserRouter.getParser(valueClass);
+        final SingleCellValueParser<?> parser = SingleCellValueParserRouter.getParser(valueClass);
         // Then
         assertThat(parser).isInstanceOf(parserClass);
     }
@@ -55,7 +55,7 @@ class ValueParserRouterTest {
                 TestClass.class.getName());
         // When
         Throwable exception = assertThrows(ExcelReaderException.class,
-                () -> ValueParserRouter.getParser(TestClass.class));
+                () -> SingleCellValueParserRouter.getParser(TestClass.class));
         // Then
         assertThat(exception).isInstanceOf(InvalidTypeException.class);
         assertThat(exception.getMessage()).isEqualTo(message);

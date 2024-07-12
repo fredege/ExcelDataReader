@@ -36,14 +36,14 @@ import static com.fgsoft.exceldatareader.exception.ExcelReaderErrorCode.UNEXPECT
 @Slf4j
 @RequiredArgsConstructor
 @Getter
-abstract class AbstractSingleCellValueParser<T> {
+abstract class AbstractSingleCellValueParser<T> implements  SingleCellValueParser<T> {
     /**
      * Parse the value for a given cell
      *
      * @param cell      Cell to parse
      * @param evaluator Formula evaluator call in case of cell containing a formula
      */
-    public T getValue(final Cell cell, @NonNull FormulaEvaluator evaluator) {
+    public T getValue(final @NonNull Cell cell, @NonNull FormulaEvaluator evaluator) {
         T value;
         if (cell == null) {
             log.warn("Null cell has been given, returning null");

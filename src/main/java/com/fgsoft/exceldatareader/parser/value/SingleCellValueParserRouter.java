@@ -30,8 +30,8 @@ import java.util.Map;
  * Class in charge of routing to the relevant value parser given the class of the value to get from
  * parsing.
  */
-public final class ValueParserRouter {
-    private static final Map<Class<?>, Class<? extends AbstractSingleCellValueParser<?>>> PARSERS =
+public final class SingleCellValueParserRouter {
+    private static final Map<Class<?>, Class<? extends SingleCellValueParser<?>>> PARSERS =
             new HashMap<>();
 
     static {
@@ -50,7 +50,7 @@ public final class ValueParserRouter {
     /**
      * Prevent instanciation.
      */
-    private ValueParserRouter() {
+    private SingleCellValueParserRouter() {
     }
 
 
@@ -61,17 +61,17 @@ public final class ValueParserRouter {
      * @return fond parser
      */
     @SuppressWarnings({"java:S1905", "unchecked"})
-    public static <T> AbstractSingleCellValueParser<T> getParser(Class<T> type) {
-        final AbstractSingleCellValueParser<T> parser;
+    public static <T> SingleCellValueParser<T> getParser(Class<T> type) {
+        final SingleCellValueParser<T> parser;
         if (type.isEnum()) {
-            parser = (AbstractSingleCellValueParser<T>) new EnumValueParser((Class<? extends Enum<?>>) type);
+            parser = (SingleCellValueParser<T>) new EnumValueParser((Class<? extends Enum<?>>) type);
         } else if (!PARSERS.containsKey(type)) {
             throw new InvalidTypeException(type.getName());
         } else {
-            final Class<? extends AbstractSingleCellValueParser<?>> parserClass = PARSERS.get(type);
+            final Class<? extends SingleCellValueParser<?>> parserClass = PARSERS.get(type);
             try {
-                final Constructor<AbstractSingleCellValueParser<T>> constructor =
-                        (Constructor<AbstractSingleCellValueParser<T>>)
+                final Constructor<SingleCellValueParser<T>> constructor =
+                        (Constructor<SingleCellValueParser<T>>)
                                 parserClass.getDeclaredConstructor();
                 parser = constructor.newInstance();
             } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException exc) {

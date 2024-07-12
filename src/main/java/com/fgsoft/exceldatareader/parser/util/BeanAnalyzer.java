@@ -17,6 +17,7 @@ package com.fgsoft.exceldatareader.parser.util;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 
+import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -64,5 +65,17 @@ public class BeanAnalyzer {
             log.debug(String.format("Checking type '%s' as single cell represented", type));
         }
         return  type == null || type.isPrimitive() || type.isEnum() || SINGLE_CELL_TYPES.contains(type);
+    }
+
+    public <T> List<Field>  getSingleCellValues(Class<T> clazz) {
+        return  new ArrayList<>();
+    }
+
+    public <T, V> void setValueOnField(T instance, Field field, V value) {
+        // To be implemented
+    }
+
+    public <T> List<Field> getMultipleCellsValues(Class<T> clazz) {
+        return new ArrayList<>();
     }
 }

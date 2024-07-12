@@ -19,10 +19,7 @@ import com.fgsoft.exceldatareader.exception.ExcelReaderException;
 import com.fgsoft.exceldatareader.parser.HeaderDescriptor;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellType;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
 
 import java.util.*;
@@ -114,5 +111,13 @@ public class WorksheetAnalyser {
             cell = null;
         }
         return  cell;
+    }
+
+    public Cell getCell(String name) {
+        return null;
+    }
+
+    public FormulaEvaluator getFormulaEvaluator() {
+        return null;
     }
 }
