@@ -15,7 +15,7 @@
 
     <properties>
         <java.version>11</java.version>
-        <lombok.version>1.18.24</lombok.version>
+        <lombok.version>1.18.30</lombok.version>
         <slf4j.version>2.0.5</slf4j.version>
         <log4j.version>2.19.0</log4j.version>
         <apache.poi.version>5.2.2</apache.poi.version>
@@ -116,8 +116,8 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.8.0</version>
                 <configuration>
-                    <source>11</source>
-                    <target>11</target>
+                    <source>16</source>
+                    <target>16</target>
                     <annotationProcessorPaths>
                         <path>
                             <groupId>org.projectlombok</groupId>

@@ -16,13 +16,16 @@ package com.fgsoft.exceldatareader.parser.util;
 
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.reflect.FieldUtils;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Slf4j
 public class BeanAnalyzer {
@@ -68,7 +71,10 @@ public class BeanAnalyzer {
     }
 
     public <T> List<Field>  getSingleCellValues(Class<T> clazz) {
-        return  new ArrayList<>();
+        return FieldUtils.getAllFieldsList(clazz).stream()
+                .filter(field ->  !field.isSynthetic() && !Modifier.isStatic(field.getModifiers()))
+                .filter(field -> isSingleCellType(field.getType()))
+                .toList();
     }
 
     public <T, V> void setValueOnField(T instance, Field field, V value) {

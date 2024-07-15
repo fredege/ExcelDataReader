@@ -19,5 +19,5 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
 
 public interface SingleCellValueParser<T> {
-    T getValue(@NonNull  final Cell cell, @NonNull final FormulaEvaluator evaluator);
+    T getValue(final Cell cell, @NonNull final FormulaEvaluator evaluator);
 }

@@ -43,7 +43,7 @@ abstract class AbstractSingleCellValueParser<T> implements  SingleCellValueParse
      * @param cell      Cell to parse
      * @param evaluator Formula evaluator call in case of cell containing a formula
      */
-    public T getValue(final @NonNull Cell cell, @NonNull FormulaEvaluator evaluator) {
+    public T getValue(final  Cell cell, @NonNull FormulaEvaluator evaluator) {
         T value;
         if (cell == null) {
             log.warn("Null cell has been given, returning null");
@@ -53,27 +53,17 @@ abstract class AbstractSingleCellValueParser<T> implements  SingleCellValueParse
             final int colIndex = cell.getColumnIndex();
             final Sheet worksheet = cell.getSheet();
             try {
-                switch (cell.getCellType()) {
-                    case FORMULA:
-                        value = getValueFromFormula(cell, evaluator);
-                        break;
-                    case BLANK:
-                        value = getValueForEmptyCell(rowIndex, colIndex, worksheet);
-                        break;
-                    case NUMERIC:
-                        value = getValueForCell(cell.getNumericCellValue(), rowIndex, colIndex, worksheet);
-                        break;
-                    case BOOLEAN:
-                        value = getValueForCell(cell.getBooleanCellValue(), rowIndex, colIndex, worksheet);
-                        break;
-                    case STRING:
-                        value = getValueForCell(cell.getStringCellValue(), rowIndex, colIndex, worksheet);
-                        break;
-                    case ERROR:
-                    default:
+                value = switch (cell.getCellType()) {
+                    case FORMULA -> getValueFromFormula(cell, evaluator);
+                    case BLANK -> getValueForEmptyCell(rowIndex, colIndex, worksheet);
+                    case NUMERIC -> getValueForCell(cell.getNumericCellValue(), rowIndex, colIndex, worksheet);
+                    case BOOLEAN -> getValueForCell(cell.getBooleanCellValue(), rowIndex, colIndex, worksheet);
+                    case STRING -> getValueForCell(cell.getStringCellValue(), rowIndex, colIndex, worksheet);
+                    default -> {
                         reportError(rowIndex, colIndex, worksheet);
-                        value = null;
-                }
+                        yield null;
+                    }
+                };
             } catch (IllegalStateException exc) {
                 value = null;
                 reportError(rowIndex, colIndex, worksheet);

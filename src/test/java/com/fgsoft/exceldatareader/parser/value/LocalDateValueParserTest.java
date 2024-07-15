@@ -188,10 +188,10 @@ class LocalDateValueParserTest {
         assertThat(inputStream).isNotNull();
         final Workbook workbook = new XSSFWorkbook(inputStream);
         final Sheet dataSheet = workbook.getSheetAt(0);
-        final Cell cell = dataSheet.getRow(2).getCell(2);
+        final Cell aCell = dataSheet.getRow(2).getCell(2);
         final LocalDateValueParser parser = new LocalDateValueParser();
         // When
-        final LocalDate actual = parser.getValue(cell, evaluator);
+        final LocalDate actual = parser.getValue(aCell, evaluator);
         // Then
         assertThat(actual).isEqualTo(LocalDate.of(YEAR, MONTH, DAY));
     }
@@ -203,12 +203,12 @@ class LocalDateValueParserTest {
         final InputStream inputStream = getClass().getClassLoader().getResourceAsStream(excelFilePath);
         assertThat(inputStream).isNotNull();
         final Workbook workbook = new XSSFWorkbook(inputStream);
-        final FormulaEvaluator evaluator = workbook.getCreationHelper().createFormulaEvaluator();
+        final FormulaEvaluator anEvaluator = workbook.getCreationHelper().createFormulaEvaluator();
         final Sheet dataSheet = workbook.getSheetAt(0);
-        final Cell cell = dataSheet.getRow(3).getCell(2);
+        final Cell aCell = dataSheet.getRow(3).getCell(2);
         final LocalDateValueParser parser = new LocalDateValueParser();
         // When
-        final LocalDate actual = parser.getValue(cell, evaluator);
+        final LocalDate actual = parser.getValue(aCell, anEvaluator);
         // Then
         assertThat(actual).isEqualTo(LocalDate.of(YEAR, MONTH, DAY));
     }

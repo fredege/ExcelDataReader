@@ -14,7 +14,13 @@
  */
 package com.fgsoft.exceldatareader.parser.util;
 
+import com.fgsoft.exceldatareader.util.SampleCompositeClass;
+import org.apache.commons.lang3.reflect.FieldUtils;
 import org.junit.jupiter.api.Test;
+
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 
@@ -109,5 +115,26 @@ class BeanAnalyzerTest {
         final String string = "A string";
         // When Then
         assertThat(beanAnalyzer.hasSingleCellValue(string)).isTrue();
+    }
+
+    @Test
+    final void getSingleCellValues() {
+        // Given
+        final List<Field> expected = new ArrayList<>();
+        expected.add(FieldUtils.getDeclaredField(SampleCompositeClass.class, "bigDecimal", true));
+        expected.add(FieldUtils.getDeclaredField(SampleCompositeClass.class, "booleanValue", true));
+        expected.add(FieldUtils.getDeclaredField(SampleCompositeClass.class, "date", true));
+        expected.add(FieldUtils.getDeclaredField(SampleCompositeClass.class, "doubleValue", true));
+        expected.add(FieldUtils.getDeclaredField(SampleCompositeClass.class, "intValue", true));
+        expected.add(FieldUtils.getDeclaredField(SampleCompositeClass.class, "localDateTime", true));
+        expected.add(FieldUtils.getDeclaredField(SampleCompositeClass.class, "localDate", true));
+        expected.add(FieldUtils.getDeclaredField(SampleCompositeClass.class, "localTime", true));
+        expected.add(FieldUtils.getDeclaredField(SampleCompositeClass.class, "longValue", true));
+        expected.add(FieldUtils.getDeclaredField(SampleCompositeClass.class, "stringValue", true));
+        expected.add(FieldUtils.getDeclaredField(SampleCompositeClass.class, "sample", true));
+        // When
+        final List<Field> actual = beanAnalyzer.getSingleCellValues(SampleCompositeClass.class);
+        // Then
+        assertThat(actual).isEqualTo(expected);
     }
 }
