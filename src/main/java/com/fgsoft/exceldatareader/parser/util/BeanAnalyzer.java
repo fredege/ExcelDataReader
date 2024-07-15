@@ -14,11 +14,20 @@
  */
 package com.fgsoft.exceldatareader.parser.util;
 
+import com.fgsoft.exceldatareader.exception.ExcelReaderErrorCode;
+import com.fgsoft.exceldatareader.exception.ExcelReaderException;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.reflect.FieldUtils;
 
+import java.beans.BeanInfo;
+import java.beans.IntrospectionException;
+import java.beans.Introspector;
+import java.beans.PropertyDescriptor;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -55,6 +64,7 @@ public class BeanAnalyzer {
      *     <li>Enum</li>
      *     <li>Java time objects, i.e. LocalDate, LocalTime, LocalDateTime</li>
      * </ul>
+     *
      * @param object object to be checked
      * @return true when can be parsed from a single cell
      */
@@ -66,21 +76,52 @@ public class BeanAnalyzer {
         if (log.isDebugEnabled()) {
             log.debug(String.format("Checking type '%s' as single cell represented", type));
         }
-        return  type == null || type.isPrimitive() || type.isEnum() || SINGLE_CELL_TYPES.contains(type);
+        return type == null || type.isPrimitive() || type.isEnum() || SINGLE_CELL_TYPES.contains(type);
     }
 
-    public <T> List<Field>  getSingleCellValues(Class<T> clazz) {
+    public <T> List<Field> getSingleCellValues(Class<T> clazz) {
         return FieldUtils.getAllFieldsList(clazz).stream()
-                .filter(field ->  !field.isSynthetic() && !Modifier.isStatic(field.getModifiers()))
+                .filter(field -> !field.isSynthetic() && !Modifier.isStatic(field.getModifiers()))
                 .filter(field -> isSingleCellType(field.getType()))
                 .toList();
     }
 
-    public <T, V> void setValueOnField(T instance, Field field, V value) {
-        // To be implemented
+    public <T> List<Field> getMultipleCellsValues(Class<T> clazz) {
+        return FieldUtils.getAllFieldsList(clazz).stream()
+                .filter(field -> !field.isSynthetic() && !Modifier.isStatic(field.getModifiers()))
+                .filter(field -> !isSingleCellType(field.getType()))
+                .toList();
     }
 
-    public <T> List<Field> getMultipleCellsValues(Class<T> clazz) {
-        return new ArrayList<>();
+    public <T, V> void setValueOnField(T instance, Field field, V value) {
+        if (value != null) {
+            try {
+                final BeanInfo beanInfo = Introspector.getBeanInfo(instance.getClass());
+                Optional<PropertyDescriptor> propertyDescriptor = Arrays.stream(beanInfo.getPropertyDescriptors())
+                        .filter(pd -> StringUtils.uncapitalize(pd.getName()).equals(field.getName()))
+                        .findAny();
+                if (propertyDescriptor.isPresent()) {
+                    setValueOnField(instance, field, propertyDescriptor.get(), value);
+                } else {
+                    throw new ExcelReaderException(ExcelReaderErrorCode.UNKNOWN);
+                }
+            } catch (IntrospectionException | InvocationTargetException | IllegalAccessException exc) {
+                throw new ExcelReaderException(ExcelReaderErrorCode.UNKNOWN);
+            }
+        }
     }
-}
+
+    private <T, V> void setValueOnField(T instance, Field field, PropertyDescriptor propertyDescriptor, V value) throws InvocationTargetException, IllegalAccessException {
+        final Method setter = propertyDescriptor.getWriteMethod();
+        if (value.getClass().isAssignableFrom(field.getType())) {
+            if (setter != null) {
+                setter.invoke(instance, value);
+            } else {
+                throw new ExcelReaderException(ExcelReaderErrorCode.NO_SETTER, field.getName());
+            }
+        } else {
+            throw new ExcelReaderException(ExcelReaderErrorCode.MISMATCHING_DATA_TYPES, field.getType().getName(),
+                    value.getClass().getName(), field.getName());
+        }
+    }
+ }

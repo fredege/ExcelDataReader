@@ -19,6 +19,7 @@ import org.apache.commons.lang3.reflect.FieldUtils;
 import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Field;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -136,5 +137,30 @@ class BeanAnalyzerTest {
         final List<Field> actual = beanAnalyzer.getSingleCellValues(SampleCompositeClass.class);
         // Then
         assertThat(actual).isEqualTo(expected);
+    }
+
+    @Test
+    final void getMultipleCellsValues() {
+        // Given
+        final List<Field> expected = new ArrayList<>();
+        expected.add(FieldUtils.getDeclaredField(SampleCompositeClass.class, "composite", true));
+        expected.add(FieldUtils.getDeclaredField(SampleCompositeClass.class, "listOfStrings", true));
+        expected.add(FieldUtils.getDeclaredField(SampleCompositeClass.class, "listOfComposites", true));
+        // When
+        final List<Field> actual = beanAnalyzer.getMultipleCellsValues(SampleCompositeClass.class);
+        // Then
+        assertThat(actual).isEqualTo(expected);
+    }
+
+    @Test
+    final void setValueOnField() {
+        // Given
+        final SampleCompositeClass instance = new SampleCompositeClass();
+        final BigDecimal value = new BigDecimal("100.00");
+        final Field field = FieldUtils.getDeclaredField(SampleCompositeClass.class, "bigDecimal", true);
+        // When
+        beanAnalyzer.setValueOnField(instance, field, value);
+        // Then
+        assertThat(instance.getBigDecimal()).isEqualTo(value);
     }
 }

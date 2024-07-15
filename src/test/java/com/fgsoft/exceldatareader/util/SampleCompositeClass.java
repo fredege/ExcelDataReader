@@ -31,6 +31,8 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class SampleCompositeClass {
+    private static final String SAMPLE_STRING = "Sample String";
+
     private BigDecimal bigDecimal;
     private boolean booleanValue;
     private Date date;
