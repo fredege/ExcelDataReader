@@ -14,6 +14,9 @@
  */
 package com.fgsoft.exceldatareader.exception;
 
+import lombok.Getter;
+
+@Getter
 public enum ExcelReaderErrorCode {
     FILE_NOT_FOUND("file '%s' not found"),
     INCORRECT_VALUE_FOR_TYPE("Incorrect value '%s' for type '%s' in cell (%d, %d) of sheet '%s'"),
@@ -28,9 +31,5 @@ public enum ExcelReaderErrorCode {
 
     ExcelReaderErrorCode(final String aMessage) {
         this.message = aMessage;
-    }
-
-    public String getMessage() {
-        return message;
     }
 }
