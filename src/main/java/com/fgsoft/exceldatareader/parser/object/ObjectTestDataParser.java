@@ -15,6 +15,7 @@
 package com.fgsoft.exceldatareader.parser.object;
 
 import com.fgsoft.exceldatareader.parser.util.BeanAnalyzer;
+import com.fgsoft.exceldatareader.parser.util.InstanceBuilder;
 import com.fgsoft.exceldatareader.parser.util.WorksheetAnalyser;
 import com.fgsoft.exceldatareader.parser.value.SingleCellValueParser;
 import com.fgsoft.exceldatareader.parser.value.SingleCellValueParserRouter;
@@ -26,7 +27,7 @@ import java.lang.reflect.Field;
 public class ObjectTestDataParser<T> extends AbstractTestDataParser<T> {
     @Override
     public T parse(WorksheetAnalyser worksheetAnalyser, Class<T> clazz) {
-        final T instance = buildInstance(clazz);
+        final T instance = InstanceBuilder.buildInstance(clazz);
         final BeanAnalyzer beanAnalyzer = new BeanAnalyzer();
         beanAnalyzer.getSingleCellValues(clazz)
                 .forEach(field -> setSingleCellValueOnField(worksheetAnalyser, field, field.getType(), instance));
@@ -51,7 +52,4 @@ public class ObjectTestDataParser<T> extends AbstractTestDataParser<T> {
         beanAnalyzer.setValueOnField(instance, field, value);
     }
 
-    private T buildInstance(Class<T> clazz) {
-        return null;
-    }
 }

@@ -30,6 +30,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -52,6 +53,7 @@ public class BeanAnalyzer {
             LocalDate.class,
             LocalDateTime.class,
             BigDecimal.class,
+            BigInteger.class,
             Enumeration.class,
             Currency.class
     );
@@ -72,23 +74,20 @@ public class BeanAnalyzer {
         return isSingleCellType(object.getClass());
     }
 
-    private boolean isSingleCellType(final Class<?> type) {
-        if (log.isDebugEnabled()) {
-            log.debug(String.format("Checking type '%s' as single cell represented", type));
-        }
-        return type == null || type.isPrimitive() || type.isEnum() || SINGLE_CELL_TYPES.contains(type);
+    private boolean isSingleCellType(@NonNull Class<?> type) {
+        return type.isPrimitive() || type.isEnum() || SINGLE_CELL_TYPES.contains(type);
     }
 
     public <T> List<Field> getSingleCellValues(Class<T> clazz) {
         return FieldUtils.getAllFieldsList(clazz).stream()
-                .filter(field -> !field.isSynthetic() && !Modifier.isStatic(field.getModifiers()))
+                .filter(field -> !Modifier.isStatic(field.getModifiers()))
                 .filter(field -> isSingleCellType(field.getType()))
                 .toList();
     }
 
     public <T> List<Field> getMultipleCellsValues(Class<T> clazz) {
         return FieldUtils.getAllFieldsList(clazz).stream()
-                .filter(field -> !field.isSynthetic() && !Modifier.isStatic(field.getModifiers()))
+                .filter(field -> !Modifier.isStatic(field.getModifiers()))
                 .filter(field -> !isSingleCellType(field.getType()))
                 .toList();
     }

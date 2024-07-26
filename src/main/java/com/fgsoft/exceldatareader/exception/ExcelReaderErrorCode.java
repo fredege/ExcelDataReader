@@ -24,7 +24,7 @@ public enum ExcelReaderErrorCode {
     UNABLE_TO_OPEN_FILE("Unable to open file %s"),
     UNEXPECTED_VALUE("Unexpected value in cell (%d, %d) of sheet '%s'"),
     MISMATCHING_DATA_TYPES("Mismatching data types: expected = '%s', actual = '%s' for field '%s'"),
-    NO_SETTER("No setter has been defiend for field '%s"),
+    NO_SETTER("No setter has been defiend for field '%s'"),
     UNKNOWN("Unknown error code");
 
     private final String message;

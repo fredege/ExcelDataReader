@@ -1,4 +1,4 @@
-/* Copyright 2023 Frederic GEDIN
+/* Copyright 2024 Frederic GEDIN
  *
  *       Licensed under the Apache License,Version2.0(the"License");
  *       you may not use this file except in compliance with the License.
@@ -14,25 +14,20 @@
  */
 package com.fgsoft.exceldatareader.util;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.Date;
-import java.util.List;
 
-@Data
-@Builder
-@AllArgsConstructor
+@Getter
+@Setter
 @NoArgsConstructor
-public class SampleCompositeClass {
-    private static final String SAMPLE_STRING = "Sample String";
-
+public class SampleClassWithNoArgsConstructor {
     private BigDecimal bigDecimal;
     private boolean booleanValue;
     private Date date;
@@ -44,12 +39,4 @@ public class SampleCompositeClass {
     private long longValue;
     private String stringValue;
     private Sample sample;
-    private SampleInstancePrimaryOnly composite;
-    private List<String> listOfStrings;
-    private List<SampleInstancePrimaryOnly> listOfComposites;
-    private InnerClass innerClass;
-
-    public static class InnerClass {
-        private int intValue;
-    }
 }
