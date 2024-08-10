@@ -14,6 +14,9 @@
  */
 package com.fgsoft.exceldatareader.parser.object;
 
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellRange;
+
 /**
  * This is the base code for automatically generate a java object based on the field names and class.
  * In order to have a proper parsing, data has to be organized according to the following rules:
@@ -25,7 +28,7 @@ package com.fgsoft.exceldatareader.parser.object;
  * represented on its own row.
  */
 public abstract class AbstractTestDataParser<T> implements TestDataParser<T> {
-    protected <V> TestDataParser<V> findParser(Class<V> type) {
+    protected <V> TestDataParser<V> findParser(Class<V> type, CellRange<Cell> fieldCellRange, CellRange<Cell> headerCellRange) {
         return null;
     }
 

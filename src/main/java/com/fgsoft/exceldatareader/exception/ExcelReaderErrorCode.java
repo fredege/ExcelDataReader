@@ -19,6 +19,7 @@ import lombok.Getter;
 @Getter
 public enum ExcelReaderErrorCode {
     FILE_NOT_FOUND("file '%s' not found"),
+    HEADER_NOT_FOUND("Unable to find a cell with header %s"),
     INCORRECT_VALUE_FOR_TYPE("Incorrect value '%s' for type '%s' in cell (%d, %d) of sheet '%s'"),
     INVALID_TYPE("Unable to find a single cell value parser for type '%s'"),
     UNABLE_TO_OPEN_FILE("Unable to open file %s"),

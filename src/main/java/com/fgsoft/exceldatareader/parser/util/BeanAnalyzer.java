@@ -18,6 +18,7 @@ import com.fgsoft.exceldatareader.exception.ExcelReaderErrorCode;
 import com.fgsoft.exceldatareader.exception.ExcelReaderException;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.reflect.FieldUtils;
 
@@ -112,7 +113,7 @@ public class BeanAnalyzer {
 
     private <T, V> void setValueOnField(T instance, Field field, PropertyDescriptor propertyDescriptor, V value) throws InvocationTargetException, IllegalAccessException {
         final Method setter = propertyDescriptor.getWriteMethod();
-        if (value.getClass().isAssignableFrom(field.getType())) {
+        if (hasSameType(value, field)) {
             if (setter != null) {
                 setter.invoke(instance, value);
             } else {
@@ -123,4 +124,11 @@ public class BeanAnalyzer {
                     value.getClass().getName(), field.getName());
         }
     }
- }
+
+    private <V> boolean hasSameType(V value, Field field) {
+        final Class<?> fieldType = field.getType().isPrimitive() ?
+                ClassUtils.primitiveToWrapper(field.getType()):
+                field.getType();
+        return fieldType.isAssignableFrom(value.getClass());
+    }
+}

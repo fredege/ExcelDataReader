@@ -17,12 +17,15 @@ package com.fgsoft.exceldatareader.parser.util;
 import com.fgsoft.exceldatareader.exception.ExcelReaderErrorCode;
 import com.fgsoft.exceldatareader.exception.ExcelReaderException;
 import com.fgsoft.exceldatareader.parser.HeaderDescriptor;
+import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
 
 import java.util.*;
+
+import static com.fgsoft.exceldatareader.exception.ExcelReaderErrorCode.HEADER_NOT_FOUND;
 
 /**
  * This class is responsible to analyze an Excel worksheet in order to:
@@ -113,11 +116,28 @@ public class WorksheetAnalyser {
         return  cell;
     }
 
-    public Cell getCell(String name) {
-        return null;
+    public Cell getCell(@NotBlank String name, CellRange<Cell> cellRange, CellRange<Cell> headerRange) {
+        if  (headerRange.getWidth() == 1 && cellRange.getHeight() == 1) {
+            for (Cell cell : headerRange) {
+                if (name.equals(cell.getStringCellValue())) {
+                    return cell;
+                }
+            }
+            throw new ExcelReaderException(HEADER_NOT_FOUND, name);
+        } else { // Should not happen
+            throw new ExcelReaderException(ExcelReaderErrorCode.UNKNOWN);
+        }
     }
 
     public FormulaEvaluator getFormulaEvaluator() {
+        return null;
+    }
+
+    public CellRange<Cell> getCellRange(String name, CellRange<Cell> cellRange) {
+        return null;
+    }
+
+    public CellRange<Cell> ggetHeaderRange(String name, CellRange<Cell> headerRange) {
         return null;
     }
 }

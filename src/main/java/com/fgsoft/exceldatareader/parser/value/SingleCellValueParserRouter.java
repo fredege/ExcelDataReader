@@ -36,11 +36,23 @@ public final class SingleCellValueParserRouter {
 
     static {
         PARSERS.put(Double.class, DoubleValueParser.class);
+        PARSERS.put(Double.TYPE, DoubleValueParser.class);
         PARSERS.put(Integer.class, IntegerValueParser.class);
+        PARSERS.put(Integer.TYPE, IntegerValueParser.class);
         PARSERS.put(Long.class, LongValueParser.class);
+        PARSERS.put(Long.TYPE, LongValueParser.class);
         PARSERS.put(BigDecimal.class, BigDecimalValueParser.class);
         PARSERS.put(Boolean.class, BooleanValueParser.class);
+        PARSERS.put(Boolean.TYPE, BooleanValueParser.class);
+        PARSERS.put(Byte.class, ByteValueParser.class);
+        PARSERS.put(Byte.TYPE, ByteValueParser.class);
+        PARSERS.put(Short.class, ShortValueParser.class);
+        PARSERS.put(Short.TYPE, ShortValueParser.class);
+        PARSERS.put(Float.class, FloatValueParser.class);
+        PARSERS.put(Float.TYPE, FloatValueParser.class);
         PARSERS.put(String.class, StringValueParser.class);
+        PARSERS.put(Character.class, CharacterValueParser.class);
+        PARSERS.put(Character.TYPE, CharacterValueParser.class);
         PARSERS.put(Date.class, DateValueParser.class);
         PARSERS.put(LocalDate.class, LocalDateValueParser.class);
         PARSERS.put(LocalTime.class, LocalTimeValueParser.class);

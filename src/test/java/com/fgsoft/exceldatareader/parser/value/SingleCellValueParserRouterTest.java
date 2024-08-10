@@ -21,6 +21,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
+import java.lang.reflect.Type;
+
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -36,7 +38,7 @@ class SingleCellValueParserRouterTest {
             "java.time.LocalDate, com.fgsoft.exceldatareader.parser.value.LocalDateValueParser",
             "java.time.LocalTime, com.fgsoft.exceldatareader.parser.value.LocalTimeValueParser",
             "java.time.LocalDateTime, com.fgsoft.exceldatareader.parser.value.LocalDateTimeValueParser",
-            "com.fgsoft.exceldatareader.util.Sample, com.fgsoft.exceldatareader.parser.value.EnumValueParser"
+            "com.fgsoft.exceldatareader.util.Sample, com.fgsoft.exceldatareader.parser.value.EnumValueParser",
     })
     final void testSelectParser(String valueClassName, String parserClassName) throws ClassNotFoundException {
         // Given
@@ -44,6 +46,38 @@ class SingleCellValueParserRouterTest {
         final Class<?> parserClass = Class.forName(parserClassName);
         // When
         final SingleCellValueParser<?> parser = SingleCellValueParserRouter.getParser(valueClass);
+        // Then
+        assertThat(parser).isInstanceOf(parserClass);
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+            "Integer.TYPE, com.fgsoft.exceldatareader.parser.value.IntegerValueParser",
+            "Long.TYPE, com.fgsoft.exceldatareader.parser.value.LongValueParser",
+            "Double.TYPE, com.fgsoft.exceldatareader.parser.value.DoubleValueParser",
+            "Boolean.TYPE, com.fgsoft.exceldatareader.parser.value.BooleanValueParser",
+            "Byte.TYPE, com.fgsoft.exceldatareader.parser.value.ByteValueParser",
+            "Short.TYPE, com.fgsoft.exceldatareader.parser.value.ShortValueParser",
+            "Float.TYPE, com.fgsoft.exceldatareader.parser.value.FloatValueParser",
+            "Character.TYPE, com.fgsoft.exceldatareader.parser.value.CharacterValueParser",
+    })
+
+    final void selectParserForPrimitiveType(final String typeName, String parserClassName) throws ClassNotFoundException {
+        // Given
+        final Type type = switch (typeName) {
+            case "Byte.TYPE" -> Byte.TYPE;
+            case "Short.TYPE" -> Short.TYPE;
+            case "Integer.TYPE" -> Integer.TYPE;
+            case "Long.TYPE" -> Long.TYPE;
+            case "Double.TYPE" -> Double.TYPE;
+            case "Float.TYPE" -> Float.TYPE;
+            case "Boolean.TYPE" -> Boolean.TYPE;
+            case "Character.TYPE" -> Character.TYPE;
+            default -> throw new IllegalStateException("Unexpected value: " + typeName);
+        };
+        final Class<?> parserClass = Class.forName(parserClassName);
+        // When
+        final SingleCellValueParser<?> parser = SingleCellValueParserRouter.getParser((Class<?>) type);
         // Then
         assertThat(parser).isInstanceOf(parserClass);
     }
