@@ -22,11 +22,13 @@ public enum ExcelReaderErrorCode {
     HEADER_NOT_FOUND("Unable to find a cell with header %s"),
     INCORRECT_VALUE_FOR_TYPE("Incorrect value '%s' for type '%s' in cell (%d, %d) of sheet '%s'"),
     INVALID_TYPE("Unable to find a single cell value parser for type '%s'"),
-    UNABLE_TO_OPEN_FILE("Unable to open file %s"),
-    UNEXPECTED_VALUE("Unexpected value in cell (%d, %d) of sheet '%s'"),
     MISMATCHING_DATA_TYPES("Mismatching data types: expected = '%s', actual = '%s' for field '%s'"),
     NO_SETTER("No setter has been defiend for field '%s'"),
-    UNKNOWN("Unknown error code");
+    TEST_NOT_FOUND("Unable to find a test with name %s"),
+    UNABLE_TO_OPEN_FILE("Unable to open file %s"),
+    UNEXPECTED_VALUE("Unexpected value in cell (%d, %d) of sheet '%s'"),
+    UNKNOWN("Unknown error code"),
+    ;
 
     private final String message;
 

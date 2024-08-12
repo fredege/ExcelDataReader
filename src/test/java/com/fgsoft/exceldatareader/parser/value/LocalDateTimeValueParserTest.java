@@ -172,7 +172,6 @@ class LocalDateTimeValueParserTest {
     @Test
     final void testNullValueOK() {
         // Given
-        final LocalDateTimeValueParser parser = new LocalDateTimeValueParser();
         // When
         final LocalDateTime value = parser.getValue(null, evaluator);
         // Then
@@ -187,10 +186,9 @@ class LocalDateTimeValueParserTest {
         assertThat(inputStream).isNotNull();
         final Workbook workbook = new XSSFWorkbook(Objects.requireNonNull(inputStream));
         final Sheet dataSheet = workbook.getSheetAt(0);
-        final Cell cell = dataSheet.getRow(2).getCell(2);
-        final LocalDateTimeValueParser parser = new LocalDateTimeValueParser();
+        final Cell currentCell = dataSheet.getRow(2).getCell(2);
         // When
-        final LocalDateTime actual = parser.getValue(cell, evaluator);
+        final LocalDateTime actual = parser.getValue(currentCell, evaluator);
         // Then
         assertThat(actual).isEqualTo(LocalDateTime.of(YEAR, MONTH,DAY, HOURS, MINUTES,SECONDS,NANO));
     }
@@ -202,12 +200,11 @@ class LocalDateTimeValueParserTest {
         final InputStream inputStream = getClass().getClassLoader().getResourceAsStream(excelFilePath);
         assertThat(inputStream).isNotNull();
         final Workbook workbook = new XSSFWorkbook(Objects.requireNonNull(inputStream));
-        final FormulaEvaluator evaluator = workbook.getCreationHelper().createFormulaEvaluator();
+        final FormulaEvaluator formulaEvaluator = workbook.getCreationHelper().createFormulaEvaluator();
         final Sheet dataSheet = workbook.getSheetAt(0);
-        final Cell cell = dataSheet.getRow(3).getCell(2);
-        final LocalDateTimeValueParser parser = new LocalDateTimeValueParser();
+        final Cell currentCell = dataSheet.getRow(3).getCell(2);
         // When
-        final LocalDateTime actual = parser.getValue(cell, evaluator);
+        final LocalDateTime actual = parser.getValue(currentCell, formulaEvaluator);
         // Then
         assertThat(actual).isEqualTo(LocalDateTime.of(YEAR, MONTH,DAY, HOURS, MINUTES,SECONDS,NANO));
     }

@@ -1,4 +1,4 @@
-/* Copyright 2023 Frederic GEDIN
+/* Copyright 2024 Frederic GEDIN
  *
  *       Licensed under the Apache License,Version2.0(the"License");
  *       you may not use this file except in compliance with the License.
@@ -12,31 +12,13 @@
  *       See the License for the specific language governing permissions and
  *       limitations under the License.
  */
-package com.fgsoft.exceldatareader.util;
+package com.fgsoft.exceldatareader.util.samples;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.Getter;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
 
-@Data
-@Builder
-@AllArgsConstructor
-@NoArgsConstructor
-public class SampleInstancePrimaryOnly {
+@Getter
+public class SampleInstanceMissingSetter {
     private BigDecimal bigDecimal;
-    private boolean booleanValue;
-    private double doubleValue;
-    private int intValue;
-    private LocalDateTime localDateTime;
-    private LocalDate localDate;
-    private LocalTime localTime;
-    private long longValue;
-    private String stringValue;
-    private Sample sample;
 }

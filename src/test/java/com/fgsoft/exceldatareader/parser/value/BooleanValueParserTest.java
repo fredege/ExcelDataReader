@@ -141,7 +141,6 @@ class BooleanValueParserTest {
     @Test
     final void testFormulaReturningABoolean() {
         // Given
-        final boolean aBoolean = true;
         final CellValue cellValue = CellValue.TRUE;
         final BooleanValueParser parser = new BooleanValueParser();
         when(cell.getCellType()).thenReturn(CellType.FORMULA);

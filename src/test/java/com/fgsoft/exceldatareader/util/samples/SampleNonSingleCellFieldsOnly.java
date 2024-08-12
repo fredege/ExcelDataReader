@@ -12,31 +12,13 @@
  *       See the License for the specific language governing permissions and
  *       limitations under the License.
  */
-package com.fgsoft.exceldatareader.util;
+package com.fgsoft.exceldatareader.util.samples;
 
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
-
-import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.util.Date;
 
 @Getter
 @Setter
-@NoArgsConstructor
-public class SampleClassWithNoArgsConstructor {
-    private BigDecimal bigDecimal;
-    private boolean booleanValue;
-    private Date date;
-    private double doubleValue;
-    private int intValue;
-    private LocalDateTime localDateTime;
-    private LocalDate localDate;
-    private LocalTime localTime;
-    private long longValue;
-    private String stringValue;
-    private Sample sample;
+public class SampleNonSingleCellFieldsOnly {
+    private SampleSingleCellFieldsOnly fieldOne;
 }

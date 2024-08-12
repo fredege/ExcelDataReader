@@ -14,7 +14,7 @@
  */
 package com.fgsoft.exceldatareader.parser.object;
 
-import com.fgsoft.exceldatareader.util.SampleInstancePrimaryOnly;
+import com.fgsoft.exceldatareader.util.samples.SampleSingleCellFieldsOnly;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.junit.jupiter.api.Test;
@@ -46,16 +46,16 @@ class PrimaryValuesParserTest {
     @Test
     final void parseInstanceWithOnlyPrimaryFields() {
         // Given
-        final SampleInstancePrimaryOnly instance = new SampleInstancePrimaryOnly();
-        final SampleInstancePrimaryOnly expected = buildExpectedSampleInstance();
+        final SampleSingleCellFieldsOnly instance = new SampleSingleCellFieldsOnly();
+        final SampleSingleCellFieldsOnly expected = buildExpectedSampleInstance();
         // When
         parser.parse(instance, HEADERS, BASE_HEADER, row);
         // Then
         assertThat(instance).isEqualTo(expected);
     }
 
-    private SampleInstancePrimaryOnly buildExpectedSampleInstance() {
-        return SampleInstancePrimaryOnly.builder()
+    private SampleSingleCellFieldsOnly buildExpectedSampleInstance() {
+        return SampleSingleCellFieldsOnly.builder()
                 .build();
     }
 

@@ -15,8 +15,8 @@
 package com.fgsoft.exceldatareader.parser.util;
 
 import com.fgsoft.exceldatareader.exception.ExcelReaderException;
-import com.fgsoft.exceldatareader.util.SampleCompositeClass;
-import com.fgsoft.exceldatareader.util.SampleInstanceMissingSetter;
+import com.fgsoft.exceldatareader.util.samples.SampleCompositeClass;
+import com.fgsoft.exceldatareader.util.samples.SampleInstanceMissingSetter;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.junit.jupiter.api.Test;
 

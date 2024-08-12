@@ -21,8 +21,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class InstanceBuilderTest {
     @ParameterizedTest
-    @ValueSource(strings = {"com.fgsoft.exceldatareader.util.SampleClassWithNoArgsConstructor",
-            "com.fgsoft.exceldatareader.util.SampleClassWithBuilder"})
+    @ValueSource(strings = {"com.fgsoft.exceldatareader.util.samples.SampleClassWithNoArgsConstructor",
+            "com.fgsoft.exceldatareader.util.samples.SampleClassWithBuilder"})
     final void buildInstance(final String className) throws ClassNotFoundException {
         // Given
         final Class<?> clazz = Class.forName(className);

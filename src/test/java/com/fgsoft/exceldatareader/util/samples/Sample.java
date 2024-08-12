@@ -1,4 +1,4 @@
-package com.fgsoft.exceldatareader.util;/* Copyright 2022 Frederic GEDIN
+package com.fgsoft.exceldatareader.util.samples;/* Copyright 2022 Frederic GEDIN
  *
  *       Licensed under the Apache License,Version2.0(the"License");
  *       you may not use this file except in compliance with the License.

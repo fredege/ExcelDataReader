@@ -1,4 +1,4 @@
-/* Copyright 2024 Frederic GEDIN
+/* Copyright 2023 Frederic GEDIN
  *
  *       Licensed under the Apache License,Version2.0(the"License");
  *       you may not use this file except in compliance with the License.
@@ -12,22 +12,27 @@
  *       See the License for the specific language governing permissions and
  *       limitations under the License.
  */
-package com.fgsoft.exceldatareader.util;
+package com.fgsoft.exceldatareader.util.samples;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.Date;
+import java.util.List;
 
-@Getter
-@Setter
+@Data
 @Builder
-public class SampleClassWithBuilder {
+@AllArgsConstructor
+@NoArgsConstructor
+public class SampleCompositeClass {
+    private static final String SAMPLE_STRING = "Sample String";
+
     private BigDecimal bigDecimal;
     private boolean booleanValue;
     private Date date;
@@ -39,4 +44,12 @@ public class SampleClassWithBuilder {
     private long longValue;
     private String stringValue;
     private Sample sample;
+    private SampleSingleCellFieldsOnly composite;
+    private List<String> listOfStrings;
+    private List<SampleSingleCellFieldsOnly> listOfComposites;
+    private InnerClass innerClass;
+
+    public static class InnerClass {
+        private int intValue;
+    }
 }

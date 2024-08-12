@@ -16,7 +16,7 @@ package com.fgsoft.exceldatareader.parser.value;
 
 import com.fgsoft.exceldatareader.exception.ExcelReaderErrorCode;
 import com.fgsoft.exceldatareader.exception.ExcelReaderException;
-import com.fgsoft.exceldatareader.util.Sample;
+import com.fgsoft.exceldatareader.util.samples.Sample;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.junit.jupiter.api.Test;
@@ -166,10 +166,10 @@ class EnumValueParserTest {
         assertThat(inputStream).isNotNull();
         final Workbook workbook = new XSSFWorkbook(inputStream);
         final Sheet dataSheet = workbook.getSheetAt(0);
-        final Cell cell = dataSheet.getRow(DATA_ROW_NUM).getCell(ENUM_COL);
+        final Cell currentCell = dataSheet.getRow(DATA_ROW_NUM).getCell(ENUM_COL);
         final EnumValueParser parser = new EnumValueParser(Sample.class);
         // When
-        final Sample actual = (Sample) parser.getValue(cell, evaluator);
+        final Sample actual = (Sample) parser.getValue(currentCell, evaluator);
         // Then
         assertThat(actual).isEqualTo(Sample.ONE);
     }
@@ -181,12 +181,12 @@ class EnumValueParserTest {
         final InputStream inputStream = getClass().getClassLoader().getResourceAsStream(excelFilePath);
         assertThat(inputStream).isNotNull();
         final Workbook workbook = new XSSFWorkbook(inputStream);
-        final FormulaEvaluator evaluator = workbook.getCreationHelper().createFormulaEvaluator();
+        final FormulaEvaluator formulaEvaluator = workbook.getCreationHelper().createFormulaEvaluator();
         final Sheet dataSheet = workbook.getSheetAt(0);
-        final Cell cell = dataSheet.getRow(FORMULA_ROW_NUM).getCell(ENUM_COL);
+        final Cell currentCell = dataSheet.getRow(FORMULA_ROW_NUM).getCell(ENUM_COL);
         final EnumValueParser parser = new EnumValueParser(Sample.class);
         // When
-        final Sample actual = (Sample) parser.getValue(cell, evaluator);
+        final Sample actual = (Sample) parser.getValue(currentCell, formulaEvaluator);
         // Then
         assertThat(actual).isEqualTo(Sample.ONE);
     }
@@ -199,10 +199,10 @@ class EnumValueParserTest {
         assertThat(inputStream).isNotNull();
         final Workbook workbook = new XSSFWorkbook(inputStream);
         final Sheet dataSheet = workbook.getSheetAt(0);
-        final Cell cell = dataSheet.getRow(NULL_DATA_ROW_NUM).getCell(ENUM_COL);
+        final Cell currentCell = dataSheet.getRow(NULL_DATA_ROW_NUM).getCell(ENUM_COL);
         final EnumValueParser parser = new EnumValueParser(Sample.class);
         // When
-        final Sample actual = (Sample) parser.getValue(cell, evaluator);
+        final Sample actual = (Sample) parser.getValue(currentCell, evaluator);
         // Then
         assertThat(actual).isNull();
     }
@@ -214,12 +214,12 @@ class EnumValueParserTest {
         final InputStream inputStream = getClass().getClassLoader().getResourceAsStream(excelFilePath);
         assertThat(inputStream).isNotNull();
         final Workbook workbook = new XSSFWorkbook(inputStream);
-        final FormulaEvaluator evaluator = workbook.getCreationHelper().createFormulaEvaluator();
+        final FormulaEvaluator formulaEvaluator = workbook.getCreationHelper().createFormulaEvaluator();
         final Sheet dataSheet = workbook.getSheetAt(0);
-        final Cell cell = dataSheet.getRow(NULL_FORMULA_ROW_NUM).getCell(ENUM_COL);
+        final Cell currentCell = dataSheet.getRow(NULL_FORMULA_ROW_NUM).getCell(ENUM_COL);
         final EnumValueParser parser = new EnumValueParser(Sample.class);
         // When
-        final Sample actual = (Sample) parser.getValue(cell, evaluator);
+        final Sample actual = (Sample) parser.getValue(currentCell, formulaEvaluator);
         // Then
         assertThat(actual).isNull();
     }

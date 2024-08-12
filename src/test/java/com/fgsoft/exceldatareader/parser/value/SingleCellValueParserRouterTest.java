@@ -38,7 +38,7 @@ class SingleCellValueParserRouterTest {
             "java.time.LocalDate, com.fgsoft.exceldatareader.parser.value.LocalDateValueParser",
             "java.time.LocalTime, com.fgsoft.exceldatareader.parser.value.LocalTimeValueParser",
             "java.time.LocalDateTime, com.fgsoft.exceldatareader.parser.value.LocalDateTimeValueParser",
-            "com.fgsoft.exceldatareader.util.Sample, com.fgsoft.exceldatareader.parser.value.EnumValueParser",
+            "com.fgsoft.exceldatareader.util.samples.Sample, com.fgsoft.exceldatareader.parser.value.EnumValueParser",
     })
     final void testSelectParser(String valueClassName, String parserClassName) throws ClassNotFoundException {
         // Given

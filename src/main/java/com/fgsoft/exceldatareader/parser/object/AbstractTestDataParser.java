@@ -14,8 +14,11 @@
  */
 package com.fgsoft.exceldatareader.parser.object;
 
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellRange;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import org.apache.poi.ss.util.CellRangeAddress;
+
+import java.util.List;
 
 /**
  * This is the base code for automatically generate a java object based on the field names and class.
@@ -27,9 +30,18 @@ import org.apache.poi.ss.usermodel.CellRange;
  * Horizontal representation is convenient for representing lists. In such a case, any element of the list is
  * represented on its own row.
  */
+@RequiredArgsConstructor
+@Getter
 public abstract class AbstractTestDataParser<T> implements TestDataParser<T> {
-    protected <V> TestDataParser<V> findParser(Class<V> type, CellRange<Cell> fieldCellRange, CellRange<Cell> headerCellRange) {
-        return null;
+    private final CellRangeAddress cellRange;
+    private final CellRangeAddress headerRange;
+
+    protected <V> TestDataParser<V> findParser(Class<V> type, CellRangeAddress dataCellRange, CellRangeAddress headerCellRange) {
+        if (type.isAssignableFrom(List.class)) {
+            return new ListTestDataParser(dataCellRange, headerCellRange);
+        } else {
+            return new ObjectTestDataParser<>(dataCellRange, headerCellRange);
+        }
     }
 
 }

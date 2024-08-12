@@ -12,13 +12,20 @@
  *       See the License for the specific language governing permissions and
  *       limitations under the License.
  */
-package com.fgsoft.exceldatareader.util;
+package com.fgsoft.exceldatareader.parser.object;
 
-import lombok.Getter;
+import com.fgsoft.exceldatareader.parser.util.WorksheetAnalyser;
+import org.apache.poi.ss.util.CellRangeAddress;
 
-import java.math.BigDecimal;
+import java.util.List;
 
-@Getter
-public class SampleInstanceMissingSetter {
-    private BigDecimal bigDecimal;
+public class ListTestDataParser<T> extends AbstractTestDataParser<List<T>> {
+    public ListTestDataParser(CellRangeAddress fieldRange, CellRangeAddress headerRange) {
+        super(fieldRange, headerRange);
+    }
+
+    @Override
+    public List<T> parse(WorksheetAnalyser worksheetAnalyser, Class<List<T>> clazz) {
+        return List.of();
+    }
 }

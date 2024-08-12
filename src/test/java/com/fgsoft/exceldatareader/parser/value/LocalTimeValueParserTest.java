@@ -184,10 +184,10 @@ class LocalTimeValueParserTest {
         assertThat(inputStream).isNotNull();
         final Workbook workbook = new XSSFWorkbook(inputStream);
         final Sheet dataSheet = workbook.getSheetAt(0);
-        final Cell cell = dataSheet.getRow(DATA_ROW_NUM).getCell(TIME_COL_NUM);
+        final Cell currentCell = dataSheet.getRow(DATA_ROW_NUM).getCell(TIME_COL_NUM);
         final LocalTimeValueParser parser = new LocalTimeValueParser();
         // When
-        final LocalTime actual = parser.getValue(cell, evaluator);
+        final LocalTime actual = parser.getValue(currentCell, evaluator);
         // Then
         assertThat(actual).isEqualTo(LocalTime.of(HOURS, MINUTES, SECONDS));
     }
@@ -199,12 +199,12 @@ class LocalTimeValueParserTest {
         final InputStream inputStream = getClass().getClassLoader().getResourceAsStream(excelFilePath);
         assertThat(inputStream).isNotNull();
         final Workbook workbook = new XSSFWorkbook(inputStream);
-        final FormulaEvaluator evaluator = workbook.getCreationHelper().createFormulaEvaluator();
+        final FormulaEvaluator formulaEvaluator = workbook.getCreationHelper().createFormulaEvaluator();
         final Sheet dataSheet = workbook.getSheetAt(0);
-        final Cell cell = dataSheet.getRow(FORMULA_ROW_NUM).getCell(TIME_COL_NUM);
+        final Cell currentCell = dataSheet.getRow(FORMULA_ROW_NUM).getCell(TIME_COL_NUM);
         final LocalTimeValueParser parser = new LocalTimeValueParser();
         // When
-        final LocalTime actual = parser.getValue(cell, evaluator);
+        final LocalTime actual = parser.getValue(currentCell, formulaEvaluator);
         // Then
         assertThat(actual).isEqualTo(LocalTime.of(HOURS, MINUTES, SECONDS));
     }

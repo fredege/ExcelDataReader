@@ -16,11 +16,12 @@ package com.fgsoft.exceldatareader.parser.object;
 
 import com.fgsoft.exceldatareader.parser.util.WorksheetAnalyser;
 import com.fgsoft.exceldatareader.util.DataBuilder;
-import com.fgsoft.exceldatareader.util.SampleInstancePrimaryOnly;
+import com.fgsoft.exceldatareader.util.samples.SampleNonSingleCellFieldsOnly;
+import com.fgsoft.exceldatareader.util.samples.SampleSingleCellFieldsOnly;
 import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellRange;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
+import org.apache.poi.ss.util.CellRangeAddress;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -43,9 +44,9 @@ class ObjectTestDataParserTest {
     @Mock
     private FormulaEvaluator formulaEvaluator;
     @Mock
-    private CellRange<Cell> cellRange;
+    private CellRangeAddress cellRange;
     @Mock
-    private CellRange<Cell> headerRange;
+    private CellRangeAddress headerRange;
 
     @BeforeEach
     final void setUp() {
@@ -55,9 +56,9 @@ class ObjectTestDataParserTest {
     @Test
     void testParsePrimaryOnly() {
         // Given
-        final ObjectTestDataParser<SampleInstancePrimaryOnly> parser = new ObjectTestDataParser<>(cellRange, headerRange);
-        final SampleInstancePrimaryOnly expected = dataBuilder.buildSampleInstancePrimaryOnly();
-        final Field[] allFields = SampleInstancePrimaryOnly.class.getDeclaredFields();
+        final ObjectTestDataParser<SampleSingleCellFieldsOnly> parser = new ObjectTestDataParser<>(cellRange, headerRange);
+        final SampleSingleCellFieldsOnly expected = dataBuilder.buildSampleInstancePrimaryOnly();
+        final Field[] allFields = SampleSingleCellFieldsOnly.class.getDeclaredFields();
         Arrays.stream(allFields).forEach(field -> {
             field.setAccessible(true);
             final Cell fieldCell = mock(Cell.class);
@@ -74,8 +75,38 @@ class ObjectTestDataParserTest {
             when(worksheetAnalyser.getCell(field.getName(), cellRange, headerRange)).thenReturn(fieldCell);
         });
         // When
-        final SampleInstancePrimaryOnly actual = parser.parse(worksheetAnalyser, SampleInstancePrimaryOnly.class);
+        final SampleSingleCellFieldsOnly actual = parser.parse(worksheetAnalyser, SampleSingleCellFieldsOnly.class);
         // Then
         assertThat(actual).isEqualTo(expected);
+    }
+
+    @Test
+    final void testNonSingleCellFieldsOnly() {
+        // Given
+        final ObjectTestDataParser<SampleNonSingleCellFieldsOnly> parser = new ObjectTestDataParser<>(cellRange, headerRange);
+        final SampleNonSingleCellFieldsOnly expected = dataBuilder.buidSampleNonSingleCellFieldsOnly();
+        final SampleSingleCellFieldsOnly value = expected.getFieldOne();
+        final Field[] allFields = SampleSingleCellFieldsOnly.class.getDeclaredFields();
+        Arrays.stream(allFields).forEach(field -> {
+            field.setAccessible(true);
+            final Cell fieldCell = mock(Cell.class);
+            try {
+                if (field.get(value) == null) {
+                    when(fieldCell.getCellType()).thenReturn(CellType.BLANK);
+                } else {
+                    when(fieldCell.getCellType()).thenReturn(CellType.STRING);
+                    when(fieldCell.getStringCellValue()).thenReturn(String.valueOf(field.get(value)));
+                }
+            } catch (IllegalAccessException e) {
+                throw new RuntimeException(e);
+            }
+            when(worksheetAnalyser.getCell(field.getName(), cellRange, headerRange)).thenReturn(fieldCell);
+        });
+        when(worksheetAnalyser.getCellRange("fieldOne", cellRange, headerRange)).thenReturn(cellRange);
+        when(worksheetAnalyser.getHeaderRange("fieldOne", headerRange)).thenReturn(headerRange);
+        // When
+        final SampleNonSingleCellFieldsOnly actual = parser.parse(worksheetAnalyser, SampleNonSingleCellFieldsOnly.class);
+        // Then
+        assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
     }
 }

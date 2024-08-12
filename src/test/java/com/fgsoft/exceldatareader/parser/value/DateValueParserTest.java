@@ -202,10 +202,10 @@ class DateValueParserTest {
         assertThat(inputStream).isNotNull();
         final Workbook workbook = new XSSFWorkbook(inputStream);
         final Sheet dataSheet = workbook.getSheetAt(0);
-        final Cell cell = dataSheet.getRow(2).getCell(2);
+        final Cell currentCell = dataSheet.getRow(2).getCell(2);
         final DateValueParser parser = new DateValueParser();
         // When
-        final Date actual = parser.getValue(cell, evaluator);
+        final Date actual = parser.getValue(currentCell, evaluator);
         // Then
         assertThat(actual).isEqualTo(DATE);
     }
@@ -217,12 +217,12 @@ class DateValueParserTest {
         final InputStream inputStream = getClass().getClassLoader().getResourceAsStream(excelFilePath);
         assertThat(inputStream).isNotNull();
         final Workbook workbook = new XSSFWorkbook(inputStream);
-        final FormulaEvaluator evaluator = workbook.getCreationHelper().createFormulaEvaluator();
+        final FormulaEvaluator formulaEvaluator = workbook.getCreationHelper().createFormulaEvaluator();
         final Sheet dataSheet = workbook.getSheetAt(0);
-        final Cell cell = dataSheet.getRow(3).getCell(2);
+        final Cell currentCell = dataSheet.getRow(3).getCell(2);
         final DateValueParser parser = new DateValueParser();
         // When
-        final Date actual = parser.getValue(cell, evaluator);
+        final Date actual = parser.getValue(currentCell, formulaEvaluator);
         // Then
         assertThat(actual).isEqualTo(DATE);
     }

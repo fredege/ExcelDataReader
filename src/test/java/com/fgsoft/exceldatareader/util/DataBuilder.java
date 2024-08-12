@@ -14,14 +14,17 @@
  */
 package com.fgsoft.exceldatareader.util;
 
+import com.fgsoft.exceldatareader.util.samples.SampleNonSingleCellFieldsOnly;
+import com.fgsoft.exceldatareader.util.samples.SampleSingleCellFieldsOnly;
+
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 public class DataBuilder {
-    public SampleInstancePrimaryOnly buildSampleInstancePrimaryOnly() {
-        final SampleInstancePrimaryOnly retVal = new SampleInstancePrimaryOnly();
+    public SampleSingleCellFieldsOnly buildSampleInstancePrimaryOnly() {
+        final SampleSingleCellFieldsOnly retVal = new SampleSingleCellFieldsOnly();
         retVal.setBigDecimal(BigDecimal.valueOf(123.56));
         retVal.setStringValue("Some sample string");
         retVal.setDoubleValue(123.56);
@@ -31,6 +34,12 @@ public class DataBuilder {
         retVal.setIntValue(123);
         retVal.setLongValue(123L);
         retVal.setLocalTime(LocalTime.NOON);
+        return retVal;
+    }
+
+    public SampleNonSingleCellFieldsOnly buidSampleNonSingleCellFieldsOnly() {
+        final SampleNonSingleCellFieldsOnly retVal = new SampleNonSingleCellFieldsOnly();
+        retVal.setFieldOne(buildSampleInstancePrimaryOnly());
         return retVal;
     }
 }

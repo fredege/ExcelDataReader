@@ -19,17 +19,17 @@ import com.fgsoft.exceldatareader.parser.util.InstanceBuilder;
 import com.fgsoft.exceldatareader.parser.util.WorksheetAnalyser;
 import com.fgsoft.exceldatareader.parser.value.SingleCellValueParser;
 import com.fgsoft.exceldatareader.parser.value.SingleCellValueParserRouter;
-import lombok.RequiredArgsConstructor;
 import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellRange;
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
+import org.apache.poi.ss.util.CellRangeAddress;
 
 import java.lang.reflect.Field;
 
-@RequiredArgsConstructor
 public class ObjectTestDataParser<T> extends AbstractTestDataParser<T> {
-    private final CellRange<Cell> cellRange;
-    private final CellRange<Cell> headerRange;
+
+    public ObjectTestDataParser(CellRangeAddress fieldRange, CellRangeAddress headerRange) {
+        super(fieldRange, headerRange);
+    }
 
     @Override
     public T parse(WorksheetAnalyser worksheetAnalyser, Class<T> clazz) {
@@ -44,7 +44,7 @@ public class ObjectTestDataParser<T> extends AbstractTestDataParser<T> {
 
     private <V> void setSingleCellValueOnField(WorksheetAnalyser worksheetAnalyser, Field field, Class<V> type, T instance) {
         final SingleCellValueParser<V> parser = SingleCellValueParserRouter.getParser(type);
-        final Cell cell = worksheetAnalyser.getCell(field.getName(), cellRange, headerRange);
+        final Cell cell = worksheetAnalyser.getCell(field.getName(), getCellRange(), getHeaderRange());
         final FormulaEvaluator formulaEvaluator = worksheetAnalyser.getFormulaEvaluator();
         final V value = parser.getValue(cell, formulaEvaluator);
         final BeanAnalyzer beanAnalyzer = new BeanAnalyzer();
@@ -52,8 +52,8 @@ public class ObjectTestDataParser<T> extends AbstractTestDataParser<T> {
     }
 
     private <V> void setValueOnField(WorksheetAnalyser worksheetAnalyser, Field field, Class<V> type, T instance) {
-        final CellRange<Cell> fieldCellRange = worksheetAnalyser.getCellRange(field.getName(), cellRange);
-        final CellRange<Cell> headerCellRange = worksheetAnalyser.ggetHeaderRange(field.getName(), headerRange);
+        final CellRangeAddress fieldCellRange = worksheetAnalyser.getCellRange(field.getName(), getCellRange(), getHeaderRange());
+        final CellRangeAddress headerCellRange = worksheetAnalyser.getHeaderRange(field.getName(), getHeaderRange());
         final TestDataParser<V> parser = findParser(type, fieldCellRange, headerCellRange);
         final V value = parser.parse(worksheetAnalyser, type);
         final BeanAnalyzer beanAnalyzer = new BeanAnalyzer();
