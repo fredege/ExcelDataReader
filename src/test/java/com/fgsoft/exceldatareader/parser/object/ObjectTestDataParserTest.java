@@ -56,7 +56,8 @@ class ObjectTestDataParserTest {
     @Test
     void testParsePrimaryOnly() {
         // Given
-        final ObjectTestDataParser<SampleSingleCellFieldsOnly> parser = new ObjectTestDataParser<>(cellRange, headerRange);
+        final ObjectTestDataParser<SampleSingleCellFieldsOnly> parser =
+                new ObjectTestDataParser<>(SampleSingleCellFieldsOnly.class, cellRange, headerRange);
         final SampleSingleCellFieldsOnly expected = dataBuilder.buildSampleInstancePrimaryOnly();
         final Field[] allFields = SampleSingleCellFieldsOnly.class.getDeclaredFields();
         Arrays.stream(allFields).forEach(field -> {
@@ -83,7 +84,8 @@ class ObjectTestDataParserTest {
     @Test
     final void testNonSingleCellFieldsOnly() {
         // Given
-        final ObjectTestDataParser<SampleNonSingleCellFieldsOnly> parser = new ObjectTestDataParser<>(cellRange, headerRange);
+        final ObjectTestDataParser<SampleNonSingleCellFieldsOnly> parser =
+                new ObjectTestDataParser<>(SampleNonSingleCellFieldsOnly.class, cellRange, headerRange);
         final SampleNonSingleCellFieldsOnly expected = dataBuilder.buidSampleNonSingleCellFieldsOnly();
         final SampleSingleCellFieldsOnly value = expected.getFieldOne();
         final Field[] allFields = SampleSingleCellFieldsOnly.class.getDeclaredFields();

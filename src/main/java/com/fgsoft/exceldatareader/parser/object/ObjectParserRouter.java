@@ -14,8 +14,11 @@
  */
 package com.fgsoft.exceldatareader.parser.object;
 
+import com.fgsoft.exceldatareader.parser.util.BeanAnalyzer;
 import org.apache.poi.ss.util.CellRangeAddress;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.ParameterizedType;
 import java.util.List;
 
 /**
@@ -23,16 +26,27 @@ import java.util.List;
  */
 public class ObjectParserRouter {
     @SuppressWarnings("unchecked")
-    public static  <T> TestDataParser<T> findParser(Class<T> type, CellRangeAddress dataCellRange, CellRangeAddress headerCellRange) {
-        if (type.isAssignableFrom(List.class)) {
-            return (TestDataParser<T>) findListParser(dataCellRange, headerCellRange);
+    public static  <T> TestDataParser<T> findParser(Field field, CellRangeAddress dataCellRange, CellRangeAddress headerCellRange) {
+        final Class<T> fieldType = (Class<T>) field.getType();
+        if (List.class.isAssignableFrom(field.getType())) {
+            return (TestDataParser<T>) findListParser(field, dataCellRange, headerCellRange);
         } else {
-            return new ObjectTestDataParser<>(dataCellRange, headerCellRange);
+            return new ObjectTestDataParser<>(fieldType, dataCellRange, headerCellRange);
         }
     }
 
-    private static <V> TestDataParser<List<V>> findListParser(CellRangeAddress dataCellRange, CellRangeAddress headerCellRange) {
-        return new ListTestDataParser<>(dataCellRange, headerCellRange);
+    private static <T extends List<V>, V> TestDataParser<T> findListParser(Field field, CellRangeAddress dataCellRange, CellRangeAddress headerCellRange) {
+        final Class<V> genericType = getGenericType(field);
+        if (BeanAnalyzer.isSingleCellType(genericType)) {
+            return new SingleCellValuesListParser<>(genericType, dataCellRange, headerCellRange);
+        }
+        return null;
+    }
+
+    @SuppressWarnings("unchecked")
+    private static <V> Class<V> getGenericType(Field field) {
+        final ParameterizedType parameterizedType = (ParameterizedType) field.getGenericType();
+        return (Class<V>) parameterizedType.getActualTypeArguments()[0];
     }
 
     private ObjectParserRouter() {

@@ -75,7 +75,7 @@ public class BeanAnalyzer {
         return isSingleCellType(object.getClass());
     }
 
-    private static boolean isSingleCellType(@NonNull Class<?> type) {
+    public static boolean isSingleCellType(@NonNull Class<?> type) {
         return type.isPrimitive() || type.isEnum() || SINGLE_CELL_TYPES.contains(type);
     }
 

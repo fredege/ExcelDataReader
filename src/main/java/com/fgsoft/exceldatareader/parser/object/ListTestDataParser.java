@@ -20,8 +20,8 @@ import org.apache.poi.ss.util.CellRangeAddress;
 import java.util.List;
 
 public class ListTestDataParser<T> extends AbstractTestDataParser<List<T>> {
-    public ListTestDataParser(CellRangeAddress fieldRange, CellRangeAddress headerRange) {
-        super(fieldRange, headerRange);
+    public ListTestDataParser(Class<?> type, CellRangeAddress fieldRange, CellRangeAddress headerRange) {
+        super(type, fieldRange, headerRange);
     }
 
     @Override

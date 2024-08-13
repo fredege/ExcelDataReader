@@ -24,4 +24,9 @@ public interface TestDataParser<T> {
      * @return built instance
      */
     T parse(final WorksheetAnalyser worksheetAnalyser, Class<T> clazz);
+
+    /**
+     * Return the type of objects to parse.
+     */
+    Class<?> getType();
 }
