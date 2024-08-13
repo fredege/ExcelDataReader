@@ -43,6 +43,7 @@ public class ObjectTestDataParser<T> extends AbstractTestDataParser<T> {
         return instance;
     }
 
+    @SuppressWarnings("unchecked")
     private <V> void setSingleCellValueOnField(WorksheetAnalyser worksheetAnalyser, Field field, T instance) {
         final SingleCellValueParser<V> parser = (SingleCellValueParser<V>) SingleCellValueParserRouter.getParser(field.getType());
         final Cell cell = worksheetAnalyser.getCell(field.getName(), getCellRange(), getHeaderRange());
@@ -51,6 +52,7 @@ public class ObjectTestDataParser<T> extends AbstractTestDataParser<T> {
         BeanAnalyzer.setValueOnField(instance, field, value);
     }
 
+    @SuppressWarnings("unchecked")
     private <V> void setValueOnField(WorksheetAnalyser worksheetAnalyser, Field field, T instance) {
         final CellRangeAddress fieldCellRange = worksheetAnalyser.getCellRange(field.getName(), getCellRange(), getHeaderRange());
         final CellRangeAddress headerCellRange = worksheetAnalyser.getHeaderRange(field.getName(), getHeaderRange());

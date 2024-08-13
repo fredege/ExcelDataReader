@@ -31,6 +31,7 @@ public class SingleCellValuesListParser<T extends List<V>, V> extends AbstractTe
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public T parse(WorksheetAnalyser worksheetAnalyser, Class<T> clazz) {
         final List<Object> retList = new ArrayList<>();
         final int columnNumber = getHeaderRange().getFirstColumn();

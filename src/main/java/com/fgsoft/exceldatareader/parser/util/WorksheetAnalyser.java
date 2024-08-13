@@ -21,6 +21,7 @@ import com.fgsoft.exceldatareader.exception.TestNotFoundException;
 import com.fgsoft.exceldatareader.parser.HeaderDescriptor;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.*;
@@ -35,6 +36,7 @@ import java.util.*;
  *     <li>Locate the cell where to get a value to parse</li>
  * </ul>
  */
+@Getter
 @RequiredArgsConstructor
 public class WorksheetAnalyser {
     private final Sheet worksheet;
