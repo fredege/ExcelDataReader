@@ -18,8 +18,6 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.apache.poi.ss.util.CellRangeAddress;
 
-import java.util.List;
-
 /**
  * This is the base code for automatically generate a java object based on the field names and class.
  * In order to have a proper parsing, data has to be organized according to the following rules:
@@ -35,13 +33,4 @@ import java.util.List;
 public abstract class AbstractTestDataParser<T> implements TestDataParser<T> {
     private final CellRangeAddress cellRange;
     private final CellRangeAddress headerRange;
-
-    protected <V> TestDataParser<V> findParser(Class<V> type, CellRangeAddress dataCellRange, CellRangeAddress headerCellRange) {
-        if (type.isAssignableFrom(List.class)) {
-            return new ListTestDataParser(dataCellRange, headerCellRange);
-        } else {
-            return new ObjectTestDataParser<>(dataCellRange, headerCellRange);
-        }
-    }
-
 }

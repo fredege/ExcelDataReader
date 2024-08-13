@@ -71,29 +71,29 @@ public class BeanAnalyzer {
      * @param object object to be checked
      * @return true when can be parsed from a single cell
      */
-    public boolean hasSingleCellValue(@NonNull final Object object) {
+    public static boolean hasSingleCellValue(@NonNull final Object object) {
         return isSingleCellType(object.getClass());
     }
 
-    private boolean isSingleCellType(@NonNull Class<?> type) {
+    private static boolean isSingleCellType(@NonNull Class<?> type) {
         return type.isPrimitive() || type.isEnum() || SINGLE_CELL_TYPES.contains(type);
     }
 
-    public <T> List<Field> getSingleCellValues(Class<T> clazz) {
+    public static <T> List<Field> getSingleCellValues(Class<T> clazz) {
         return FieldUtils.getAllFieldsList(clazz).stream()
                 .filter(field -> !Modifier.isStatic(field.getModifiers()))
                 .filter(field -> isSingleCellType(field.getType()))
                 .toList();
     }
 
-    public <T> List<Field> getMultipleCellsValues(Class<T> clazz) {
+    public static <T> List<Field> getMultipleCellsValues(Class<T> clazz) {
         return FieldUtils.getAllFieldsList(clazz).stream()
                 .filter(field -> !Modifier.isStatic(field.getModifiers()))
                 .filter(field -> !isSingleCellType(field.getType()))
                 .toList();
     }
 
-    public <T, V> void setValueOnField(T instance, Field field, V value) {
+    public static <T, V> void setValueOnField(T instance, Field field, V value) {
         if (value != null) {
             try {
                 final BeanInfo beanInfo = Introspector.getBeanInfo(instance.getClass());
@@ -111,7 +111,7 @@ public class BeanAnalyzer {
         }
     }
 
-    private <T, V> void setValueOnField(T instance, Field field, PropertyDescriptor propertyDescriptor, V value) throws InvocationTargetException, IllegalAccessException {
+    private static <T, V> void setValueOnField(T instance, Field field, PropertyDescriptor propertyDescriptor, V value) throws InvocationTargetException, IllegalAccessException {
         final Method setter = propertyDescriptor.getWriteMethod();
         if (hasSameType(value, field)) {
             if (setter != null) {
@@ -125,10 +125,14 @@ public class BeanAnalyzer {
         }
     }
 
-    private <V> boolean hasSameType(V value, Field field) {
+    private static <V> boolean hasSameType(V value, Field field) {
         final Class<?> fieldType = field.getType().isPrimitive() ?
                 ClassUtils.primitiveToWrapper(field.getType()):
                 field.getType();
         return fieldType.isAssignableFrom(value.getClass());
+    }
+
+    private BeanAnalyzer() {
+        // Prevents instantiation
     }
 }

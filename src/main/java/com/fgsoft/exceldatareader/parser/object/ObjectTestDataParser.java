@@ -25,6 +25,8 @@ import org.apache.poi.ss.util.CellRangeAddress;
 
 import java.lang.reflect.Field;
 
+import static com.fgsoft.exceldatareader.parser.object.ObjectParserRouter.findParser;
+
 public class ObjectTestDataParser<T> extends AbstractTestDataParser<T> {
 
     public ObjectTestDataParser(CellRangeAddress fieldRange, CellRangeAddress headerRange) {
@@ -34,10 +36,9 @@ public class ObjectTestDataParser<T> extends AbstractTestDataParser<T> {
     @Override
     public T parse(WorksheetAnalyser worksheetAnalyser, Class<T> clazz) {
         final T instance = InstanceBuilder.buildInstance(clazz);
-        final BeanAnalyzer beanAnalyzer = new BeanAnalyzer();
-        beanAnalyzer.getSingleCellValues(clazz)
+        BeanAnalyzer.getSingleCellValues(clazz)
                 .forEach(field -> setSingleCellValueOnField(worksheetAnalyser, field, field.getType(), instance));
-        beanAnalyzer.getMultipleCellsValues(clazz)
+        BeanAnalyzer.getMultipleCellsValues(clazz)
                 .forEach(field -> setValueOnField(worksheetAnalyser, field, field.getType(), instance));
         return instance;
     }
@@ -47,8 +48,7 @@ public class ObjectTestDataParser<T> extends AbstractTestDataParser<T> {
         final Cell cell = worksheetAnalyser.getCell(field.getName(), getCellRange(), getHeaderRange());
         final FormulaEvaluator formulaEvaluator = worksheetAnalyser.getFormulaEvaluator();
         final V value = parser.getValue(cell, formulaEvaluator);
-        final BeanAnalyzer beanAnalyzer = new BeanAnalyzer();
-        beanAnalyzer.setValueOnField(instance, field, value);
+        BeanAnalyzer.setValueOnField(instance, field, value);
     }
 
     private <V> void setValueOnField(WorksheetAnalyser worksheetAnalyser, Field field, Class<V> type, T instance) {
@@ -56,8 +56,7 @@ public class ObjectTestDataParser<T> extends AbstractTestDataParser<T> {
         final CellRangeAddress headerCellRange = worksheetAnalyser.getHeaderRange(field.getName(), getHeaderRange());
         final TestDataParser<V> parser = findParser(type, fieldCellRange, headerCellRange);
         final V value = parser.parse(worksheetAnalyser, type);
-        final BeanAnalyzer beanAnalyzer = new BeanAnalyzer();
-        beanAnalyzer.setValueOnField(instance, field, value);
+        BeanAnalyzer.setValueOnField(instance, field, value);
     }
 
 }
