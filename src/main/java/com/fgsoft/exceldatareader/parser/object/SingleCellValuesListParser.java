@@ -25,22 +25,22 @@ import org.apache.poi.ss.util.CellRangeAddress;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SingleCellValuesListParser<T extends List<V>, V> extends AbstractTestDataParser<T> {
-    public SingleCellValuesListParser(Class<V> type, CellRangeAddress cellRange, CellRangeAddress headerRange) {
-        super(type, cellRange, headerRange);
+public class SingleCellValuesListParser<T extends List<V>, V> extends AbstractListTestDataParser<T, V> {
+    public SingleCellValuesListParser(Class<V> itemType, CellRangeAddress cellRange, CellRangeAddress headerRange) {
+        super(itemType, cellRange, headerRange);
     }
 
     @Override
     @SuppressWarnings("unchecked")
     public T parse(WorksheetAnalyser worksheetAnalyser, Class<T> clazz) {
-        final List<Object> retList = new ArrayList<>();
+        final List<V> retList = new ArrayList<>();
         final int columnNumber = getHeaderRange().getFirstColumn();
-        final SingleCellValueParser<?> singleCellValueParser = SingleCellValueParserRouter.getParser(getType());
+        final SingleCellValueParser<V> singleCellValueParser = SingleCellValueParserRouter.getParser(getItemType());
         final FormulaEvaluator formulaEvaluator = worksheetAnalyser.getFormulaEvaluator();
         for (int rowNum = getCellRange().getFirstRow(); rowNum <= getCellRange().getLastRow(); rowNum++) {
             final  Row row = worksheetAnalyser.getWorksheet().getRow(rowNum);
             final Cell cell = row.getCell(columnNumber);
-            final Object value = singleCellValueParser.getValue(cell, formulaEvaluator);
+            final V value = singleCellValueParser.getValue(cell, formulaEvaluator);
             retList.add(value);
         }
         return (T) retList;

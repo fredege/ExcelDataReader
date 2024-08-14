@@ -14,20 +14,24 @@
  */
 package com.fgsoft.exceldatareader.parser.object;
 
-import com.fgsoft.exceldatareader.parser.util.WorksheetAnalyser;
+import lombok.Getter;
 import org.apache.poi.ss.util.CellRangeAddress;
 
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
 
-public class ListTestDataParser<T extends List<V>, V> extends AbstractListTestDataParser<T, V> {
-    public ListTestDataParser(Class<V> type, CellRangeAddress fieldRange, CellRangeAddress headerRange) {
-        super(type, fieldRange, headerRange);
+@Getter
+abstract class AbstractListTestDataParser<T extends List<V>, V> extends AbstractTestDataParser<T> {
+    private final Class<V> itemType;
+
+    AbstractListTestDataParser(Class<V> itemType, CellRangeAddress cellRange, CellRangeAddress headerRange) {
+        super(buildParserType(itemType), cellRange, headerRange);
+        this.itemType = itemType;
     }
 
-    @Override
-    @SuppressWarnings({"unchecked"})
-    public T parse(WorksheetAnalyser worksheetAnalyser, Class<T> clazz) {
-        return (T) Collections.emptyList();
+    @SuppressWarnings({"unchecked", "java:S1172", "java:S1854", "java:S2133"})
+    private static <T extends List<V>, V> Class<T> buildParserType(Class<V> type) {
+        final List<V> list = new ArrayList<>();
+        return (Class<T>) list.getClass();
     }
 }

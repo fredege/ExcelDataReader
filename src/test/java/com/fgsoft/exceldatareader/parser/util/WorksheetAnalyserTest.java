@@ -97,8 +97,8 @@ class WorksheetAnalyserTest {
 
     @ParameterizedTest
     @CsvSource({
-            "TEST-01, B3:AI5",
-            "TEST-02, B7:AI9",
+            "TEST-01, B4:AI6",
+            "TEST-02, B8:AI10",
     })
     final void findTestRange(final String testName, final String expectedRange) throws URISyntaxException, IOException {
         // Given
@@ -119,14 +119,14 @@ class WorksheetAnalyserTest {
 
     @ParameterizedTest
     @CsvSource({
-            "composite, N3:X3",
-            "listOfStrings, M3:M4",
-            "listOfComposites, Y3:AI5"
+            "composite, N4:X4",
+            "listOfStrings, M4:M5",
+            "listOfComposites, Y4:AI6"
     })
     final void getCellRange(final String fieldName, final String expectedRange) throws URISyntaxException, IOException {
         // Given
         final CellRangeAddress headerRange = CellRangeAddress.valueOf("B1:AI2");
-        final CellRangeAddress testDataRange = CellRangeAddress.valueOf("B3:AI6");
+        final CellRangeAddress testDataRange = CellRangeAddress.valueOf("B4:AI7");
         final CellRangeAddress expected = CellRangeAddress.valueOf(expectedRange);
         final HeaderDescriptor headerDescriptor = new HeaderDescriptor(0, 1, 1);
         final URL url = this.getClass().getResource("/testData/SampleDataFile.xlsx");
@@ -146,7 +146,7 @@ class WorksheetAnalyserTest {
     final void getCellRangeNotFound() throws URISyntaxException {
         // Given
         final CellRangeAddress headerRange = CellRangeAddress.valueOf("B1:AI2");
-        final CellRangeAddress testDataRange = CellRangeAddress.valueOf("B3:AI5");
+        final CellRangeAddress testDataRange = CellRangeAddress.valueOf("B4:AI5");
         final HeaderDescriptor headerDescriptor = new HeaderDescriptor(0, 1, 1);
         final URL url = this.getClass().getResource("/testData/SampleDataFile.xlsx");
         assertThat(url).isNotNull();
@@ -207,28 +207,28 @@ class WorksheetAnalyserTest {
 
     @ParameterizedTest
     @CsvSource({
-            "bigDecimal, 2, 1, B3:AI5, B1:AI2",
-            "booleanValue, 2, 2, B3:AI5, B1:AI2",
-            "date, 2, 3, B3:AI5, B1:AI2",
-            "doubleValue, 2, 4, B3:AI5, B1:AI2",
-            "intValue, 2, 5, B3:AI5, B1:AI2",
-            "localDateTime, 2, 6, B3:AI5, B1:AI2",
-            "localDate, 2, 7, B3:AI5, B1:AI2",
-            "localTime, 2, 8, B3:AI5, B1:AI2",
-            "longValue, 2, 9, B3:AI5, B1:AI2",
-            "stringValue, 2, 10, B3:AI5, B1:AI2",
-            "sample, 2, 11, B3:AI5, B1:AI2",
-            "bigDecimal, 2, 13, N3:X3, N2:X2",
-            "booleanValue, 2, 14, N3:X3, N2:X2",
-            "date, 2, 15, N3:X3, N2:X2",
-            "doubleValue, 2, 16, N3:X3, N2:X2",
-            "intValue, 2, 17, N3:X3, N2:X2",
-            "localDateTime, 2, 18, N3:X3, N2:X2",
-            "localDate, 2, 19, N3:X3, N2:X2",
-            "localTime, 2, 20, N3:X3, N2:X2",
-            "longValue, 2, 21, N3:X3, N2:X2",
-            "stringValue, 2, 22, N3:X3, N2:X2",
-            "sample, 2, 23, N3:X3, N2:X2",
+            "bigDecimal, 3, 1, B4:AI5, B1:AI2",
+            "booleanValue, 3, 2, B4:AI5, B1:AI2",
+            "date, 3, 3, B4:AI5, B1:AI2",
+            "doubleValue, 3, 4, B4:AI5, B1:AI2",
+            "intValue, 3, 5, B4:AI5, B1:AI2",
+            "localDateTime, 3, 6, B4:AI5, B1:AI2",
+            "localDate, 3, 7, B4:AI5, B1:AI2",
+            "localTime, 3, 8, B4:AI5, B1:AI2",
+            "longValue, 3, 9, B4:AI5, B1:AI2",
+            "stringValue, 3, 10, B4:AI5, B1:AI2",
+            "sample, 3, 11, B4:AI5, B1:AI2",
+            "bigDecimal, 3, 13, N4:X4, N2:X2",
+            "booleanValue, 3, 14, N4:X4, N2:X2",
+            "date, 3, 15, N4:X4, N2:X2",
+            "doubleValue, 3, 16, N4:X4, N2:X2",
+            "intValue, 3, 17, N4:X4, N2:X2",
+            "localDateTime, 3, 18, N4:X4, N2:X2",
+            "localDate, 3, 19, N4:X4, N2:X2",
+            "localTime, 3, 20, N4:X4, N2:X2",
+            "longValue, 3, 21, N4:X4, N2:X2",
+            "stringValue, 3, 22, N4:X4, N2:X2",
+            "sample, 3, 23, N4:X4, N2:X2",
     })
     final void getCell(final String name, final int rowNum, final int colNum,
                        final String cellRegion, final String headerRegion) throws URISyntaxException, IOException {
@@ -254,7 +254,7 @@ class WorksheetAnalyserTest {
     @Test
     final void getCellHeaderNotFound() throws URISyntaxException, IOException {
         // Given
-        final CellRangeAddress cellRange = CellRangeAddress.valueOf("B3:AI5");
+        final CellRangeAddress cellRange = CellRangeAddress.valueOf("B4:AI5");
         final CellRangeAddress headerRange = CellRangeAddress.valueOf("B1:AI2");
         final HeaderDescriptor headerDescriptor = new HeaderDescriptor(0, 1, 1);
         final URL url = this.getClass().getResource("/testData/SampleDataFile.xlsx");

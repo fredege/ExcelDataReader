@@ -31,7 +31,7 @@ import org.apache.poi.ss.util.CellRangeAddress;
 @RequiredArgsConstructor
 @Getter
 public abstract class AbstractTestDataParser<T> implements TestDataParser<T> {
-    private final Class<?> type;
+    private final Class<T> type;
     private final CellRangeAddress cellRange;
     private final CellRangeAddress headerRange;
 }

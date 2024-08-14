@@ -15,14 +15,17 @@
 package com.fgsoft.exceldatareader.reader;
 
 import com.fgsoft.exceldatareader.exception.ExcelReaderException;
-import com.fgsoft.exceldatareader.parser.ExcelFileParser;
+import com.fgsoft.exceldatareader.parser.HeaderDescriptor;
+import com.fgsoft.exceldatareader.parser.object.ObjectParserRouter;
+import com.fgsoft.exceldatareader.parser.object.TestDataParser;
+import com.fgsoft.exceldatareader.parser.util.WorksheetAnalyser;
+import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
+import org.apache.poi.ss.util.CellRangeAddress;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
 
 import static com.fgsoft.exceldatareader.exception.ExcelReaderErrorCode.FILE_NOT_FOUND;
 import static com.fgsoft.exceldatareader.exception.ExcelReaderErrorCode.UNABLE_TO_OPEN_FILE;
@@ -32,8 +35,7 @@ import static com.fgsoft.exceldatareader.exception.ExcelReaderErrorCode.UNABLE_T
  *
  */
 public class ExcelDataReader {
-    private final Workbook workbook;
-    private final List<ExcelFileParser<?>> parsers = new ArrayList<>();
+    private Workbook workbook;
 
     public ExcelDataReader(final String filename) {
         this.workbook = getWorkbook(filename);
@@ -51,4 +53,13 @@ public class ExcelDataReader {
         }
     }
 
+    public <T> T getTestData(final Class<T> dataType, final String testName, final String sheetName, HeaderDescriptor headerDescriptor) {
+        assert(workbook != null);
+        final Sheet sheet = workbook.getSheet(sheetName);
+        final WorksheetAnalyser worksheetAnalyser = new WorksheetAnalyser(sheet, headerDescriptor);
+        final CellRangeAddress headerRange = worksheetAnalyser.getMainHeaderRange(headerDescriptor);
+        final CellRangeAddress dataRange = worksheetAnalyser.findTestDataRange(testName);
+        final TestDataParser<T> parser = ObjectParserRouter.findParser(dataType, dataRange, headerRange);
+        return parser.parse(worksheetAnalyser, dataType);
+    }
 }

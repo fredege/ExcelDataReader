@@ -57,6 +57,6 @@ class ObjectParserRouterTest {
         assertThat(parser).isInstanceOf(SingleCellValuesListParser.class);
         final SingleCellValuesListParser<?, ?> testParser = (SingleCellValuesListParser<?, ?>) parser;
         assertThat(testParser).isNotNull();
-        assertThat(testParser.getType()).isSameAs(String.class);
+        assertThat(testParser.getItemType()).isSameAs(String.class);
     }
 }

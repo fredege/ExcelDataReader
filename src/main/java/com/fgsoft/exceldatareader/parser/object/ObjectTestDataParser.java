@@ -35,10 +35,10 @@ public class ObjectTestDataParser<T> extends AbstractTestDataParser<T> {
 
     @Override
     public T parse(WorksheetAnalyser worksheetAnalyser, Class<T> clazz) {
-        final T instance = InstanceBuilder.buildInstance(clazz);
-        BeanAnalyzer.getSingleCellValues(clazz)
+        final T instance = InstanceBuilder.buildInstance(getType());
+        BeanAnalyzer.getSingleCellValues(getType())
                 .forEach(field -> setSingleCellValueOnField(worksheetAnalyser, field, instance));
-        BeanAnalyzer.getMultipleCellsValues(clazz)
+        BeanAnalyzer.getMultipleCellsValues(getType())
                 .forEach(field -> setValueOnField(worksheetAnalyser, field, instance));
         return instance;
     }

@@ -76,6 +76,11 @@ public class WorksheetAnalyser {
         return removeTrailingEmptyRows(tmpRange);
     }
 
+    public CellRangeAddress getMainHeaderRange(HeaderDescriptor headerDescriptor) {
+        return null;
+    }
+
+
     public Cell getCell(@NotBlank String name, @NotNull CellRangeAddress cellRange, @NotNull CellRangeAddress headerRange) {
         final Row headerRow = worksheet.getRow(headerRange.getFirstRow());
         final Row valueRow = worksheet.getRow(cellRange.getFirstRow());

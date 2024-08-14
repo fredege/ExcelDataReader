@@ -25,20 +25,25 @@ import java.util.List;
  * This class is responsible for selecting the appropriate parser depending on the type of the object to parse.
  */
 public class ObjectParserRouter {
+    public static <T> TestDataParser<T> findParser(Class<T> dataType, CellRangeAddress dataRange, CellRangeAddress headerRange) {
+        return new ObjectTestDataParser<>(dataType, dataRange, headerRange);
+    }
+
     @SuppressWarnings("unchecked")
     public static  <T> TestDataParser<T> findParser(Field field, CellRangeAddress dataCellRange, CellRangeAddress headerCellRange) {
-        final Class<T> fieldType = (Class<T>) field.getType();
-        if (List.class.isAssignableFrom(field.getType())) {
-            return (TestDataParser<T>) findListParser(field, dataCellRange, headerCellRange);
+        final Class<?> fieldType = field.getType();
+        if (List.class.isAssignableFrom(fieldType)) {
+            final Class<?> genericType = getGenericType(field);
+            return (TestDataParser<T>) findListParser(genericType, dataCellRange, headerCellRange);
         } else {
-            return new ObjectTestDataParser<>(fieldType, dataCellRange, headerCellRange);
+            final Class<T> dataType = (Class<T>) field.getType();
+            return new ObjectTestDataParser<>(dataType, dataCellRange, headerCellRange);
         }
     }
 
-    private static <T extends List<V>, V> TestDataParser<T> findListParser(Field field, CellRangeAddress dataCellRange, CellRangeAddress headerCellRange) {
-        final Class<V> genericType = getGenericType(field);
-        if (BeanAnalyzer.isSingleCellType(genericType)) {
-            return new SingleCellValuesListParser<>(genericType, dataCellRange, headerCellRange);
+    private static <T extends List<V>, V> TestDataParser<T> findListParser(Class<V> type, CellRangeAddress dataCellRange, CellRangeAddress headerCellRange) {
+        if (BeanAnalyzer.isSingleCellType(type)) {
+            return new SingleCellValuesListParser<>(type, dataCellRange, headerCellRange);
         }
         return null;
     }
@@ -52,4 +57,5 @@ public class ObjectParserRouter {
     private ObjectParserRouter() {
         // Prevents instantiation
     }
+
 }
