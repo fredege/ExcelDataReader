@@ -57,7 +57,7 @@ public class ExcelDataReader {
         assert(workbook != null);
         final Sheet sheet = workbook.getSheet(sheetName);
         final WorksheetAnalyser worksheetAnalyser = new WorksheetAnalyser(sheet, headerDescriptor);
-        final CellRangeAddress headerRange = worksheetAnalyser.getMainHeaderRange(headerDescriptor);
+        final CellRangeAddress headerRange = worksheetAnalyser.getMainHeaderRange();
         final CellRangeAddress dataRange = worksheetAnalyser.findTestDataRange(testName);
         final TestDataParser<T> parser = ObjectParserRouter.findParser(dataType, dataRange, headerRange);
         return parser.parse(worksheetAnalyser, dataType);

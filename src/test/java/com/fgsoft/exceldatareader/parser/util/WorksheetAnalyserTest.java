@@ -95,6 +95,24 @@ class WorksheetAnalyserTest {
         }
     }
 
+    @Test
+    final void getHeaderRange() throws URISyntaxException, IOException {
+        // Given
+        final HeaderDescriptor headerDescriptor = new HeaderDescriptor(0, 1, 2);
+        final CellRangeAddress expected = CellRangeAddress.valueOf("B1:AI2");
+        final URL url = this.getClass().getResource("/testData/SampleDataFile.xlsx");
+        assertThat(url).isNotNull();
+        try (FileInputStream file = new FileInputStream(new File(url.toURI()))) {
+            final XSSFWorkbook workbook = new XSSFWorkbook(file);
+            final XSSFSheet sheet = workbook.getSheet("SampleInstanceComposite");
+            final WorksheetAnalyser analyser = new WorksheetAnalyser(sheet, headerDescriptor);
+            // When
+            final CellRangeAddress actual = analyser.getMainHeaderRange();
+            // Then
+            assertThat(actual).isEqualTo(expected);
+        }
+    }
+
     @ParameterizedTest
     @CsvSource({
             "TEST-01, B4:AI6",

@@ -76,8 +76,25 @@ public class WorksheetAnalyser {
         return removeTrailingEmptyRows(tmpRange);
     }
 
-    public CellRangeAddress getMainHeaderRange(HeaderDescriptor headerDescriptor) {
-        return null;
+    public CellRangeAddress getMainHeaderRange() {
+        final CellRangeAddress testNameRange = getMergedCell(0, 0);
+        final int firstHeaderRowNum = testNameRange.getFirstRow();
+        final int lastHeaderRowNum = testNameRange.getLastRow() - headerDescriptor.getLastHeaderRow() + headerDescriptor.getLastTitleRow();
+        final int firstHeaderColumnNum = testNameRange.getLastColumn() + 1;
+        final int lastHeaderColumnNum = findLargestTitleRow(firstHeaderRowNum, lastHeaderRowNum) -1;
+        return new CellRangeAddress(firstHeaderRowNum, lastHeaderRowNum,
+                firstHeaderColumnNum, lastHeaderColumnNum);
+    }
+
+    private int findLargestTitleRow(int first, int last) {
+        int largestTitleRowNum = 0;
+        for (int cnt = first; cnt <= last; cnt++) {
+            int width = worksheet.getRow(cnt).getLastCellNum();
+            if (width > largestTitleRowNum) {
+                largestTitleRowNum = width;
+            }
+        }
+        return largestTitleRowNum;
     }
 
 
