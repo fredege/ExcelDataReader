@@ -17,6 +17,7 @@ package com.fgsoft.exceldatareader.parser.util;
 import com.fgsoft.exceldatareader.exception.ExcelReaderException;
 import com.fgsoft.exceldatareader.parser.HeaderDescriptor;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -24,6 +25,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
+import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.File;
@@ -56,6 +58,9 @@ class WorksheetAnalyserTest {
             "listOfComposites.localDate", "listOfComposites.localTime", "listOfComposites.longValue",
             "listOfComposites.stringValue", "listOfComposites.sample");
 
+    @Mock
+    private FormulaEvaluator formulaEvaluator;
+
     @Test
     final void getHeadersMapForSimpleClass() throws IOException, URISyntaxException {
         // Given
@@ -66,7 +71,7 @@ class WorksheetAnalyserTest {
         try (FileInputStream file = new FileInputStream(new File(url.toURI()))) {
             final XSSFWorkbook workbook = new XSSFWorkbook(file);
             final XSSFSheet sheet = workbook.getSheet("SampleInstancePrimaryOnly");
-            final WorksheetAnalyser analyser = new WorksheetAnalyser(sheet, headerDescriptor);
+            final WorksheetAnalyser analyser = new WorksheetAnalyser(sheet, headerDescriptor, formulaEvaluator);
             // When
             final Map<String, Integer> actual = analyser.getHeadersMap();
             // Then
@@ -84,7 +89,7 @@ class WorksheetAnalyserTest {
         try (FileInputStream file = new FileInputStream(new File(url.toURI()))) {
             final XSSFWorkbook workbook = new XSSFWorkbook(file);
             final XSSFSheet sheet = workbook.getSheet("SampleInstanceComposite");
-            final WorksheetAnalyser analyser = new WorksheetAnalyser(sheet, headerDescriptor);
+            final WorksheetAnalyser analyser = new WorksheetAnalyser(sheet, headerDescriptor, formulaEvaluator);
             // When
             final Map<String, Integer> actual = analyser.getHeadersMap();
             // Then
@@ -105,7 +110,7 @@ class WorksheetAnalyserTest {
         try (FileInputStream file = new FileInputStream(new File(url.toURI()))) {
             final XSSFWorkbook workbook = new XSSFWorkbook(file);
             final XSSFSheet sheet = workbook.getSheet("SampleInstanceComposite");
-            final WorksheetAnalyser analyser = new WorksheetAnalyser(sheet, headerDescriptor);
+            final WorksheetAnalyser analyser = new WorksheetAnalyser(sheet, headerDescriptor, formulaEvaluator);
             // When
             final CellRangeAddress actual = analyser.getMainHeaderRange();
             // Then
@@ -120,14 +125,14 @@ class WorksheetAnalyserTest {
     })
     final void findTestRange(final String testName, final String expectedRange) throws URISyntaxException, IOException {
         // Given
-        final HeaderDescriptor headerDescriptor = new HeaderDescriptor(0, 1, 1);
+        final HeaderDescriptor headerDescriptor = new HeaderDescriptor(0, 1, 2);
         final CellRangeAddress expected = CellRangeAddress.valueOf(expectedRange);
         final URL url = this.getClass().getResource("/testData/SampleDataFile.xlsx");
         assertThat(url).isNotNull();
         try (FileInputStream file = new FileInputStream(new File(url.toURI()))) {
             final XSSFWorkbook workbook = new XSSFWorkbook(file);
             final XSSFSheet sheet = workbook.getSheet("SampleInstanceComposite");
-            final WorksheetAnalyser analyser = new WorksheetAnalyser(sheet, headerDescriptor);
+            final WorksheetAnalyser analyser = new WorksheetAnalyser(sheet, headerDescriptor, formulaEvaluator);
             // When
             final CellRangeAddress actual = analyser.findTestDataRange(testName);
             // Then
@@ -152,7 +157,7 @@ class WorksheetAnalyserTest {
         try (FileInputStream file = new FileInputStream(new File(url.toURI()))) {
             final XSSFWorkbook workbook = new XSSFWorkbook(file);
             final XSSFSheet sheet = workbook.getSheet("SampleInstanceComposite");
-            final WorksheetAnalyser analyser = new WorksheetAnalyser(sheet, headerDescriptor);
+            final WorksheetAnalyser analyser = new WorksheetAnalyser(sheet, headerDescriptor, formulaEvaluator);
             // When
             final CellRangeAddress actual = analyser.getCellRange(fieldName, testDataRange, headerRange);
             // Then
@@ -171,7 +176,7 @@ class WorksheetAnalyserTest {
         try (FileInputStream file = new FileInputStream(new File(url.toURI()))) {
             final XSSFWorkbook workbook = new XSSFWorkbook(file);
             final XSSFSheet sheet = workbook.getSheet("SampleInstanceComposite");
-            final WorksheetAnalyser analyser = new WorksheetAnalyser(sheet, headerDescriptor);
+            final WorksheetAnalyser analyser = new WorksheetAnalyser(sheet, headerDescriptor, formulaEvaluator);
             // When
             final ExcelReaderException exception = assertThrows(ExcelReaderException.class,
                     ()-> analyser.getCellRange("NotFound", testDataRange, headerRange));
@@ -197,7 +202,7 @@ class WorksheetAnalyserTest {
         try (FileInputStream file = new FileInputStream(new File(url.toURI()))) {
             final XSSFWorkbook workbook = new XSSFWorkbook(file);
             final XSSFSheet sheet = workbook.getSheet("SampleInstanceComposite");
-            final WorksheetAnalyser analyser = new WorksheetAnalyser(sheet, headerDescriptor);
+            final WorksheetAnalyser analyser = new WorksheetAnalyser(sheet, headerDescriptor, formulaEvaluator);
             // When
             final CellRangeAddress actual = analyser.getHeaderRange(fieldName, headerRange);
             // Then
@@ -214,7 +219,7 @@ class WorksheetAnalyserTest {
         try (FileInputStream file = new FileInputStream(new File(url.toURI()))) {
             final XSSFWorkbook workbook = new XSSFWorkbook(file);
             final XSSFSheet sheet = workbook.getSheet("SampleInstanceComposite");
-            final WorksheetAnalyser analyser = new WorksheetAnalyser(sheet, headerDescriptor);
+            final WorksheetAnalyser analyser = new WorksheetAnalyser(sheet, headerDescriptor, formulaEvaluator);
             // When
             final ExcelReaderException exception = assertThrows(ExcelReaderException.class,
                     () -> analyser.findTestDataRange("NotFound"));
@@ -259,7 +264,7 @@ class WorksheetAnalyserTest {
         try (FileInputStream file = new FileInputStream(new File(url.toURI()))) {
             final XSSFWorkbook workbook = new XSSFWorkbook(file);
             final XSSFSheet sheet = workbook.getSheet("SampleInstanceComposite");
-            final WorksheetAnalyser analyser = new WorksheetAnalyser(sheet, headerDescriptor);
+            final WorksheetAnalyser analyser = new WorksheetAnalyser(sheet, headerDescriptor, formulaEvaluator);
             // When
             final Cell actual = analyser.getCell(name, cellRange, headerRange);
             // Then
@@ -280,7 +285,7 @@ class WorksheetAnalyserTest {
         try (FileInputStream file = new FileInputStream(new File(url.toURI()))) {
             final XSSFWorkbook workbook = new XSSFWorkbook(file);
             final XSSFSheet sheet = workbook.getSheet("SampleInstanceComposite");
-            final WorksheetAnalyser analyser = new WorksheetAnalyser(sheet, headerDescriptor);
+            final WorksheetAnalyser analyser = new WorksheetAnalyser(sheet, headerDescriptor, formulaEvaluator);
             // When
             final ExcelReaderException exception = assertThrows(ExcelReaderException.class,
                     () -> analyser.getCell("NotFound", cellRange, headerRange));

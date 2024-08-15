@@ -19,6 +19,7 @@ import com.fgsoft.exceldatareader.parser.HeaderDescriptor;
 import com.fgsoft.exceldatareader.parser.object.ObjectParserRouter;
 import com.fgsoft.exceldatareader.parser.object.TestDataParser;
 import com.fgsoft.exceldatareader.parser.util.WorksheetAnalyser;
+import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
@@ -35,10 +36,12 @@ import static com.fgsoft.exceldatareader.exception.ExcelReaderErrorCode.UNABLE_T
  *
  */
 public class ExcelDataReader {
-    private Workbook workbook;
+    private final Workbook workbook;
+    private final FormulaEvaluator formulaEvaluator;
 
     public ExcelDataReader(final String filename) {
         this.workbook = getWorkbook(filename);
+        this.formulaEvaluator = workbook.getCreationHelper().createFormulaEvaluator();
     }
 
     private Workbook getWorkbook(String filename) {
@@ -56,7 +59,7 @@ public class ExcelDataReader {
     public <T> T getTestData(final Class<T> dataType, final String testName, final String sheetName, HeaderDescriptor headerDescriptor) {
         assert(workbook != null);
         final Sheet sheet = workbook.getSheet(sheetName);
-        final WorksheetAnalyser worksheetAnalyser = new WorksheetAnalyser(sheet, headerDescriptor);
+        final WorksheetAnalyser worksheetAnalyser = new WorksheetAnalyser(sheet, headerDescriptor, formulaEvaluator);
         final CellRangeAddress headerRange = worksheetAnalyser.getMainHeaderRange();
         final CellRangeAddress dataRange = worksheetAnalyser.findTestDataRange(testName);
         final TestDataParser<T> parser = ObjectParserRouter.findParser(dataType, dataRange, headerRange);

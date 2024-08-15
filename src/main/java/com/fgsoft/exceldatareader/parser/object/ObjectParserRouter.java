@@ -30,7 +30,7 @@ public class ObjectParserRouter {
     }
 
     @SuppressWarnings("unchecked")
-    public static  <T> TestDataParser<T> findParser(Field field, CellRangeAddress dataCellRange, CellRangeAddress headerCellRange) {
+    public static <T> TestDataParser<T> findParser(Field field, CellRangeAddress dataCellRange, CellRangeAddress headerCellRange) {
         final Class<?> fieldType = field.getType();
         if (List.class.isAssignableFrom(fieldType)) {
             final Class<?> genericType = getGenericType(field);
@@ -44,8 +44,11 @@ public class ObjectParserRouter {
     private static <T extends List<V>, V> TestDataParser<T> findListParser(Class<V> type, CellRangeAddress dataCellRange, CellRangeAddress headerCellRange) {
         if (BeanAnalyzer.isSingleCellType(type)) {
             return new SingleCellValuesListParser<>(type, dataCellRange, headerCellRange);
+        } else if (BeanAnalyzer.isBeanWithOnlySingleCellValueFields(type)) {
+            return new BeanWithOnlySingleCellValuesListParser<>(type, dataCellRange, headerCellRange);
+        } else {
+            return null;
         }
-        return null;
     }
 
     @SuppressWarnings("unchecked")

@@ -79,6 +79,13 @@ public class BeanAnalyzer {
         return type.isPrimitive() || type.isEnum() || SINGLE_CELL_TYPES.contains(type);
     }
 
+    public static boolean isBeanWithOnlySingleCellValueFields(@NonNull Class<?> clazz) {
+        return FieldUtils.getAllFieldsList(clazz).stream()
+                .filter(f -> !isSingleCellType(f.getType()))
+                .toList().isEmpty();
+    }
+
+
     public static <T> List<Field> getSingleCellValues(Class<T> clazz) {
         return FieldUtils.getAllFieldsList(clazz).stream()
                 .filter(field -> !Modifier.isStatic(field.getModifiers()))
@@ -127,7 +134,7 @@ public class BeanAnalyzer {
 
     private static <V> boolean hasSameType(V value, Field field) {
         final Class<?> fieldType = field.getType().isPrimitive() ?
-                ClassUtils.primitiveToWrapper(field.getType()):
+                ClassUtils.primitiveToWrapper(field.getType()) :
                 field.getType();
         return fieldType.isAssignableFrom(value.getClass());
     }
@@ -135,4 +142,5 @@ public class BeanAnalyzer {
     private BeanAnalyzer() {
         // Prevents instantiation
     }
+
 }

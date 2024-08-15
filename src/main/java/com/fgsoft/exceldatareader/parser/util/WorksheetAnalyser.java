@@ -41,6 +41,7 @@ import java.util.*;
 public class WorksheetAnalyser {
     private final Sheet worksheet;
     private final HeaderDescriptor headerDescriptor;
+    private final FormulaEvaluator formulaEvaluator;
 
     /**
      * Scan the worksheet in order to get the map of headers and fields of the object to get value from parsing
@@ -71,7 +72,7 @@ public class WorksheetAnalyser {
         final int firstTestRowNum = findFirstTestRowNum(testName);
         final int lastTestRowNum = findLastTestRowNum(firstTestRowNum, lastRowNum);
         final int lastTestColumnNum = findLargestTitleRow(buildTitleRows()).getLastCellNum() - 1;
-        final CellRangeAddress tmpRange =  new CellRangeAddress(firstTestRowNum - 1, lastTestRowNum,
+        final CellRangeAddress tmpRange =  new CellRangeAddress(firstTestRowNum, lastTestRowNum,
                 1, lastTestColumnNum);
         return removeTrailingEmptyRows(tmpRange);
     }
@@ -111,10 +112,6 @@ public class WorksheetAnalyser {
             }
         }
         throw new HeaderNotFoundException(name);
-    }
-
-    public FormulaEvaluator getFormulaEvaluator() {
-        return null;
     }
 
     /**
@@ -225,12 +222,10 @@ public class WorksheetAnalyser {
     }
 
     private int findFirstTestRowNum(String testName) {
-        final Iterator<Row> rowIterator = worksheet.iterator();
-        while (rowIterator.hasNext()) {
-            final Row row = rowIterator.next();
+        for (Row row : worksheet) {
             final Cell testNameCell = row.getCell(0);
             if (testNameCell != null && testName.equals(testNameCell.getStringCellValue())) {
-                return rowIterator.next().getRowNum();
+                return row.getRowNum();
             }
         }
         throw new TestNotFoundException(testName);
@@ -238,7 +233,9 @@ public class WorksheetAnalyser {
 
     private int findLastTestRowNum(int firstTestRowNum, int lastRowNum) {
         for (Row row : worksheet) {
-            if (row.getRowNum() > firstTestRowNum && row.getCell(0) != null) {
+            if (row.getRowNum() > firstTestRowNum &&
+                    row.getCell(0) != null &&
+                    row.getCell(0).getCellType() != CellType.BLANK) {
                 return row.getRowNum() - 1;
             }
         }
