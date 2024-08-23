@@ -12,12 +12,11 @@
  *       See the License for the specific language governing permissions and
  *       limitations under the License.
  */
-package com.fgsoft.exceldatareader.parser.object;
+package com.fgsoft.exceldatareader.parser.object.list;
 
 import com.fgsoft.exceldatareader.parser.util.WorksheetAnalyser;
 import org.apache.poi.ss.util.CellRangeAddress;
 
-import java.util.Collections;
 import java.util.List;
 
 public class ListTestDataParser<T extends List<V>, V> extends AbstractListTestDataParser<T, V> {
@@ -26,8 +25,7 @@ public class ListTestDataParser<T extends List<V>, V> extends AbstractListTestDa
     }
 
     @Override
-    @SuppressWarnings({"unchecked"})
     public T parse(WorksheetAnalyser worksheetAnalyser, Class<T> clazz) {
-        return (T) Collections.emptyList();
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 }

@@ -12,22 +12,34 @@
  *       See the License for the specific language governing permissions and
  *       limitations under the License.
  */
-package com.fgsoft.exceldatareader.parser.object;
+package com.fgsoft.exceldatareader.parser.object.list;
 
+import com.fgsoft.exceldatareader.parser.object.ObjectParserRouter;
+import com.fgsoft.exceldatareader.parser.object.object.ObjectTestDataParser;
 import com.fgsoft.exceldatareader.parser.util.WorksheetAnalyser;
-import java.util.Collections;
 import org.apache.poi.ss.util.CellRangeAddress;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class BeanWithOnlySingleCellValuesListParser<T extends List<V>, V> extends AbstractListTestDataParser<T, V> {
-    BeanWithOnlySingleCellValuesListParser(Class<V> itemType, CellRangeAddress cellRange, CellRangeAddress headerRange) {
+    public BeanWithOnlySingleCellValuesListParser(Class<V> itemType, CellRangeAddress cellRange, CellRangeAddress headerRange) {
         super(itemType, cellRange, headerRange);
     }
 
     @Override
     @SuppressWarnings("unchecked")
     public T parse(WorksheetAnalyser worksheetAnalyser, Class<T> clazz) {
-        return (T) Collections.emptyList();
+        final List<V> retList = new ArrayList<>();
+        final Class<V> itemType = getItemType();
+        for (int rowNum = getCellRange().getFirstRow(); rowNum <= getCellRange().getLastRow(); rowNum++) {
+            final CellRangeAddress itemCellRange = new CellRangeAddress(rowNum, rowNum,
+                    getCellRange().getFirstColumn(), getCellRange().getLastColumn());
+            final ObjectTestDataParser<V> itemParser =
+                    (ObjectTestDataParser<V>) ObjectParserRouter.findParser(itemType, itemCellRange, getHeaderRange());
+            final V value = itemParser.parse(worksheetAnalyser, itemType);
+            retList.add(value);
+        }
+        return (T) retList;
     }
 }

@@ -12,8 +12,10 @@
  *       See the License for the specific language governing permissions and
  *       limitations under the License.
  */
-package com.fgsoft.exceldatareader.parser.object;
+package com.fgsoft.exceldatareader.parser.object.object;
 
+import com.fgsoft.exceldatareader.parser.object.AbstractTestDataParser;
+import com.fgsoft.exceldatareader.parser.object.TestDataParser;
 import com.fgsoft.exceldatareader.parser.util.BeanAnalyzer;
 import com.fgsoft.exceldatareader.parser.util.InstanceBuilder;
 import com.fgsoft.exceldatareader.parser.util.WorksheetAnalyser;

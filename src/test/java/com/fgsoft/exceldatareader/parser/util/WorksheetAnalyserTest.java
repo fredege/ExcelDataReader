@@ -33,11 +33,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 import static com.fgsoft.exceldatareader.exception.ExcelReaderErrorCode.HEADER_NOT_FOUND;
 import static com.fgsoft.exceldatareader.exception.ExcelReaderErrorCode.TEST_NOT_FOUND;
@@ -46,59 +41,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @ExtendWith(MockitoExtension.class)
 class WorksheetAnalyserTest {
-    private final List<String> PrimaryOnlyValues = Arrays.asList("testName", "bigDecimal", "booleanValue", "date",
-            "doubleValue", "intValue", "localDateTime", "localDate", "localTime", "longValue", "stringValue", "sample");
-    private final List<String> CompositeValues = Arrays.asList("testName", "bigDecimal", "booleanValue", "date",
-            "doubleValue", "intValue", "localDateTime", "localDate", "localTime", "longValue", "stringValue", "sample",
-            "listOfStrings", "composite.bigDecimal", "composite.booleanValue", "composite.date", "composite.doubleValue",
-            "composite.intValue", "composite.localDateTime", "composite.localDate", "composite.localTime",
-            "composite.longValue", "composite.stringValue", "composite.sample",
-            "listOfComposites.bigDecimal", "listOfComposites.booleanValue", "listOfComposites.date",
-            "listOfComposites.doubleValue", "listOfComposites.intValue", "listOfComposites.localDateTime",
-            "listOfComposites.localDate", "listOfComposites.localTime", "listOfComposites.longValue",
-            "listOfComposites.stringValue", "listOfComposites.sample");
-
     @Mock
     private FormulaEvaluator formulaEvaluator;
-
-    @Test
-    final void getHeadersMapForSimpleClass() throws IOException, URISyntaxException {
-        // Given
-        final Map<String, Integer> expected = buildExpectedHeadersMapForPrimaryOnly();
-        final HeaderDescriptor headerDescriptor = new HeaderDescriptor(0, 1, 1);
-        final URL url = this.getClass().getResource("/testData/SampleDataFile.xlsx");
-        assertThat(url).isNotNull();
-        try (FileInputStream file = new FileInputStream(new File(url.toURI()))) {
-            final XSSFWorkbook workbook = new XSSFWorkbook(file);
-            final XSSFSheet sheet = workbook.getSheet("SampleInstancePrimaryOnly");
-            final WorksheetAnalyser analyser = new WorksheetAnalyser(sheet, headerDescriptor, formulaEvaluator);
-            // When
-            final Map<String, Integer> actual = analyser.getHeadersMap();
-            // Then
-            assertThat(actual).isEqualTo(expected);
-        }
-    }
-
-    @Test
-    final void getHeadersMapForCompositeClass() throws URISyntaxException, IOException {
-        // Given
-        final Map<String, Integer> expected = buildExpectedHeadersMapForComposite();
-        final HeaderDescriptor headerDescriptor = new HeaderDescriptor(0, 1, 1);
-        final URL url = this.getClass().getResource("/testData/SampleDataFile.xlsx");
-        assertThat(url).isNotNull();
-        try (FileInputStream file = new FileInputStream(new File(url.toURI()))) {
-            final XSSFWorkbook workbook = new XSSFWorkbook(file);
-            final XSSFSheet sheet = workbook.getSheet("SampleInstanceComposite");
-            final WorksheetAnalyser analyser = new WorksheetAnalyser(sheet, headerDescriptor, formulaEvaluator);
-            // When
-            final Map<String, Integer> actual = analyser.getHeadersMap();
-            // Then
-            assertThat(actual).hasSameSizeAs(expected);
-            for (Map.Entry<String, Integer> entry : actual.entrySet()) {
-                assertThat(entry.getValue()).isEqualTo(expected.get(entry.getKey()));
-            }
-        }
-    }
 
     @Test
     final void getHeaderRange() throws URISyntaxException, IOException {
@@ -292,17 +236,5 @@ class WorksheetAnalyserTest {
             // Then
             assertThat(exception.getMessage()).isEqualTo(String.format(HEADER_NOT_FOUND.getMessage(), "NotFound"));
         }
-    }
-
-    private Map<String, Integer> buildExpectedHeadersMapForPrimaryOnly() {
-        return PrimaryOnlyValues.stream()
-                .filter(a -> !"testName".equals(a))
-                .collect(Collectors.toMap(Function.identity(), PrimaryOnlyValues::indexOf));
-    }
-
-    private Map<String, Integer> buildExpectedHeadersMapForComposite() {
-        return CompositeValues.stream()
-                .filter(a -> !"testName".equals(a))
-                .collect(Collectors.toMap(Function.identity(), CompositeValues::indexOf));
     }
 }

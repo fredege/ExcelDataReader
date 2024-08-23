@@ -23,7 +23,6 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
 
@@ -42,25 +41,6 @@ public class WorksheetAnalyser {
     private final Sheet worksheet;
     private final HeaderDescriptor headerDescriptor;
     private final FormulaEvaluator formulaEvaluator;
-
-    /**
-     * Scan the worksheet in order to get the map of headers and fields of the object to get value from parsing
-     *
-     * @return Map of object fields headers and columns in worksheet.
-     */
-    public Map<String, Integer> getHeadersMap() {
-        final Map<String, Integer> retMap = new HashMap<>();
-        final List<Row> titleRows = buildTitleRows();
-        final Row largestTitleRow = findLargestTitleRow(titleRows);
-        for (Cell cell : largestTitleRow) {
-            final int columnIndex = cell.getColumnIndex();
-            if (columnIndex > 0) { // First column is assigned to the test name
-                final String headerValue = computeHeader(columnIndex, titleRows).trim();
-                retMap.put(headerValue, columnIndex);
-            }
-        }
-        return retMap;
-    }
 
     /**
      * Scan the worksheet in order to get the range of cells corresponding to the data for the given test name.
@@ -163,18 +143,6 @@ public class WorksheetAnalyser {
         }
     }
 
-    private String computeHeader(int columnIndex, List<Row> titleRows) {
-        final List<String> tmpHeaders = new ArrayList<>(titleRows.size());
-        for (final Row row : titleRows) {
-            final Cell combinedCell = getCellWithMerge(row.getRowNum(), columnIndex);
-            if (combinedCell != null && CellType.BLANK != combinedCell.getCellType()) {
-                final String titleHeader = combinedCell.getStringCellValue();
-                tmpHeaders.add(0, titleHeader);
-            }
-        }
-        return StringUtils.join(tmpHeaders, '.');
-    }
-
     /**
      * Return the merged cell encompassing the given cell row and column
      *
@@ -190,35 +158,6 @@ public class WorksheetAnalyser {
             }
         }
         return new CellRangeAddress(rowNum, rowNum, columnNum, columnNum);
-    }
-
-
-    /**
-     * Returns the top left cell corresponding to the given coordinates. This allows to get the contents for coordinates
-     * even if it corresponds to a merged region.
-     *
-     * @param rowIndex    index of the row
-     * @param columnIndex index of the column
-     * @return cell to get the value from
-     */
-    private Cell getCellWithMerge(int rowIndex, int columnIndex) {
-        final Cell cell;
-        if (rowIndex >= 0) {
-            int topRow = rowIndex;
-            int firstColumn = columnIndex;
-            final List<CellRangeAddress> merges = worksheet.getMergedRegions();
-            for (CellRangeAddress merge : merges) {
-                if (merge.isInRange(rowIndex, columnIndex)) {
-                    topRow = merge.getFirstRow();
-                    firstColumn = merge.getFirstColumn();
-                    break;
-                }
-            }
-            cell = worksheet.getRow(topRow).getCell(firstColumn);
-        } else {
-            cell = null;
-        }
-        return cell;
     }
 
     private int findFirstTestRowNum(String testName) {
@@ -253,13 +192,17 @@ public class WorksheetAnalyser {
     }
 
     private CellRangeAddress removeTrailingEmptyRows(CellRangeAddress range) {
-        if (hasLastLineEmpty(range)) {
+        if (hasMoreThanOneLine(range) && hasLastLineEmpty(range)) {
             final CellRangeAddress tmpRange = new CellRangeAddress(range.getFirstRow(), range.getLastRow() -1,
                     range.getFirstColumn(), range.getLastColumn());
             return removeTrailingEmptyRows(tmpRange);
         } else {
             return range;
         }
+    }
+
+    private boolean hasMoreThanOneLine(CellRangeAddress range) {
+        return range.getLastRow() > range.getFirstRow();
     }
 
     private boolean hasLastLineEmpty(CellRangeAddress range) {

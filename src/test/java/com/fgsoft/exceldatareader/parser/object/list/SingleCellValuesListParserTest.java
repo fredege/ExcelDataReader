@@ -12,7 +12,7 @@
  *       See the License for the specific language governing permissions and
  *       limitations under the License.
  */
-package com.fgsoft.exceldatareader.parser.object;
+package com.fgsoft.exceldatareader.parser.object.list;
 
 import com.fgsoft.exceldatareader.parser.util.WorksheetAnalyser;
 import org.apache.poi.ss.usermodel.*;
@@ -29,7 +29,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class SingleCellValuesListParserSingleCellValuesListParserTest {
+class SingleCellValuesListParserTest {
     @Mock
     private WorksheetAnalyser worksheetAnalyser;
     @Mock

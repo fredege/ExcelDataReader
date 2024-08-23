@@ -1,4 +1,4 @@
-/* Copyright 2022 Frederic GEDIN
+/* Copyright 2024 Frederic GEDIN
  *
  *       Licensed under the Apache License,Version2.0(the"License");
  *       you may not use this file except in compliance with the License.
@@ -12,22 +12,19 @@
  *       See the License for the specific language governing permissions and
  *       limitations under the License.
  */
-package com.fgsoft.exceldatareader.parser.object;
+package com.fgsoft.exceldatareader.util.samples;
 
-import lombok.RequiredArgsConstructor;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
 
-/**
- * This parser is used to get all the primary values of a given instance from a row in excel
- */
-@RequiredArgsConstructor
-public class PrimaryValuesParser {
-    private final Sheet worksheet;
-
-    public void parse(Object instance, List<String> headers, String baseHeader, Row row) {
-        // To be implemented
-    }
+@Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+public class SampleNotFullySupported {
+    private List<SampleCompositeClass> list;
 }

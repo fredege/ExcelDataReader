@@ -14,6 +14,10 @@
  */
 package com.fgsoft.exceldatareader.parser.object;
 
+import com.fgsoft.exceldatareader.parser.object.list.BeanWithOnlySingleCellValuesListParser;
+import com.fgsoft.exceldatareader.parser.object.list.ListTestDataParser;
+import com.fgsoft.exceldatareader.parser.object.list.SingleCellValuesListParser;
+import com.fgsoft.exceldatareader.parser.object.object.ObjectTestDataParser;
 import com.fgsoft.exceldatareader.parser.util.BeanAnalyzer;
 import org.apache.poi.ss.util.CellRangeAddress;
 
@@ -47,7 +51,7 @@ public class ObjectParserRouter {
         } else if (BeanAnalyzer.isBeanWithOnlySingleCellValueFields(type)) {
             return new BeanWithOnlySingleCellValuesListParser<>(type, dataCellRange, headerCellRange);
         } else {
-            return null;
+            return new ListTestDataParser<>(type, dataCellRange, headerCellRange);
         }
     }
 

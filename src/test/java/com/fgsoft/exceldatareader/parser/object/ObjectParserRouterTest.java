@@ -14,7 +14,12 @@
  */
 package com.fgsoft.exceldatareader.parser.object;
 
+import com.fgsoft.exceldatareader.parser.object.list.BeanWithOnlySingleCellValuesListParser;
+import com.fgsoft.exceldatareader.parser.object.list.ListTestDataParser;
+import com.fgsoft.exceldatareader.parser.object.list.SingleCellValuesListParser;
+import com.fgsoft.exceldatareader.parser.object.object.ObjectTestDataParser;
 import com.fgsoft.exceldatareader.util.samples.SampleCompositeClass;
+import com.fgsoft.exceldatareader.util.samples.SampleNotFullySupported;
 import com.fgsoft.exceldatareader.util.samples.SampleSingleCellFieldsOnly;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.junit.jupiter.api.Test;
@@ -59,4 +64,33 @@ class ObjectParserRouterTest {
         assertThat(testParser).isNotNull();
         assertThat(testParser.getItemType()).isSameAs(String.class);
     }
+
+    @Test
+    final void findParserForBeanWithOnlySingleCellValuesList() throws NoSuchFieldException {
+        // Given
+        final Field field = type.getDeclaredField("listOfComposites");
+        // When
+        final TestDataParser<?> parser = ObjectParserRouter.findParser(field, cellRange, headerRange);
+        // Then
+        assertThat(parser).isInstanceOf(BeanWithOnlySingleCellValuesListParser.class);
+        final BeanWithOnlySingleCellValuesListParser<?, ?> testParser = (BeanWithOnlySingleCellValuesListParser<?, ?>) parser;
+        assertThat(testParser).isNotNull();
+        assertThat(testParser.getItemType()).isSameAs(SampleSingleCellFieldsOnly.class);
+    }
+
+
+    @Test
+    final void findParserForList() throws NoSuchFieldException {
+        // Given
+        final Class<?> type2 = SampleNotFullySupported.class;
+        final Field field = type2.getDeclaredField("list");
+        // When
+        final TestDataParser<?> parser = ObjectParserRouter.findParser(field, cellRange, headerRange);
+        // Then
+        assertThat(parser).isInstanceOf(ListTestDataParser.class);
+        final ListTestDataParser<?, ?> testParser = (ListTestDataParser<?, ?>) parser;
+        assertThat(testParser).isNotNull();
+        assertThat(testParser.getItemType()).isSameAs(SampleCompositeClass.class);
+    }
+
 }
