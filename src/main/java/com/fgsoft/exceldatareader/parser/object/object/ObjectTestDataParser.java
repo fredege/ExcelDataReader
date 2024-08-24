@@ -26,6 +26,7 @@ import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.util.CellRangeAddress;
 
 import java.lang.reflect.Field;
+import java.util.List;
 
 import static com.fgsoft.exceldatareader.parser.object.ObjectParserRouter.findParser;
 
@@ -36,11 +37,14 @@ public class ObjectTestDataParser<T> extends AbstractTestDataParser<T> {
     }
 
     @Override
-    public T parse(WorksheetAnalyser worksheetAnalyser, Class<T> clazz) {
+    public T parse(WorksheetAnalyser worksheetAnalyser, Class<T> clazz, String... ignore) {
         final T instance = InstanceBuilder.buildInstance(getType());
-        BeanAnalyzer.getSingleCellValues(getType())
+        final List<String> ignoredFieldName = List.of(ignore);
+        BeanAnalyzer.getSingleCellValues(getType()).stream()
+                .filter(field -> !ignoredFieldName.contains(field.getName()))
                 .forEach(field -> setSingleCellValueOnField(worksheetAnalyser, field, instance));
-        BeanAnalyzer.getMultipleCellsValues(getType())
+        BeanAnalyzer.getMultipleCellsValues(getType()).stream()
+                .filter(field -> !ignoredFieldName.contains(field.getName()))
                 .forEach(field -> setValueOnField(worksheetAnalyser, field, instance));
         return instance;
     }

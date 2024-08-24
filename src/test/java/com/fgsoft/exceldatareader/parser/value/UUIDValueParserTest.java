@@ -1,0 +1,200 @@
+/* Copyright 2020 Frederic GEDIN
+ *
+ *       Licensed under the Apache License,Version2.0(the"License");
+ *       you may not use this file except in compliance with the License.
+ *       You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *       Unless required by applicable law or agreed to in writing,software
+ *       distributed under the License is distributed on an"AS IS"BASIS,
+ *       WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,either express or implied.
+ *       See the License for the specific language governing permissions and
+ *       limitations under the License.
+ */
+package com.fgsoft.exceldatareader.parser.value;
+
+import com.fgsoft.exceldatareader.exception.ExcelReaderErrorCode;
+import com.fgsoft.exceldatareader.exception.ExcelReaderException;
+import com.fgsoft.exceldatareader.exception.IncorrectValueForTypeException;
+import org.apache.poi.ss.usermodel.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.util.UUID;
+
+import static com.fgsoft.exceldatareader.util.TestConstants.SHEET_NAME;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.when;
+
+@ExtendWith(MockitoExtension.class)
+class UUIDValueParserTest {
+    @Mock
+    private Cell cell;
+    @Mock
+    private Sheet sheet;
+    @Mock
+    private FormulaEvaluator evaluator;
+
+    @BeforeEach
+    final void initialize() {
+    }
+
+    @Test
+    final void testParseStringValueOK() {
+        // Given
+        final UUIDValueParser parser = new UUIDValueParser();
+        final UUID expected = UUID.randomUUID();
+        when(cell.getStringCellValue()).thenReturn(expected.toString());
+        when(cell.getCellType()).thenReturn(CellType.STRING);
+        // When
+        final UUID value = parser.getValue(cell, evaluator);
+        // Then
+        assertThat(value).isEqualTo(expected);
+    }
+
+    @Test
+    final void testParseStringValueKO() {
+        // Given
+        final String strValue = "Not good";
+        final UUIDValueParser parser = new UUIDValueParser();
+        when(cell.getCellType()).thenReturn(CellType.STRING);
+        when(cell.getStringCellValue()).thenReturn(strValue);
+        when(sheet.getSheetName()).thenReturn(SHEET_NAME);
+        when(cell.getSheet()).thenReturn(sheet);
+        when(cell.getRowIndex()).thenReturn(0);
+        when(cell.getColumnIndex()).thenReturn(0);
+        final String message = String.format(ExcelReaderErrorCode.INCORRECT_VALUE_FOR_TYPE.getMessage(),
+                strValue, UUID.class.getName(), 0, 0, SHEET_NAME);
+        // When
+        Throwable exception = assertThrows(ExcelReaderException.class,
+                () -> parser.getValue(cell, evaluator));
+        // Then
+        assertThat(exception).isInstanceOf(IncorrectValueForTypeException.class);
+        assertThat(exception.getMessage()).isEqualTo(message);
+    }
+
+    @Test
+    final void testDoubleValue() {
+        // Given
+        final double dblValue = 1.0;
+        final UUIDValueParser parser = new UUIDValueParser();
+        when(cell.getNumericCellValue()).thenReturn(dblValue);
+        when(cell.getCellType()).thenReturn(CellType.NUMERIC);
+        when(sheet.getSheetName()).thenReturn(SHEET_NAME);
+        when(cell.getSheet()).thenReturn(sheet);
+        when(cell.getRowIndex()).thenReturn(0);
+        when(cell.getColumnIndex()).thenReturn(0);
+        final String message = String.format(ExcelReaderErrorCode.INCORRECT_VALUE_FOR_TYPE.getMessage(),
+                dblValue, UUID.class.getName(), 0, 0, SHEET_NAME);
+        // When
+        Throwable exception = assertThrows(ExcelReaderException.class,
+                () -> parser.getValue(cell, evaluator));
+        // Then
+        assertThat(exception).isInstanceOf(IncorrectValueForTypeException.class);
+        assertThat(exception.getMessage()).isEqualTo(message);
+    }
+
+    @Test
+    final void testBooleanValueOK() {
+        // Given
+        final boolean boolValue = true;
+        final UUIDValueParser parser = new UUIDValueParser();
+        when(cell.getBooleanCellValue()).thenReturn(boolValue);
+        when(cell.getCellType()).thenReturn(CellType.BOOLEAN);
+        when(sheet.getSheetName()).thenReturn(SHEET_NAME);
+        when(cell.getSheet()).thenReturn(sheet);
+        when(cell.getRowIndex()).thenReturn(0);
+        when(cell.getColumnIndex()).thenReturn(0);
+        final String message = String.format(ExcelReaderErrorCode.INCORRECT_VALUE_FOR_TYPE.getMessage(),
+                boolValue, UUID.class.getName(), 0, 0, SHEET_NAME);
+        // When
+        Throwable exception = assertThrows(ExcelReaderException.class,
+                () -> parser.getValue(cell, evaluator));
+        // Then
+        assertThat(exception).isInstanceOf(IncorrectValueForTypeException.class);
+        assertThat(exception.getMessage()).isEqualTo(message);
+    }
+
+    @Test
+    final void testBlankValueOK() {
+        // Given
+        final UUIDValueParser parser = new UUIDValueParser();
+        when(cell.getCellType()).thenReturn(CellType.BLANK);
+        // When
+        final UUID value = parser.getValue(cell, evaluator);
+        // Then
+        assertThat(value).isNull();
+    }
+
+    @Test
+    final void testNullValueOK() {
+        // Given
+        final UUIDValueParser parser = new UUIDValueParser();
+        // When
+        final UUID value = parser.getValue(null, evaluator);
+        // Then
+        assertThat(value).isNull();
+    }
+
+    @Test
+    final void testFormulaReturningABoolean() {
+        // Given
+        final CellValue cellValue = CellValue.TRUE;
+        final UUIDValueParser parser = new UUIDValueParser();
+        when(cell.getCellType()).thenReturn(CellType.FORMULA);
+        when(evaluator.evaluate(cell)).thenReturn(cellValue);
+        when(sheet.getSheetName()).thenReturn(SHEET_NAME);
+        when(cell.getSheet()).thenReturn(sheet);
+        when(cell.getRowIndex()).thenReturn(0);
+        when(cell.getColumnIndex()).thenReturn(0);
+        final String message = String.format(ExcelReaderErrorCode.INCORRECT_VALUE_FOR_TYPE.getMessage(),
+                Boolean.TRUE, UUID.class.getName(), 0, 0, SHEET_NAME);
+        // When
+        Throwable exception = assertThrows(ExcelReaderException.class,
+                () -> parser.getValue(cell, evaluator));
+        // Then
+        assertThat(exception).isInstanceOf(IncorrectValueForTypeException.class);
+        assertThat(exception.getMessage()).isEqualTo(message);
+    }
+
+    @Test
+    final void testFormulaReturningAString() {
+        // Given
+        final UUID expected = UUID.randomUUID();
+        final CellValue cellValue = new CellValue(expected.toString());
+        final UUIDValueParser parser = new UUIDValueParser();
+        when(cell.getCellType()).thenReturn(CellType.FORMULA);
+        when(evaluator.evaluate(cell)).thenReturn(cellValue);
+        // When
+        final UUID value = parser.getValue(cell, evaluator);
+        // Then
+        assertThat(value).isEqualTo(expected);
+    }
+
+    @Test
+    final void testFormulaReturningADouble() {
+        // Given
+        final double dblValue = 0.0;
+        final CellValue cellValue = new CellValue(dblValue);
+        final UUIDValueParser parser = new UUIDValueParser();
+        when(cell.getCellType()).thenReturn(CellType.FORMULA);
+        when(evaluator.evaluate(cell)).thenReturn(cellValue);
+        when(sheet.getSheetName()).thenReturn(SHEET_NAME);
+        when(cell.getSheet()).thenReturn(sheet);
+        when(cell.getRowIndex()).thenReturn(0);
+        when(cell.getColumnIndex()).thenReturn(0);
+        final String message = String.format(ExcelReaderErrorCode.INCORRECT_VALUE_FOR_TYPE.getMessage(),
+                dblValue, UUID.class.getName(), 0, 0, SHEET_NAME);
+        // When
+        Throwable exception = assertThrows(ExcelReaderException.class,
+                () -> parser.getValue(cell, evaluator));
+        // Then
+        assertThat(exception).isInstanceOf(IncorrectValueForTypeException.class);
+        assertThat(exception.getMessage()).isEqualTo(message);
+    }
+}

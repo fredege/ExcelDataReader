@@ -21,4 +21,5 @@ import lombok.Setter;
 @Setter
 public class SampleNonSingleCellFieldsOnly {
     private SampleSingleCellFieldsOnly fieldOne;
+    private SampleSingleCellFieldsOnly fieldTwo;
 }

@@ -25,7 +25,7 @@ public class ListTestDataParser<T extends List<V>, V> extends AbstractListTestDa
     }
 
     @Override
-    public T parse(WorksheetAnalyser worksheetAnalyser, Class<T> clazz) {
+    public T parse(WorksheetAnalyser worksheetAnalyser, Class<T> clazz, String... ignore) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 }

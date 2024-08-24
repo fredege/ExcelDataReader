@@ -40,6 +40,7 @@ public class DataBuilder {
     public SampleNonSingleCellFieldsOnly buidSampleNonSingleCellFieldsOnly() {
         final SampleNonSingleCellFieldsOnly retVal = new SampleNonSingleCellFieldsOnly();
         retVal.setFieldOne(buildSampleInstancePrimaryOnly());
+        retVal.setFieldTwo(buildSampleInstancePrimaryOnly());
         return retVal;
     }
 }

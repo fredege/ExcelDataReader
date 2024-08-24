@@ -23,7 +23,7 @@ public interface TestDataParser<T> {
      * @param clazz class of the object to instantiate and populate
      * @return built instance
      */
-    T parse(final WorksheetAnalyser worksheetAnalyser, Class<T> clazz);
+    T parse(final WorksheetAnalyser worksheetAnalyser, Class<T> clazz, String... ignore);
 
     /**
      * Return the type of objects to parse.

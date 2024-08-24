@@ -56,13 +56,13 @@ public class ExcelDataReader {
         }
     }
 
-    public <T> T getTestData(final Class<T> dataType, final String testName, final String sheetName, HeaderDescriptor headerDescriptor) {
+    public <T> T getTestData(final Class<T> dataType, final String testName, final String sheetName, HeaderDescriptor headerDescriptor, String... ignore) {
         assert(workbook != null);
         final Sheet sheet = workbook.getSheet(sheetName);
         final WorksheetAnalyser worksheetAnalyser = new WorksheetAnalyser(sheet, headerDescriptor, formulaEvaluator);
         final CellRangeAddress headerRange = worksheetAnalyser.getMainHeaderRange();
         final CellRangeAddress dataRange = worksheetAnalyser.findTestDataRange(testName);
         final TestDataParser<T> parser = ObjectParserRouter.findParser(dataType, dataRange, headerRange);
-        return parser.parse(worksheetAnalyser, dataType);
+        return parser.parse(worksheetAnalyser, dataType, ignore);
     }
 }

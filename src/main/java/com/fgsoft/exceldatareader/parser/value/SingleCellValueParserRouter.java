@@ -25,6 +25,7 @@ import java.time.*;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 /**
  * Class in charge of routing to the relevant value parser given the class of the value to get from
@@ -57,6 +58,7 @@ public final class SingleCellValueParserRouter {
         PARSERS.put(LocalDate.class, LocalDateValueParser.class);
         PARSERS.put(LocalTime.class, LocalTimeValueParser.class);
         PARSERS.put(LocalDateTime.class, LocalDateTimeValueParser.class);
+        PARSERS.put(UUID.class, UUIDValueParser.class);
     }
 
     /**

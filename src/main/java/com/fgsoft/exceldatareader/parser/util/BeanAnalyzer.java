@@ -56,7 +56,8 @@ public class BeanAnalyzer {
             BigDecimal.class,
             BigInteger.class,
             Enumeration.class,
-            Currency.class
+            Currency.class,
+            UUID.class
     );
 
     /**

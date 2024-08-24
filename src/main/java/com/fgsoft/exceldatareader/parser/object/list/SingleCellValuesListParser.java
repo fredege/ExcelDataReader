@@ -32,7 +32,7 @@ public class SingleCellValuesListParser<T extends List<V>, V> extends AbstractLi
 
     @Override
     @SuppressWarnings("unchecked")
-    public T parse(WorksheetAnalyser worksheetAnalyser, Class<T> clazz) {
+    public T parse(WorksheetAnalyser worksheetAnalyser, Class<T> clazz, String... ignore) {
         final List<V> retList = new ArrayList<>();
         final int columnNumber = getHeaderRange().getFirstColumn();
         final SingleCellValueParser<V> singleCellValueParser = SingleCellValueParserRouter.getParser(getItemType());
