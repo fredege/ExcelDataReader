@@ -29,6 +29,8 @@ public class BooleanValueParser extends AbstractSingleCellValueParser<Boolean> {
         MAP_VALUES.put("N", false);
         MAP_VALUES.put("Yes", true);
         MAP_VALUES.put("No", false);
+        MAP_VALUES.put("yes", true);
+        MAP_VALUES.put("no", false);
         MAP_VALUES.put("true", true);
         MAP_VALUES.put("false", false);
     }

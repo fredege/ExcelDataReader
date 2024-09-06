@@ -14,6 +14,7 @@
  */
 package com.fgsoft.exceldatareader.parser.object.object;
 
+import com.fgsoft.exceldatareader.exception.HeaderNotFoundException;
 import com.fgsoft.exceldatareader.parser.object.AbstractTestDataParser;
 import com.fgsoft.exceldatareader.parser.object.TestDataParser;
 import com.fgsoft.exceldatareader.parser.util.BeanAnalyzer;
@@ -37,34 +38,42 @@ public class ObjectTestDataParser<T> extends AbstractTestDataParser<T> {
     }
 
     @Override
-    public T parse(WorksheetAnalyser worksheetAnalyser, Class<T> clazz, String... ignore) {
+    public T parse(WorksheetAnalyser worksheetAnalyser, Class<T> clazz, boolean skipMissingHeader, String... ignore) {
         final T instance = InstanceBuilder.buildInstance(getType());
         final List<String> ignoredFieldName = List.of(ignore);
         BeanAnalyzer.getSingleCellValues(getType()).stream()
                 .filter(field -> !ignoredFieldName.contains(field.getName()))
-                .forEach(field -> setSingleCellValueOnField(worksheetAnalyser, field, instance));
+                .forEach(field -> setSingleCellValueOnField(worksheetAnalyser, field, instance, skipMissingHeader));
         BeanAnalyzer.getMultipleCellsValues(getType()).stream()
                 .filter(field -> !ignoredFieldName.contains(field.getName()))
-                .forEach(field -> setValueOnField(worksheetAnalyser, field, instance));
+                .forEach(field -> setValueOnField(worksheetAnalyser, field, instance, skipMissingHeader));
         return instance;
     }
 
     @SuppressWarnings("unchecked")
-    private <V> void setSingleCellValueOnField(WorksheetAnalyser worksheetAnalyser, Field field, T instance) {
-        final SingleCellValueParser<V> parser = (SingleCellValueParser<V>) SingleCellValueParserRouter.getParser(field.getType());
-        final Cell cell = worksheetAnalyser.getCell(field.getName(), getCellRange(), getHeaderRange());
-        final FormulaEvaluator formulaEvaluator = worksheetAnalyser.getFormulaEvaluator();
-        final V value = parser.getValue(cell, formulaEvaluator);
-        BeanAnalyzer.setValueOnField(instance, field, value);
+    private <V> void setSingleCellValueOnField(WorksheetAnalyser worksheetAnalyser, Field field, T instance, boolean skipMissingHeader) {
+        try {
+            final SingleCellValueParser<V> parser = (SingleCellValueParser<V>) SingleCellValueParserRouter.getParser(field.getType());
+            final Cell cell = worksheetAnalyser.getCell(field.getName(), getCellRange(), getHeaderRange());
+            final FormulaEvaluator formulaEvaluator = worksheetAnalyser.getFormulaEvaluator();
+            final V value = parser.getValue(cell, formulaEvaluator);
+            BeanAnalyzer.setValueOnField(instance, field, value);
+        } catch (HeaderNotFoundException exc) {
+            if (!skipMissingHeader) throw exc;
+        }
     }
 
     @SuppressWarnings("unchecked")
-    private <V> void setValueOnField(WorksheetAnalyser worksheetAnalyser, Field field, T instance) {
-        final CellRangeAddress fieldCellRange = worksheetAnalyser.getCellRange(field.getName(), getCellRange(), getHeaderRange());
-        final CellRangeAddress headerCellRange = worksheetAnalyser.getHeaderRange(field.getName(), getHeaderRange());
-        final TestDataParser<V> parser = findParser(field, fieldCellRange, headerCellRange);
-        final V value = parser.parse(worksheetAnalyser, (Class<V>) field.getType());
-        BeanAnalyzer.setValueOnField(instance, field, value);
+    private <V> void setValueOnField(WorksheetAnalyser worksheetAnalyser, Field field, T instance, boolean skipMissingHeader) {
+        try {
+            final CellRangeAddress fieldCellRange = worksheetAnalyser.getCellRange(field.getName(), getCellRange(), getHeaderRange());
+            final CellRangeAddress headerCellRange = worksheetAnalyser.getHeaderRange(field.getName(), getHeaderRange());
+            final TestDataParser<V> parser = findParser(field, fieldCellRange, headerCellRange);
+            final V value = parser.parse(worksheetAnalyser, (Class<V>) field.getType(), skipMissingHeader);
+            BeanAnalyzer.setValueOnField(instance, field, value);
+        } catch (HeaderNotFoundException exc) {
+            if (!skipMissingHeader) throw exc;
+        }
     }
 
 }

@@ -85,7 +85,7 @@ class BeanWithOnlySingleCellValuesListParserTest {
         }
         // When
         final List<SampleSingleCellFieldsOnly> actual = parser.parse(worksheetAnalyser,
-                (Class<List<SampleSingleCellFieldsOnly>>) expected.getClass());
+                (Class<List<SampleSingleCellFieldsOnly>>) expected.getClass(), false);
         // Then
         assertThat(actual).isEqualTo(expected);
     }

@@ -29,7 +29,7 @@ public class BeanWithOnlySingleCellValuesListParser<T extends List<V>, V> extend
 
     @Override
     @SuppressWarnings("unchecked")
-    public T parse(WorksheetAnalyser worksheetAnalyser, Class<T> clazz, String... ignore) {
+    public T parse(WorksheetAnalyser worksheetAnalyser, Class<T> clazz, boolean skipMissingHeader, String... ignore) {
         final List<V> retList = new ArrayList<>();
         final Class<V> itemType = getItemType();
         for (int rowNum = getCellRange().getFirstRow(); rowNum <= getCellRange().getLastRow(); rowNum++) {
@@ -37,7 +37,7 @@ public class BeanWithOnlySingleCellValuesListParser<T extends List<V>, V> extend
                     getCellRange().getFirstColumn(), getCellRange().getLastColumn());
             final ObjectTestDataParser<V> itemParser =
                     (ObjectTestDataParser<V>) ObjectParserRouter.findParser(itemType, itemCellRange, getHeaderRange());
-            final V value = itemParser.parse(worksheetAnalyser, itemType);
+            final V value = itemParser.parse(worksheetAnalyser, itemType, false);
             retList.add(value);
         }
         return (T) retList;

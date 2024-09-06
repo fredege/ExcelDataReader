@@ -23,6 +23,7 @@ public enum ExcelReaderErrorCode {
     INCORRECT_VALUE_FOR_TYPE("Incorrect value '%s' for type '%s' in cell (%d, %d) of sheet '%s'"),
     INVALID_TYPE("Unable to find a single cell value parser for type '%s'"),
     MISMATCHING_DATA_TYPES("Mismatching data types: expected = '%s', actual = '%s' for field '%s'"),
+    MISSING_MANDATORY_FIELD("Class %s is required to have a mandatory field for proper list parsing"),
     NO_SETTER("No setter has been defiend for field '%s'"),
     TEST_NOT_FOUND("Unable to find a test with name %s"),
     UNABLE_TO_OPEN_FILE("Unable to open file %s"),

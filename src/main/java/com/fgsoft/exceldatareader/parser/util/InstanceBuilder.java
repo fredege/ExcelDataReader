@@ -30,7 +30,7 @@ public class InstanceBuilder {
     public static <T> T buildInstance(Class<T> clazz) {
         final T instance;
         final Optional<Method> builderMethodOption = getBuilder(clazz);
-        if (builderMethodOption.isPresent()) {
+        if (!BeanAnalyzer.hasNonNullField(clazz) && builderMethodOption.isPresent()) {
             instance = getInstanceFromBuilder(builderMethodOption.get());
         } else {
             instance = getInstanceFromConstructor(clazz);

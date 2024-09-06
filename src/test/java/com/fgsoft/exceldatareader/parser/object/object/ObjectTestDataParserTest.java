@@ -75,7 +75,7 @@ class ObjectTestDataParserTest {
             when(worksheetAnalyser.getCell(field.getName(), cellRange, headerRange)).thenReturn(fieldCell);
         });
         // When
-        final SampleSingleCellFieldsOnly actual = parser.parse(worksheetAnalyser, SampleSingleCellFieldsOnly.class);
+        final SampleSingleCellFieldsOnly actual = parser.parse(worksheetAnalyser, SampleSingleCellFieldsOnly.class, false);
         // Then
         assertThat(actual).isEqualTo(expected);
     }
@@ -105,7 +105,7 @@ class ObjectTestDataParserTest {
             lenient().when(worksheetAnalyser.getCell(field.getName(), cellRange, headerRange)).thenReturn(fieldCell);
         });
         // When
-        final SampleSingleCellFieldsOnly actual = parser.parse(worksheetAnalyser, SampleSingleCellFieldsOnly.class, "bigDecimal");
+        final SampleSingleCellFieldsOnly actual = parser.parse(worksheetAnalyser, SampleSingleCellFieldsOnly.class, false, "bigDecimal");
         // Then
         assertThat(actual).isEqualTo(expected);
     }
@@ -138,7 +138,7 @@ class ObjectTestDataParserTest {
         when(worksheetAnalyser.getCellRange("fieldTwo", cellRange, headerRange)).thenReturn(cellRange);
         when(worksheetAnalyser.getHeaderRange("fieldTwo", headerRange)).thenReturn(headerRange);
         // When
-        final SampleNonSingleCellFieldsOnly actual = parser.parse(worksheetAnalyser, SampleNonSingleCellFieldsOnly.class);
+        final SampleNonSingleCellFieldsOnly actual = parser.parse(worksheetAnalyser, SampleNonSingleCellFieldsOnly.class, false);
         // Then
         assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
     }
@@ -170,7 +170,7 @@ class ObjectTestDataParserTest {
         when(worksheetAnalyser.getCellRange("fieldOne", cellRange, headerRange)).thenReturn(cellRange);
         when(worksheetAnalyser.getHeaderRange("fieldOne", headerRange)).thenReturn(headerRange);
         // When
-        final SampleNonSingleCellFieldsOnly actual = parser.parse(worksheetAnalyser, SampleNonSingleCellFieldsOnly.class, "fieldTwo");
+        final SampleNonSingleCellFieldsOnly actual = parser.parse(worksheetAnalyser, SampleNonSingleCellFieldsOnly.class, false, "fieldTwo");
         // Then
         assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
     }

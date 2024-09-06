@@ -19,11 +19,13 @@ import com.fgsoft.exceldatareader.parser.util.WorksheetAnalyser;
 public interface TestDataParser<T> {
     /**
      * Build and populate an object using data from a worksheet.
+     *
      * @param worksheetAnalyser worksheet analyzer
-     * @param clazz class of the object to instantiate and populate
+     * @param clazz             class of the object to instantiate and populate
+     * @param skipMissingHeader flag to set field value to null if no corresponding header is present
      * @return built instance
      */
-    T parse(final WorksheetAnalyser worksheetAnalyser, Class<T> clazz, String... ignore);
+    T parse(final WorksheetAnalyser worksheetAnalyser, Class<T> clazz, boolean skipMissingHeader, String... ignore);
 
     /**
      * Return the type of objects to parse.

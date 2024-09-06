@@ -42,6 +42,31 @@ public class WorksheetAnalyser {
     private final HeaderDescriptor headerDescriptor;
     private final FormulaEvaluator formulaEvaluator;
 
+    public WorksheetAnalyser(Sheet worksheet, FormulaEvaluator formulaEvaluator) {
+        this.worksheet = worksheet;
+        this.headerDescriptor = getDefaultHeaderDescriptor();
+        this.formulaEvaluator = formulaEvaluator;
+    }
+
+    /**
+     * Scan the worksheet in order to get all test names
+     *
+     * @return the list of test names present in the current sheet
+     */
+    public List<String> getAllTestNames() {
+        final List<String> testNames = new ArrayList<>();
+        for (Row row : worksheet) {
+            if (row.getRowNum() > headerDescriptor.getLastTitleRow()) {
+                final Cell testNameCell = row.getCell(0);
+                if (testNameCell != null && !CellType.BLANK.equals(testNameCell.getCellType())) {
+                    testNames.add(testNameCell.getStringCellValue());
+                }
+            }
+        }
+        return testNames;
+    }
+
+
     /**
      * Scan the worksheet in order to get the range of cells corresponding to the data for the given test name.
      *
@@ -52,9 +77,21 @@ public class WorksheetAnalyser {
         final int firstTestRowNum = findFirstTestRowNum(testName);
         final int lastTestRowNum = findLastTestRowNum(firstTestRowNum, lastRowNum);
         final int lastTestColumnNum = findLargestTitleRow(buildTitleRows()).getLastCellNum() - 1;
-        final CellRangeAddress tmpRange =  new CellRangeAddress(firstTestRowNum, lastTestRowNum,
+        final CellRangeAddress tmpRange = new CellRangeAddress(firstTestRowNum, lastTestRowNum,
                 1, lastTestColumnNum);
         return removeTrailingEmptyRows(tmpRange);
+    }
+
+    /**
+     * Build a default header descriptor based on the sheet structure
+     *
+     * @return built header descriptor
+     */
+    private HeaderDescriptor getDefaultHeaderDescriptor() {
+        final CellRangeAddress testNameRange = getMergedCell(0, 0);
+        final int firstHeaderRow = testNameRange.getFirstRow();
+        final int lastHeaderRow = testNameRange.getLastRow();
+        return new HeaderDescriptor(firstHeaderRow, lastHeaderRow, lastHeaderRow);
     }
 
     public CellRangeAddress getMainHeaderRange() {
@@ -62,7 +99,7 @@ public class WorksheetAnalyser {
         final int firstHeaderRowNum = testNameRange.getFirstRow();
         final int lastHeaderRowNum = testNameRange.getLastRow() - headerDescriptor.getLastHeaderRow() + headerDescriptor.getLastTitleRow();
         final int firstHeaderColumnNum = testNameRange.getLastColumn() + 1;
-        final int lastHeaderColumnNum = findLargestTitleRow(firstHeaderRowNum, lastHeaderRowNum) -1;
+        final int lastHeaderColumnNum = findLargestTitleRow(firstHeaderRowNum, lastHeaderRowNum) - 1;
         return new CellRangeAddress(firstHeaderRowNum, lastHeaderRowNum,
                 firstHeaderColumnNum, lastHeaderColumnNum);
     }
@@ -94,6 +131,19 @@ public class WorksheetAnalyser {
         throw new HeaderNotFoundException(name);
     }
 
+    public int getHeaderColumnNumber(@NotBlank String name, @NotNull CellRangeAddress headerRange) {
+        final Row headerRow = worksheet.getRow(headerRange.getFirstRow());
+        final Iterator<Cell> headerIterator = headerRow.cellIterator();
+        while (headerIterator.hasNext()) {
+            final Cell headerCell = headerIterator.next();
+            if (name.equals(headerCell.getStringCellValue())) {
+                return headerCell.getColumnIndex();
+            }
+        }
+        throw new HeaderNotFoundException(name);
+
+    }
+
     /**
      * Extracts the address of the Excel region containing the test data corresponding to a composite field.
      *
@@ -123,6 +173,12 @@ public class WorksheetAnalyser {
         }
     }
 
+    public boolean isCellEmpty(int rowNum, int colNum) {
+        final Row row = worksheet.getRow(rowNum);
+        final Cell cell = row.getCell(colNum);
+        return (cell == null) || CellType.BLANK.equals(cell.getCellType());
+    }
+
     private List<Row> buildTitleRows() {
         final int firstTitleRow = headerDescriptor.getFirstTitleRow();
         final int lastTitleRow = headerDescriptor.getLastTitleRow();
@@ -146,7 +202,7 @@ public class WorksheetAnalyser {
     /**
      * Return the merged cell encompassing the given cell row and column
      *
-     * @param rowNum row number
+     * @param rowNum    row number
      * @param columnNum column number
      * @return corresponding cell range address
      */
@@ -193,7 +249,7 @@ public class WorksheetAnalyser {
 
     private CellRangeAddress removeTrailingEmptyRows(CellRangeAddress range) {
         if (hasMoreThanOneLine(range) && hasLastLineEmpty(range)) {
-            final CellRangeAddress tmpRange = new CellRangeAddress(range.getFirstRow(), range.getLastRow() -1,
+            final CellRangeAddress tmpRange = new CellRangeAddress(range.getFirstRow(), range.getLastRow() - 1,
                     range.getFirstColumn(), range.getLastColumn());
             return removeTrailingEmptyRows(tmpRange);
         } else {
@@ -208,10 +264,10 @@ public class WorksheetAnalyser {
     private boolean hasLastLineEmpty(CellRangeAddress range) {
         final Row row = worksheet.getRow(range.getLastRow());
         for (int index = range.getFirstColumn(); index <= range.getLastColumn(); index++) {
-                if (row.getCell(index) != null && row.getCell(index).getCellType() != CellType.BLANK) {
-                    return false;
-                }
+            if (row.getCell(index) != null && row.getCell(index).getCellType() != CellType.BLANK) {
+                return false;
             }
+        }
         return true;
     }
 

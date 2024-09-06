@@ -16,6 +16,8 @@ package com.fgsoft.exceldatareader.parser.util;
 
 import com.fgsoft.exceldatareader.exception.ExcelReaderErrorCode;
 import com.fgsoft.exceldatareader.exception.ExcelReaderException;
+import com.fgsoft.exceldatareader.exception.MissingMandatoryException;
+import jakarta.validation.constraints.NotNull;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ClassUtils;
@@ -32,6 +34,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -57,7 +60,8 @@ public class BeanAnalyzer {
             BigInteger.class,
             Enumeration.class,
             Currency.class,
-            UUID.class
+            UUID.class,
+            Instant.class
     );
 
     /**
@@ -118,6 +122,24 @@ public class BeanAnalyzer {
             }
         }
     }
+
+    public static <V> boolean hasNonNullField(Class<V> clazz) {
+        return FieldUtils.getAllFieldsList(clazz).stream()
+                .anyMatch(BeanAnalyzer::isMandatory);
+    }
+
+    public static <V> Field getNonNullField(Class<V> clazz) {
+        final String typeName = clazz.getName();
+        return FieldUtils.getAllFieldsList(clazz).stream()
+                .filter(BeanAnalyzer::isMandatory)
+                .findFirst()
+                .orElseThrow(() -> new MissingMandatoryException(typeName));
+    }
+
+    private static boolean isMandatory(Field field) {
+        return field.isAnnotationPresent(NotNull.class);
+    }
+
 
     private static <T, V> void setValueOnField(T instance, Field field, PropertyDescriptor propertyDescriptor, V value) throws InvocationTargetException, IllegalAccessException {
         final Method setter = propertyDescriptor.getWriteMethod();

@@ -33,6 +33,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.List;
 
 import static com.fgsoft.exceldatareader.exception.ExcelReaderErrorCode.HEADER_NOT_FOUND;
 import static com.fgsoft.exceldatareader.exception.ExcelReaderErrorCode.TEST_NOT_FOUND;
@@ -43,6 +44,24 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 class WorksheetAnalyserTest {
     @Mock
     private FormulaEvaluator formulaEvaluator;
+
+    @Test
+    final void getAllTestNames() throws URISyntaxException, IOException {
+        // Given
+        final HeaderDescriptor headerDescriptor = new HeaderDescriptor(0, 1, 2);
+        final List<String> expected = List.of("TEST-01", "TEST-02");
+        final URL url = this.getClass().getResource("/testData/SampleDataFile.xlsx");
+        assertThat(url).isNotNull();
+        try (FileInputStream file = new FileInputStream(new File(url.toURI()))) {
+            final XSSFWorkbook workbook = new XSSFWorkbook(file);
+            final XSSFSheet sheet = workbook.getSheet("SampleInstanceComposite");
+            final WorksheetAnalyser analyser = new WorksheetAnalyser(sheet, headerDescriptor, formulaEvaluator);
+            // When
+            final List<String> actual = analyser.getAllTestNames();
+            // Then
+            assertThat(actual).isEqualTo(expected);
+        }
+    }
 
     @Test
     final void getHeaderRange() throws URISyntaxException, IOException {

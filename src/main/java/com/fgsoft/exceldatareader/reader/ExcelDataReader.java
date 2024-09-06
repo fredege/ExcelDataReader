@@ -27,13 +27,13 @@ import org.apache.poi.ss.util.CellRangeAddress;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
 
 import static com.fgsoft.exceldatareader.exception.ExcelReaderErrorCode.FILE_NOT_FOUND;
 import static com.fgsoft.exceldatareader.exception.ExcelReaderErrorCode.UNABLE_TO_OPEN_FILE;
 
 /**
  * Reader used to retrieve test data from excel file.
- *
  */
 public class ExcelDataReader {
     private final Workbook workbook;
@@ -57,12 +57,36 @@ public class ExcelDataReader {
     }
 
     public <T> T getTestData(final Class<T> dataType, final String testName, final String sheetName, HeaderDescriptor headerDescriptor, String... ignore) {
-        assert(workbook != null);
+        assert (workbook != null);
         final Sheet sheet = workbook.getSheet(sheetName);
         final WorksheetAnalyser worksheetAnalyser = new WorksheetAnalyser(sheet, headerDescriptor, formulaEvaluator);
         final CellRangeAddress headerRange = worksheetAnalyser.getMainHeaderRange();
         final CellRangeAddress dataRange = worksheetAnalyser.findTestDataRange(testName);
         final TestDataParser<T> parser = ObjectParserRouter.findParser(dataType, dataRange, headerRange);
-        return parser.parse(worksheetAnalyser, dataType, ignore);
+        return parser.parse(worksheetAnalyser, dataType, false, ignore);
+    }
+
+    public <T> T getTestData(final Class<T> dataType, final String testName, final String sheetName, boolean skipMissingHeader, String... ignore) {
+        assert (workbook != null);
+        final Sheet sheet = workbook.getSheet(sheetName);
+        final WorksheetAnalyser worksheetAnalyser = new WorksheetAnalyser(sheet, formulaEvaluator);
+        final CellRangeAddress headerRange = worksheetAnalyser.getMainHeaderRange();
+        final CellRangeAddress dataRange = worksheetAnalyser.findTestDataRange(testName);
+        final TestDataParser<T> parser = ObjectParserRouter.findParser(dataType, dataRange, headerRange);
+        return parser.parse(worksheetAnalyser, dataType, skipMissingHeader, ignore);
+    }
+
+    public <T> List<T> getAllTestData(Class<T> dataType, String sheetName, boolean skipMissingHeader, String... ignore) {
+        assert (workbook != null);
+        final Sheet sheet = workbook.getSheet(sheetName);
+        final WorksheetAnalyser worksheetAnalyser = new WorksheetAnalyser(sheet, formulaEvaluator);
+        final CellRangeAddress headerRange = worksheetAnalyser.getMainHeaderRange();
+        final List<String> testNames = worksheetAnalyser.getAllTestNames();
+        return testNames.stream().map(name -> {
+                    final CellRangeAddress dataRange = worksheetAnalyser.findTestDataRange(name);
+                    final TestDataParser<T> parser = ObjectParserRouter.findParser(dataType, dataRange, headerRange);
+                    return parser.parse(worksheetAnalyser, dataType, skipMissingHeader, ignore);
+                })
+                .toList();
     }
 }

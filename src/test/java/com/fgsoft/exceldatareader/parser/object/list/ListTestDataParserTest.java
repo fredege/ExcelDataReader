@@ -14,6 +14,7 @@
  */
 package com.fgsoft.exceldatareader.parser.object.list;
 
+import com.fgsoft.exceldatareader.exception.MissingMandatoryException;
 import com.fgsoft.exceldatareader.parser.util.WorksheetAnalyser;
 import com.fgsoft.exceldatareader.util.samples.SampleCompositeClass;
 import org.apache.poi.ss.util.CellRangeAddress;
@@ -42,6 +43,6 @@ class ListTestDataParserTest {
                 new ListTestDataParser<>(SampleCompositeClass.class, cellRange, headerRange);
         final Class<List<SampleCompositeClass>> clazz = parser.getType();
         // When // Then
-        assertThrows(UnsupportedOperationException.class, () -> parser.parse(worksheetAnalyser, clazz));
+        assertThrows(MissingMandatoryException.class, () -> parser.parse(worksheetAnalyser, clazz, false));
     }
 }

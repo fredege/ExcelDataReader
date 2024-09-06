@@ -64,7 +64,7 @@ class SingleCellValuesListParserTest {
             when(cell.getCellType()).thenReturn(CellType.STRING);
         }
         // When
-        final List<String> actual = parser.parse(worksheetAnalyser, (Class<List<String>>) expected.getClass());
+        final List<String> actual = parser.parse(worksheetAnalyser, (Class<List<String>>) expected.getClass(), false);
         // Then
         assertThat(actual).isEqualTo(expected);
     }
