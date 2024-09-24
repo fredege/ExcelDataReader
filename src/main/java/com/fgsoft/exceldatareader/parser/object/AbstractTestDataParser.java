@@ -25,7 +25,7 @@ import org.apache.poi.ss.util.CellRangeAddress;
  *     <li>All field values for a given object are organized horizontally</li>
  *     <li>For each object, the first column contains a name that will be uses as a reference</li>
  * </ul>
- * Horizontal representation is convenient for representing lists. In such a case, any element of the list is
+ * Horizontal representation is convenient for representing lists. In such a case, any element of the collection is
  * represented on its own row.
  */
 @RequiredArgsConstructor

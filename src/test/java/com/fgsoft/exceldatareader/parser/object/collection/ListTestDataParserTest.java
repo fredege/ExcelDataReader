@@ -12,7 +12,7 @@
  *       See the License for the specific language governing permissions and
  *       limitations under the License.
  */
-package com.fgsoft.exceldatareader.parser.object.list;
+package com.fgsoft.exceldatareader.parser.object.collection;
 
 import com.fgsoft.exceldatareader.exception.MissingMandatoryException;
 import com.fgsoft.exceldatareader.parser.util.WorksheetAnalyser;
@@ -23,6 +23,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -37,10 +38,12 @@ class ListTestDataParserTest {
     private CellRangeAddress headerRange;
 
     @Test
+    @SuppressWarnings("unchecked")
     final void testParse() {
         // Given
-        final ListTestDataParser<List<SampleCompositeClass>, SampleCompositeClass> parser =
-                new ListTestDataParser<>(SampleCompositeClass.class, cellRange, headerRange);
+        final List<SampleCompositeClass> sampleList = new ArrayList<>();
+        final CollectionTestDataParser<List<SampleCompositeClass>, SampleCompositeClass> parser =
+                new CollectionTestDataParser<>(sampleList.getClass(), SampleCompositeClass.class, cellRange, headerRange);
         final Class<List<SampleCompositeClass>> clazz = parser.getType();
         // When // Then
         assertThrows(MissingMandatoryException.class, () -> parser.parse(worksheetAnalyser, clazz, false));

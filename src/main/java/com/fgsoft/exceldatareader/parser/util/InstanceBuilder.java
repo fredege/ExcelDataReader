@@ -16,6 +16,8 @@ package com.fgsoft.exceldatareader.parser.util;
 
 import com.fgsoft.exceldatareader.exception.ExcelReaderErrorCode;
 import com.fgsoft.exceldatareader.exception.ExcelReaderException;
+import com.fgsoft.exceldatareader.exception.InstantiationErrorException;
+import lombok.extern.slf4j.Slf4j;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -26,6 +28,7 @@ import java.util.Optional;
 /**
  * This class is responsible for building any new object instance.
  */
+@Slf4j
 public class InstanceBuilder {
     public static <T> T buildInstance(Class<T> clazz) {
         final T instance;
@@ -38,13 +41,16 @@ public class InstanceBuilder {
         return instance;
     }
 
+    @SuppressWarnings("java:S3011")
     private static <T> T getInstanceFromConstructor(Class<T> clazz) {
         try {
             final Constructor<T> constructor = clazz.getDeclaredConstructor();
+            constructor.setAccessible(true);
             return constructor.newInstance();
         } catch (NoSuchMethodException | InstantiationException | IllegalAccessException |
                  InvocationTargetException exc) {
-            throw new ExcelReaderException(exc, ExcelReaderErrorCode.UNKNOWN);
+            log.error(exc.getMessage(), exc);
+            throw new InstantiationErrorException(clazz, exc.getMessage());
         }
     }
 

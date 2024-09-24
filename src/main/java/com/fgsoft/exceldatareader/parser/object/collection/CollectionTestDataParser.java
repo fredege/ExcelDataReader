@@ -12,7 +12,7 @@
  *       See the License for the specific language governing permissions and
  *       limitations under the License.
  */
-package com.fgsoft.exceldatareader.parser.object.list;
+package com.fgsoft.exceldatareader.parser.object.collection;
 
 import com.fgsoft.exceldatareader.parser.object.ObjectParserRouter;
 import com.fgsoft.exceldatareader.parser.object.object.ObjectTestDataParser;
@@ -21,18 +21,17 @@ import com.fgsoft.exceldatareader.parser.util.WorksheetAnalyser;
 import org.apache.poi.ss.util.CellRangeAddress;
 
 import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Collection;
 
-public class ListTestDataParser<T extends List<V>, V> extends AbstractListTestDataParser<T, V> {
-    public ListTestDataParser(Class<V> type, CellRangeAddress fieldRange, CellRangeAddress headerRange) {
-        super(type, fieldRange, headerRange);
+public class CollectionTestDataParser<T extends Collection<V>, V> extends AbstractCollectionTestDataParser<T, V> {
+    public CollectionTestDataParser(Class<T> collectionType, Class<V> type, CellRangeAddress fieldRange, CellRangeAddress headerRange) {
+        super(collectionType, type, fieldRange, headerRange);
     }
 
     @Override
     @SuppressWarnings("unchecked")
     public T parse(WorksheetAnalyser worksheetAnalyser, Class<T> clazz, boolean skipMissingHeader, String... ignore) {
-        final List<V> retList = new ArrayList<>();
+        final T retCollection = (T) buildInstance(clazz);
         final Class<V> itemType = getItemType();
         int rowNum = getCellRange().getFirstRow();
         while (rowNum <= getCellRange().getLastRow()) {
@@ -40,10 +39,10 @@ public class ListTestDataParser<T extends List<V>, V> extends AbstractListTestDa
             final ObjectTestDataParser<V> itemParser =
                     (ObjectTestDataParser<V>) ObjectParserRouter.findParser(itemType, itemCellRange, getHeaderRange());
             final V value = itemParser.parse(worksheetAnalyser, itemType, skipMissingHeader, ignore);
-            retList.add(value);
+            retCollection.add(value);
             rowNum = itemCellRange.getLastRow() + 1;
         }
-        return (T) retList;
+        return retCollection;
     }
 
     private CellRangeAddress computeItemCellRange(WorksheetAnalyser worksheetAnalyzer, int rowNum, Class<V> itemType) {

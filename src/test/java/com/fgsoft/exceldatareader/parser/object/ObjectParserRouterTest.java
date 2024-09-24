@@ -14,9 +14,9 @@
  */
 package com.fgsoft.exceldatareader.parser.object;
 
-import com.fgsoft.exceldatareader.parser.object.list.BeanWithOnlySingleCellValuesListParser;
-import com.fgsoft.exceldatareader.parser.object.list.ListTestDataParser;
-import com.fgsoft.exceldatareader.parser.object.list.SingleCellValuesListParser;
+import com.fgsoft.exceldatareader.parser.object.collection.BeanWithOnlySingleCellValuesCollectionParser;
+import com.fgsoft.exceldatareader.parser.object.collection.CollectionTestDataParser;
+import com.fgsoft.exceldatareader.parser.object.collection.SingleCellValuesCollectionParser;
 import com.fgsoft.exceldatareader.parser.object.object.ObjectTestDataParser;
 import com.fgsoft.exceldatareader.util.samples.SampleCompositeClass;
 import com.fgsoft.exceldatareader.util.samples.SampleNotFullySupported;
@@ -59,8 +59,8 @@ class ObjectParserRouterTest {
         // When
         final TestDataParser<?> parser = ObjectParserRouter.findParser(field, cellRange, headerRange);
         // Then
-        assertThat(parser).isInstanceOf(SingleCellValuesListParser.class);
-        final SingleCellValuesListParser<?, ?> testParser = (SingleCellValuesListParser<?, ?>) parser;
+        assertThat(parser).isInstanceOf(SingleCellValuesCollectionParser.class);
+        final SingleCellValuesCollectionParser<?, ?> testParser = (SingleCellValuesCollectionParser<?, ?>) parser;
         assertThat(testParser).isNotNull();
         assertThat(testParser.getItemType()).isSameAs(String.class);
     }
@@ -72,8 +72,8 @@ class ObjectParserRouterTest {
         // When
         final TestDataParser<?> parser = ObjectParserRouter.findParser(field, cellRange, headerRange);
         // Then
-        assertThat(parser).isInstanceOf(BeanWithOnlySingleCellValuesListParser.class);
-        final BeanWithOnlySingleCellValuesListParser<?, ?> testParser = (BeanWithOnlySingleCellValuesListParser<?, ?>) parser;
+        assertThat(parser).isInstanceOf(BeanWithOnlySingleCellValuesCollectionParser.class);
+        final BeanWithOnlySingleCellValuesCollectionParser<?, ?> testParser = (BeanWithOnlySingleCellValuesCollectionParser<?, ?>) parser;
         assertThat(testParser).isNotNull();
         assertThat(testParser.getItemType()).isSameAs(SampleSingleCellFieldsOnly.class);
     }
@@ -87,8 +87,8 @@ class ObjectParserRouterTest {
         // When
         final TestDataParser<?> parser = ObjectParserRouter.findParser(field, cellRange, headerRange);
         // Then
-        assertThat(parser).isInstanceOf(ListTestDataParser.class);
-        final ListTestDataParser<?, ?> testParser = (ListTestDataParser<?, ?>) parser;
+        assertThat(parser).isInstanceOf(CollectionTestDataParser.class);
+        final CollectionTestDataParser<?, ?> testParser = (CollectionTestDataParser<?, ?>) parser;
         assertThat(testParser).isNotNull();
         assertThat(testParser.getItemType()).isSameAs(SampleCompositeClass.class);
     }

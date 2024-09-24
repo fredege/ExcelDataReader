@@ -12,7 +12,7 @@
  *       See the License for the specific language governing permissions and
  *       limitations under the License.
  */
-package com.fgsoft.exceldatareader.parser.object.list;
+package com.fgsoft.exceldatareader.parser.object.collection;
 
 import com.fgsoft.exceldatareader.parser.util.WorksheetAnalyser;
 import com.fgsoft.exceldatareader.util.DataBuilder;
@@ -25,6 +25,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -33,7 +34,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class BeanWithOnlySingleCellValuesListParserTest {
+class BeanWithOnlySingleCellValuesCollectionParserTest {
     private final DataBuilder dataBuilder = new DataBuilder();
 
     @Mock
@@ -53,8 +54,9 @@ class BeanWithOnlySingleCellValuesListParserTest {
         final int firstRowNum = 2;
         final int firstColumnNum = 12;
         final int lastColumnNum = firstColumnNum + allFields.length;
-        final BeanWithOnlySingleCellValuesListParser<List<SampleSingleCellFieldsOnly>, SampleSingleCellFieldsOnly> parser =
-                new BeanWithOnlySingleCellValuesListParser<>(SampleSingleCellFieldsOnly.class, cellRange, headerRange);
+        final List<SampleSingleCellFieldsOnly> testList = new ArrayList<>();
+        final BeanWithOnlySingleCellValuesCollectionParser<List<SampleSingleCellFieldsOnly>, SampleSingleCellFieldsOnly> parser =
+                new BeanWithOnlySingleCellValuesCollectionParser<>(testList.getClass(), SampleSingleCellFieldsOnly.class, cellRange, headerRange);
         final SampleSingleCellFieldsOnly itemOne = dataBuilder.buildSampleInstancePrimaryOnly();
         final SampleSingleCellFieldsOnly itemTwo = dataBuilder.buildSampleInstancePrimaryOnly();
         final List<SampleSingleCellFieldsOnly> expected = List.of(itemOne, itemTwo);

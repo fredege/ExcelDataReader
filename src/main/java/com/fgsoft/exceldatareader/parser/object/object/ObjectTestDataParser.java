@@ -46,7 +46,7 @@ public class ObjectTestDataParser<T> extends AbstractTestDataParser<T> {
                 .forEach(field -> setSingleCellValueOnField(worksheetAnalyser, field, instance, skipMissingHeader));
         BeanAnalyzer.getMultipleCellsValues(getType()).stream()
                 .filter(field -> !ignoredFieldName.contains(field.getName()))
-                .forEach(field -> setValueOnField(worksheetAnalyser, field, instance, skipMissingHeader));
+                .forEach(field -> setValueOnField(worksheetAnalyser, field, instance, skipMissingHeader, ignore));
         return instance;
     }
 
@@ -64,12 +64,12 @@ public class ObjectTestDataParser<T> extends AbstractTestDataParser<T> {
     }
 
     @SuppressWarnings("unchecked")
-    private <V> void setValueOnField(WorksheetAnalyser worksheetAnalyser, Field field, T instance, boolean skipMissingHeader) {
+    private <V> void setValueOnField(WorksheetAnalyser worksheetAnalyser, Field field, T instance, boolean skipMissingHeader, String... ignore) {
         try {
             final CellRangeAddress fieldCellRange = worksheetAnalyser.getCellRange(field.getName(), getCellRange(), getHeaderRange());
             final CellRangeAddress headerCellRange = worksheetAnalyser.getHeaderRange(field.getName(), getHeaderRange());
             final TestDataParser<V> parser = findParser(field, fieldCellRange, headerCellRange);
-            final V value = parser.parse(worksheetAnalyser, (Class<V>) field.getType(), skipMissingHeader);
+            final V value = parser.parse(worksheetAnalyser, (Class<V>) field.getType(), skipMissingHeader, ignore);
             BeanAnalyzer.setValueOnField(instance, field, value);
         } catch (HeaderNotFoundException exc) {
             if (!skipMissingHeader) throw exc;

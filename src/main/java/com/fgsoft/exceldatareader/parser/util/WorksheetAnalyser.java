@@ -51,7 +51,7 @@ public class WorksheetAnalyser {
     /**
      * Scan the worksheet in order to get all test names
      *
-     * @return the list of test names present in the current sheet
+     * @return the collection of test names present in the current sheet
      */
     public List<String> getAllTestNames() {
         final List<String> testNames = new ArrayList<>();
@@ -123,7 +123,7 @@ public class WorksheetAnalyser {
         final int columnIndex;
         while (headerIterator.hasNext()) {
             final Cell headerCell = headerIterator.next();
-            if (name.equals(headerCell.getStringCellValue())) {
+            if (headerCell.getColumnIndex() >= cellRange.getFirstColumn() && headerCell.getColumnIndex() <= cellRange.getLastColumn() && name.equals(headerCell.getStringCellValue())) {
                 columnIndex = headerCell.getColumnIndex();
                 return valueRow.getCell(columnIndex);
             }

@@ -12,7 +12,7 @@
  *       See the License for the specific language governing permissions and
  *       limitations under the License.
  */
-package com.fgsoft.exceldatareader.parser.object.list;
+package com.fgsoft.exceldatareader.parser.object.collection;
 
 import com.fgsoft.exceldatareader.parser.util.WorksheetAnalyser;
 import com.fgsoft.exceldatareader.parser.value.SingleCellValueParser;
@@ -22,18 +22,17 @@ import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.util.CellRangeAddress;
 
-import java.util.ArrayList;
 import java.util.List;
 
-public class SingleCellValuesListParser<T extends List<V>, V> extends AbstractListTestDataParser<T, V> {
-    public SingleCellValuesListParser(Class<V> itemType, CellRangeAddress cellRange, CellRangeAddress headerRange) {
-        super(itemType, cellRange, headerRange);
+public class SingleCellValuesCollectionParser<U extends List<V>, V> extends AbstractCollectionTestDataParser<U, V> {
+    public SingleCellValuesCollectionParser(Class<U> collectionType, Class<V> itemType, CellRangeAddress cellRange, CellRangeAddress headerRange) {
+        super(collectionType, itemType, cellRange, headerRange);
     }
 
     @Override
     @SuppressWarnings("unchecked")
-    public T parse(WorksheetAnalyser worksheetAnalyser, Class<T> clazz, boolean skipMissingHeader, String... ignore) {
-        final List<V> retList = new ArrayList<>();
+    public U parse(WorksheetAnalyser worksheetAnalyser, Class<U> clazz, boolean skipMissingHeader, String... ignore) {
+        final U retCollection = (U) buildInstance(clazz);
         final int columnNumber = getHeaderRange().getFirstColumn();
         final SingleCellValueParser<V> singleCellValueParser = SingleCellValueParserRouter.getParser(getItemType());
         final FormulaEvaluator formulaEvaluator = worksheetAnalyser.getFormulaEvaluator();
@@ -41,8 +40,8 @@ public class SingleCellValuesListParser<T extends List<V>, V> extends AbstractLi
             final  Row row = worksheetAnalyser.getWorksheet().getRow(rowNum);
             final Cell cell = row.getCell(columnNumber);
             final V value = singleCellValueParser.getValue(cell, formulaEvaluator);
-            retList.add(value);
+            retCollection.add(value);
         }
-        return (T) retList;
+        return retCollection;
     }
 }

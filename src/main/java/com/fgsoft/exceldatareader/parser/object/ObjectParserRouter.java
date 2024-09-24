@@ -14,15 +14,16 @@
  */
 package com.fgsoft.exceldatareader.parser.object;
 
-import com.fgsoft.exceldatareader.parser.object.list.BeanWithOnlySingleCellValuesListParser;
-import com.fgsoft.exceldatareader.parser.object.list.ListTestDataParser;
-import com.fgsoft.exceldatareader.parser.object.list.SingleCellValuesListParser;
+import com.fgsoft.exceldatareader.parser.object.collection.BeanWithOnlySingleCellValuesCollectionParser;
+import com.fgsoft.exceldatareader.parser.object.collection.CollectionTestDataParser;
+import com.fgsoft.exceldatareader.parser.object.collection.SingleCellValuesCollectionParser;
 import com.fgsoft.exceldatareader.parser.object.object.ObjectTestDataParser;
 import com.fgsoft.exceldatareader.parser.util.BeanAnalyzer;
 import org.apache.poi.ss.util.CellRangeAddress;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -36,22 +37,26 @@ public class ObjectParserRouter {
     @SuppressWarnings("unchecked")
     public static <T> TestDataParser<T> findParser(Field field, CellRangeAddress dataCellRange, CellRangeAddress headerCellRange) {
         final Class<?> fieldType = field.getType();
-        if (List.class.isAssignableFrom(fieldType)) {
+        if (Collection.class.isAssignableFrom(fieldType)) {
             final Class<?> genericType = getGenericType(field);
-            return (TestDataParser<T>) findListParser(genericType, dataCellRange, headerCellRange);
+            return (TestDataParser<T>) findCollectionParser(fieldType, genericType, dataCellRange, headerCellRange);
         } else {
             final Class<T> dataType = (Class<T>) field.getType();
             return new ObjectTestDataParser<>(dataType, dataCellRange, headerCellRange);
         }
     }
 
-    private static <T extends List<V>, V> TestDataParser<T> findListParser(Class<V> type, CellRangeAddress dataCellRange, CellRangeAddress headerCellRange) {
-        if (BeanAnalyzer.isSingleCellType(type)) {
-            return new SingleCellValuesListParser<>(type, dataCellRange, headerCellRange);
-        } else if (BeanAnalyzer.isBeanWithOnlySingleCellValueFields(type)) {
-            return new BeanWithOnlySingleCellValuesListParser<>(type, dataCellRange, headerCellRange);
+    @SuppressWarnings("unchecked")
+    private static <U extends List<V>, V> TestDataParser<U> findCollectionParser(Class<?> fieldType, Class<?> itemType,
+                                                                                 CellRangeAddress dataCellRange,
+                                                                                 CellRangeAddress headerCellRange) {
+        final Class<U> collectionType = (Class<U>) fieldType;
+        if (BeanAnalyzer.isSingleCellType(itemType)) {
+            return new SingleCellValuesCollectionParser<>(collectionType, (Class<V>) itemType, dataCellRange, headerCellRange);
+        } else if (BeanAnalyzer.isBeanWithOnlySingleCellValueFields(itemType)) {
+            return new BeanWithOnlySingleCellValuesCollectionParser<>(collectionType, (Class<V>) itemType, dataCellRange, headerCellRange);
         } else {
-            return new ListTestDataParser<>(type, dataCellRange, headerCellRange);
+            return new CollectionTestDataParser<>(collectionType, (Class<V>) itemType, dataCellRange, headerCellRange);
         }
     }
 

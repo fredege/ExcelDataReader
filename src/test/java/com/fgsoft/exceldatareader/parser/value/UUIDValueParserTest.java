@@ -18,7 +18,6 @@ import com.fgsoft.exceldatareader.exception.ExcelReaderErrorCode;
 import com.fgsoft.exceldatareader.exception.ExcelReaderException;
 import com.fgsoft.exceldatareader.exception.IncorrectValueForTypeException;
 import org.apache.poi.ss.usermodel.*;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -39,10 +38,6 @@ class UUIDValueParserTest {
     private Sheet sheet;
     @Mock
     private FormulaEvaluator evaluator;
-
-    @BeforeEach
-    final void initialize() {
-    }
 
     @Test
     final void testParseStringValueOK() {

@@ -26,7 +26,7 @@ import lombok.RequiredArgsConstructor;
  *     corresponds to the upper entry of the value for single cell values or can be used to represent a group of values
  *     for multiple cells values. Header title rows must be grouped: any row between the fist and the last title rows
  *     contributes to the computation of the key that will used to select the relevant column. For all title rows but
- *     the last one, celles can be horizontally grouped in order to represent an inner object or a list of inner
+ *     the last one, celles can be horizontally grouped in order to represent an inner object or a collection of inner
  *     objects.</li>
  *     <li>Optional comment rows can be used to provide information that will not be used for parsing. These rows can
  *     be put before or after the title rows, but never between the first and the last title rows.</li>

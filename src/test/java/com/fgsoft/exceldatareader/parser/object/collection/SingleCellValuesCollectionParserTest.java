@@ -12,7 +12,7 @@
  *       See the License for the specific language governing permissions and
  *       limitations under the License.
  */
-package com.fgsoft.exceldatareader.parser.object.list;
+package com.fgsoft.exceldatareader.parser.object.collection;
 
 import com.fgsoft.exceldatareader.parser.util.WorksheetAnalyser;
 import org.apache.poi.ss.usermodel.*;
@@ -22,6 +22,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -29,7 +30,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class SingleCellValuesListParserTest {
+class SingleCellValuesCollectionParserTest {
     @Mock
     private WorksheetAnalyser worksheetAnalyser;
     @Mock
@@ -47,8 +48,9 @@ class SingleCellValuesListParserTest {
         // Given
         final int firstRowNum = 2;
         final int firstColumnNum = 12;
-        final SingleCellValuesListParser<List<String>, String> parser =
-                new SingleCellValuesListParser<>(String.class, cellRange, headerRange);
+        final List<String> testList = new ArrayList<>();
+        final SingleCellValuesCollectionParser<List<String>, String> parser =
+                new SingleCellValuesCollectionParser<>(testList.getClass(), String.class, cellRange, headerRange);
         final List<String> expected = List.of("A", "B");
         when(worksheetAnalyser.getWorksheet()).thenReturn(sheet);
         when(headerRange.getFirstColumn()).thenReturn(firstColumnNum);
