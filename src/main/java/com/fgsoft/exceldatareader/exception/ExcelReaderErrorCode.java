@@ -28,6 +28,7 @@ public enum ExcelReaderErrorCode {
     NO_SETTER("No setter has been defiend for field '%s'"),
     TEST_NOT_FOUND("Unable to find a test with name %s"),
     UNABLE_TO_OPEN_FILE("Unable to open file %s"),
+    UNEXPECTED_EXCEPTION("Unexpected exception: %s"),
     UNEXPECTED_VALUE("Unexpected value in cell (%d, %d) of sheet '%s'"),
     UNSUPPORTED_TYPE("Unsupported type '%s'"),
     UNKNOWN("Unknown error code"),

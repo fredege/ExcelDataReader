@@ -115,23 +115,16 @@ abstract class AbstractSingleCellValueParser<T> implements  SingleCellValueParse
         final Sheet worksheet = cell.getSheet();
         try {
             final CellValue cellValue = evaluator.evaluate(cell);
-            switch (cellValue.getCellType()) {
-                case BLANK:
-                    value = getValueForEmptyCell(rowIndex, colIndex, worksheet);
-                    break;
-                case NUMERIC:
-                    value = parseNumericCell(cellValue, rowIndex, colIndex, worksheet);
-                    break;
-                case BOOLEAN:
-                    value = getValueForCell(cellValue.getBooleanValue(), rowIndex, colIndex, worksheet);
-                    break;
-                case STRING:
-                    value = getValueForCell(cellValue.getStringValue(), rowIndex, colIndex, worksheet);
-                    break;
-                default:
-                    value = null;
+            value = switch (cellValue.getCellType()) {
+                case BLANK -> getValueForEmptyCell(rowIndex, colIndex, worksheet);
+                case NUMERIC -> parseNumericCell(cellValue, rowIndex, colIndex, worksheet);
+                case BOOLEAN -> getValueForCell(cellValue.getBooleanValue(), rowIndex, colIndex, worksheet);
+                case STRING -> getValueForCell(cellValue.getStringValue(), rowIndex, colIndex, worksheet);
+                default -> {
                     reportError(rowIndex, colIndex, worksheet);
-            }
+                    yield null;
+                }
+           };
         } catch (IllegalStateException exc) {
             value = null;
             reportError(rowIndex, colIndex, worksheet);

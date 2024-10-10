@@ -88,7 +88,7 @@ public final class SingleCellValueParserRouter {
                                 parserClass.getDeclaredConstructor();
                 parser = constructor.newInstance();
             } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException exc) {
-                throw new ExcelReaderException(exc, ExcelReaderErrorCode.UNKNOWN);
+                throw new ExcelReaderException(exc, ExcelReaderErrorCode.UNEXPECTED_EXCEPTION, exc.getMessage());
             }
         }
         return parser;
