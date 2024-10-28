@@ -16,6 +16,7 @@ package com.fgsoft.exceldatareader.parser.object.collection;
 
 import com.fgsoft.exceldatareader.exception.MissingMandatoryException;
 import com.fgsoft.exceldatareader.parser.util.WorksheetAnalyser;
+import com.fgsoft.exceldatareader.reader.ExcelDataReader;
 import com.fgsoft.exceldatareader.util.samples.SampleCompositeClass;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.junit.jupiter.api.Test;
@@ -30,6 +31,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @ExtendWith(MockitoExtension.class)
 class ListTestDataParserTest {
+    @Mock
+    private ExcelDataReader reader;
     @Mock
     private WorksheetAnalyser worksheetAnalyser;
     @Mock
@@ -46,6 +49,6 @@ class ListTestDataParserTest {
                 new CollectionTestDataParser<>(sampleList.getClass(), SampleCompositeClass.class, cellRange, headerRange);
         final Class<List<SampleCompositeClass>> clazz = parser.getType();
         // When // Then
-        assertThrows(MissingMandatoryException.class, () -> parser.parse(worksheetAnalyser, clazz, false));
+        assertThrows(MissingMandatoryException.class, () -> parser.parse(reader, worksheetAnalyser, clazz, false));
     }
 }

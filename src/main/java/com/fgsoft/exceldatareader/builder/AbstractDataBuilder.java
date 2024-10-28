@@ -15,31 +15,29 @@
 package com.fgsoft.exceldatareader.builder;
 
 import com.fgsoft.exceldatareader.reader.ExcelDataReader;
+import lombok.AccessLevel;
+import lombok.Getter;
 
 import java.util.List;
 
 public abstract class AbstractDataBuilder {
+    @Getter(AccessLevel.PROTECTED)
     private final ExcelDataReader reader;
 
     protected AbstractDataBuilder(final String fileName) {
         this.reader = new ExcelDataReader(fileName);
     }
 
-    public <T> T build(final Class<T> clazz, final String testName, final String sheetName, final String... ignore) {
-        return build(clazz, testName, sheetName, false, ignore);
+    public <T> T build(final Class<T> clazz, final String testName, final String... ignore) {
+        return build(clazz, testName, false, ignore);
     }
 
-    public <T> T build(final Class<T> clazz, final String testName, final String sheetName, boolean skipMissingHeader, final String... ignore) {
-        return reader.getTestData(clazz, testName, sheetName, skipMissingHeader, ignore);
+    public <T> T build(final Class<T> clazz, final String testName, boolean skipMissingHeader, final String... ignore) {
+        return reader.getTestData(clazz, testName, skipMissingHeader, ignore);
     }
 
-    public <T> List<T> buildAll(final Class<T> clazz, final String sheetNamer, final String... ignore) {
-        return buildAll(clazz, sheetNamer, false, ignore);
-    }
-
-
-    public <T> List<T> buildAll(final Class<T> clazz, final String sheetName, final boolean skipMissingHeader, final String... ignore) {
-        return reader.getAllTestData(clazz, sheetName, skipMissingHeader, ignore);
+    public <T> List<T> buildAll(final Class<T> clazz, final boolean skipMissingHeader, final String... ignore) {
+        return reader.getAllTestData(clazz, skipMissingHeader, ignore);
     }
 
 }

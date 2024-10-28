@@ -14,10 +14,7 @@
  */
 package com.fgsoft.exceldatareader.util.samples;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -49,6 +46,8 @@ public class SampleCompositeClass {
     private List<SampleSingleCellFieldsOnly> listOfComposites;
     private InnerClass innerClass;
 
+    @Getter
+    @Setter
     public static class InnerClass {
         private int intValue;
     }

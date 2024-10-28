@@ -15,6 +15,7 @@
 package com.fgsoft.exceldatareader.parser.object.object;
 
 import com.fgsoft.exceldatareader.parser.util.WorksheetAnalyser;
+import com.fgsoft.exceldatareader.reader.ExcelDataReader;
 import com.fgsoft.exceldatareader.util.DataBuilder;
 import com.fgsoft.exceldatareader.util.samples.SampleNonSingleCellFieldsOnly;
 import com.fgsoft.exceldatareader.util.samples.SampleSingleCellFieldsOnly;
@@ -38,6 +39,8 @@ import static org.mockito.Mockito.*;
 class ObjectTestDataParserTest {
     private final DataBuilder dataBuilder = new DataBuilder();
 
+    @Mock
+    private ExcelDataReader reader;
     @Mock
     private WorksheetAnalyser worksheetAnalyser;
     @Mock
@@ -75,7 +78,7 @@ class ObjectTestDataParserTest {
             when(worksheetAnalyser.getCell(field.getName(), cellRange, headerRange)).thenReturn(fieldCell);
         });
         // When
-        final SampleSingleCellFieldsOnly actual = parser.parse(worksheetAnalyser, SampleSingleCellFieldsOnly.class, false);
+        final SampleSingleCellFieldsOnly actual = parser.parse(reader, worksheetAnalyser, SampleSingleCellFieldsOnly.class, false);
         // Then
         assertThat(actual).isEqualTo(expected);
     }
@@ -105,7 +108,7 @@ class ObjectTestDataParserTest {
             lenient().when(worksheetAnalyser.getCell(field.getName(), cellRange, headerRange)).thenReturn(fieldCell);
         });
         // When
-        final SampleSingleCellFieldsOnly actual = parser.parse(worksheetAnalyser, SampleSingleCellFieldsOnly.class, false, "bigDecimal");
+        final SampleSingleCellFieldsOnly actual = parser.parse(reader, worksheetAnalyser, SampleSingleCellFieldsOnly.class, false, "bigDecimal");
         // Then
         assertThat(actual).isEqualTo(expected);
     }
@@ -138,7 +141,7 @@ class ObjectTestDataParserTest {
         when(worksheetAnalyser.getCellRange("fieldTwo", cellRange, headerRange)).thenReturn(cellRange);
         when(worksheetAnalyser.getHeaderRange("fieldTwo", headerRange)).thenReturn(headerRange);
         // When
-        final SampleNonSingleCellFieldsOnly actual = parser.parse(worksheetAnalyser, SampleNonSingleCellFieldsOnly.class, false);
+        final SampleNonSingleCellFieldsOnly actual = parser.parse(reader, worksheetAnalyser, SampleNonSingleCellFieldsOnly.class, false);
         // Then
         assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
     }
@@ -170,8 +173,15 @@ class ObjectTestDataParserTest {
         when(worksheetAnalyser.getCellRange("fieldOne", cellRange, headerRange)).thenReturn(cellRange);
         when(worksheetAnalyser.getHeaderRange("fieldOne", headerRange)).thenReturn(headerRange);
         // When
-        final SampleNonSingleCellFieldsOnly actual = parser.parse(worksheetAnalyser, SampleNonSingleCellFieldsOnly.class, false, "fieldTwo");
+        final SampleNonSingleCellFieldsOnly actual = parser.parse(reader, worksheetAnalyser, SampleNonSingleCellFieldsOnly.class, false, "fieldTwo");
         // Then
         assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
+    }
+
+    @Test
+    final void testObjectWithReference() {
+        // Given
+        // When
+        // Then
     }
 }

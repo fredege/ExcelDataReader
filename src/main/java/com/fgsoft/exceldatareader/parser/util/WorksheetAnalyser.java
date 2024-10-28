@@ -115,7 +115,6 @@ public class WorksheetAnalyser {
         return largestTitleRowNum;
     }
 
-
     public Cell getCell(@NotBlank String name, @NotNull CellRangeAddress cellRange, @NotNull CellRangeAddress headerRange) {
         final Row headerRow = worksheet.getRow(headerRange.getFirstRow());
         final Row valueRow = worksheet.getRow(cellRange.getFirstRow());
@@ -129,6 +128,16 @@ public class WorksheetAnalyser {
             }
         }
         throw new HeaderNotFoundException(name);
+    }
+
+    /**
+     * Get the first cell of a range.
+     * @param cellRange range to analyse
+     * @return first cell;
+     */
+    public Cell getCell(CellRangeAddress cellRange) {
+        final Row row = worksheet.getRow(cellRange.getFirstRow());
+        return row.getCell(cellRange.getFirstColumn());
     }
 
     public int getHeaderColumnNumber(@NotBlank String name, @NotNull CellRangeAddress headerRange) {

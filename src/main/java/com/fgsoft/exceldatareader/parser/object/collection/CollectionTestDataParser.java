@@ -18,6 +18,7 @@ import com.fgsoft.exceldatareader.parser.object.ObjectParserRouter;
 import com.fgsoft.exceldatareader.parser.object.object.ObjectTestDataParser;
 import com.fgsoft.exceldatareader.parser.util.BeanAnalyzer;
 import com.fgsoft.exceldatareader.parser.util.WorksheetAnalyser;
+import com.fgsoft.exceldatareader.reader.ExcelDataReader;
 import org.apache.poi.ss.util.CellRangeAddress;
 
 import java.lang.reflect.Field;
@@ -30,7 +31,7 @@ public class CollectionTestDataParser<T extends Collection<V>, V> extends Abstra
 
     @Override
     @SuppressWarnings("unchecked")
-    public T parse(WorksheetAnalyser worksheetAnalyser, Class<T> clazz, boolean skipMissingHeader, String... ignore) {
+    public T parse(ExcelDataReader reader, WorksheetAnalyser worksheetAnalyser, Class<T> clazz, boolean skipMissingHeader, String... ignore) {
         final T retCollection = (T) buildInstance(clazz);
         final Class<V> itemType = getItemType();
         int rowNum = getCellRange().getFirstRow();
@@ -38,7 +39,7 @@ public class CollectionTestDataParser<T extends Collection<V>, V> extends Abstra
             final CellRangeAddress itemCellRange = computeItemCellRange(worksheetAnalyser, rowNum, itemType);
             final ObjectTestDataParser<V> itemParser =
                     (ObjectTestDataParser<V>) ObjectParserRouter.findParser(itemType, itemCellRange, getHeaderRange());
-            final V value = itemParser.parse(worksheetAnalyser, itemType, skipMissingHeader, ignore);
+            final V value = itemParser.parse(reader, worksheetAnalyser, itemType, skipMissingHeader, ignore);
             retCollection.add(value);
             rowNum = itemCellRange.getLastRow() + 1;
         }

@@ -15,6 +15,7 @@
 package com.fgsoft.exceldatareader.parser.object.collection;
 
 import com.fgsoft.exceldatareader.parser.util.WorksheetAnalyser;
+import com.fgsoft.exceldatareader.reader.ExcelDataReader;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.junit.jupiter.api.Test;
@@ -31,6 +32,8 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class SingleCellValuesCollectionParserTest {
+    @Mock
+    private ExcelDataReader reader;
     @Mock
     private WorksheetAnalyser worksheetAnalyser;
     @Mock
@@ -66,7 +69,7 @@ class SingleCellValuesCollectionParserTest {
             when(cell.getCellType()).thenReturn(CellType.STRING);
         }
         // When
-        final List<String> actual = parser.parse(worksheetAnalyser, (Class<List<String>>) expected.getClass(), false);
+        final List<String> actual = parser.parse(reader, worksheetAnalyser, (Class<List<String>>) expected.getClass(), false);
         // Then
         assertThat(actual).isEqualTo(expected);
     }

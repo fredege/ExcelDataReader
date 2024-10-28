@@ -15,6 +15,7 @@
 package com.fgsoft.exceldatareader.parser.object.collection;
 
 import com.fgsoft.exceldatareader.parser.util.WorksheetAnalyser;
+import com.fgsoft.exceldatareader.reader.ExcelDataReader;
 import com.fgsoft.exceldatareader.util.DataBuilder;
 import com.fgsoft.exceldatareader.util.samples.SampleSingleCellFieldsOnly;
 import org.apache.poi.ss.usermodel.*;
@@ -37,6 +38,8 @@ import static org.mockito.Mockito.when;
 class BeanWithOnlySingleCellValuesCollectionParserTest {
     private final DataBuilder dataBuilder = new DataBuilder();
 
+    @Mock
+    private ExcelDataReader reader;
     @Mock
     private WorksheetAnalyser worksheetAnalyser;
     @Mock
@@ -86,7 +89,7 @@ class BeanWithOnlySingleCellValuesCollectionParserTest {
             });
         }
         // When
-        final List<SampleSingleCellFieldsOnly> actual = parser.parse(worksheetAnalyser,
+        final List<SampleSingleCellFieldsOnly> actual = parser.parse(reader, worksheetAnalyser,
                 (Class<List<SampleSingleCellFieldsOnly>>) expected.getClass(), false);
         // Then
         assertThat(actual).isEqualTo(expected);

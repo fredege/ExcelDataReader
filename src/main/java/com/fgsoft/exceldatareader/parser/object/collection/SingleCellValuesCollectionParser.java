@@ -17,6 +17,7 @@ package com.fgsoft.exceldatareader.parser.object.collection;
 import com.fgsoft.exceldatareader.parser.util.WorksheetAnalyser;
 import com.fgsoft.exceldatareader.parser.value.SingleCellValueParser;
 import com.fgsoft.exceldatareader.parser.value.SingleCellValueParserRouter;
+import com.fgsoft.exceldatareader.reader.ExcelDataReader;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.usermodel.Row;
@@ -31,7 +32,7 @@ public class SingleCellValuesCollectionParser<U extends List<V>, V> extends Abst
 
     @Override
     @SuppressWarnings("unchecked")
-    public U parse(WorksheetAnalyser worksheetAnalyser, Class<U> clazz, boolean skipMissingHeader, String... ignore) {
+    public U parse(ExcelDataReader reader, WorksheetAnalyser worksheetAnalyser, Class<U> clazz, boolean skipMissingHeader, String... ignore) {
         final U retCollection = (U) buildInstance(clazz);
         final int columnNumber = getHeaderRange().getFirstColumn();
         final SingleCellValueParser<V> singleCellValueParser = SingleCellValueParserRouter.getParser(getItemType());

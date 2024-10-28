@@ -15,6 +15,7 @@
 package com.fgsoft.exceldatareader.parser.object;
 
 import com.fgsoft.exceldatareader.parser.util.WorksheetAnalyser;
+import com.fgsoft.exceldatareader.reader.ExcelDataReader;
 
 public interface TestDataParser<T> {
     /**
@@ -25,7 +26,7 @@ public interface TestDataParser<T> {
      * @param skipMissingHeader flag to set field value to null if no corresponding header is present
      * @return built instance
      */
-    T parse(final WorksheetAnalyser worksheetAnalyser, Class<T> clazz, boolean skipMissingHeader, String... ignore);
+    T parse(final ExcelDataReader reader, final WorksheetAnalyser worksheetAnalyser, Class<T> clazz, boolean skipMissingHeader, String... ignore);
 
     /**
      * Return the type of objects to parse.

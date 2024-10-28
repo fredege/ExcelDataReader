@@ -17,6 +17,7 @@ package com.fgsoft.exceldatareader.parser.object.collection;
 import com.fgsoft.exceldatareader.parser.object.ObjectParserRouter;
 import com.fgsoft.exceldatareader.parser.object.object.ObjectTestDataParser;
 import com.fgsoft.exceldatareader.parser.util.WorksheetAnalyser;
+import com.fgsoft.exceldatareader.reader.ExcelDataReader;
 import org.apache.poi.ss.util.CellRangeAddress;
 
 import java.util.List;
@@ -28,7 +29,7 @@ public class BeanWithOnlySingleCellValuesCollectionParser<T extends List<V>, V> 
 
     @Override
     @SuppressWarnings("unchecked")
-    public T parse(WorksheetAnalyser worksheetAnalyser, Class<T> clazz, boolean skipMissingHeader, String... ignore) {
+    public T parse(ExcelDataReader reader, WorksheetAnalyser worksheetAnalyser, Class<T> clazz, boolean skipMissingHeader, String... ignore) {
         final T retCollection = (T) buildInstance(clazz);
         final Class<V> itemType = getItemType();
         for (int rowNum = getCellRange().getFirstRow(); rowNum <= getCellRange().getLastRow(); rowNum++) {
@@ -36,7 +37,7 @@ public class BeanWithOnlySingleCellValuesCollectionParser<T extends List<V>, V> 
                     getCellRange().getFirstColumn(), getCellRange().getLastColumn());
             final ObjectTestDataParser<V> itemParser =
                     (ObjectTestDataParser<V>) ObjectParserRouter.findParser(itemType, itemCellRange, getHeaderRange());
-            final V value = itemParser.parse(worksheetAnalyser, itemType, false);
+            final V value = itemParser.parse(reader, worksheetAnalyser, itemType, false);
             retCollection.add(value);
         }
         return retCollection;
