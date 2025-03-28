@@ -27,6 +27,7 @@ import com.fgsoft.exceldatareader.parser.value.SingleCellValueParserRouter;
 import com.fgsoft.exceldatareader.reader.ExcelDataReader;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
+import org.apache.poi.ss.usermodel.CellValue;
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.util.CellRangeAddress;
 
@@ -49,6 +50,10 @@ public class ObjectTestDataParser<T> extends AbstractTestDataParser<T> {
             final Cell cell = worksheetAnalyser.getCell(getCellRange());
             if (cell != null && CellType.STRING.equals(cell.getCellType())) {
                 return getFromReference(reader, cell.getStringCellValue(), clazz, skipMissingHeader);
+            } else if (cell != null && CellType.FORMULA.equals(cell.getCellType())) {
+                final FormulaEvaluator evaluator = worksheetAnalyser.getFormulaEvaluator();
+                final CellValue cellValue = evaluator.evaluate(cell);
+                return getFromReference(reader, cellValue.getStringValue(), clazz, skipMissingHeader);
             } else if (cell != null && CellType.BLANK.equals(cell.getCellType())) {
                 return null;
             } else {
@@ -113,5 +118,4 @@ public class ObjectTestDataParser<T> extends AbstractTestDataParser<T> {
             if (!skipMissingHeader) throw exc;
         }
     }
-
 }
