@@ -30,8 +30,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.fgsoft.exceldatareader.exception.ExcelReaderErrorCode.FILE_NOT_FOUND;
-import static com.fgsoft.exceldatareader.exception.ExcelReaderErrorCode.UNABLE_TO_OPEN_FILE;
+import static com.fgsoft.exceldatareader.exception.ExcelReaderErrorCode.*;
 
 /**
  * Reader used to retrieve test data from excel file.
@@ -92,7 +91,7 @@ public class ExcelDataReader {
     public <T> Class<? extends T> getRegisteredClass(String className) {
         final Class<?> clazz = sheetNames.keySet().stream()
                 .filter(c -> c.getSimpleName().equals(className))
-                .findFirst().orElseThrow(() -> new ExcelReaderException(UNABLE_TO_OPEN_FILE, className));
+                .findFirst().orElseThrow(() -> new ExcelReaderException(WORKSHEET_NOT_FOUND, className));
         return (Class<? extends T>) clazz;
     }
 }
