@@ -16,17 +16,20 @@ package com.fgsoft.exceldatareader.parser.value;
 
 import com.fgsoft.exceldatareader.exception.ExcelReaderErrorCode;
 import com.fgsoft.exceldatareader.exception.ExcelReaderException;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellType;
-import org.apache.poi.ss.usermodel.FormulaEvaluator;
-import org.apache.poi.ss.usermodel.Sheet;
+import com.fgsoft.exceldatareader.parser.enums.CellDataFormat;
+import org.apache.poi.ss.usermodel.*;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 
+import static com.fgsoft.exceldatareader.parser.enums.CellDataFormat.GENERIC;
+import static com.fgsoft.exceldatareader.parser.enums.CellDataFormat.NUMBER_2;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
@@ -41,6 +44,8 @@ class BigDecimalValueParserTest {
     private Sheet sheet;
     @Mock
     private FormulaEvaluator evaluator;
+    @Mock
+    private CellStyle cellStyle;
 
     @Test
     final void testParseStringValueOK() {
@@ -52,6 +57,8 @@ class BigDecimalValueParserTest {
         when(cell.getSheet()).thenReturn(sheet);
         when(cell.getRowIndex()).thenReturn(0);
         when(cell.getColumnIndex()).thenReturn(0);
+        when(cellStyle.getDataFormat()).thenReturn(GENERIC.getCode());
+        when(cell.getCellStyle()).thenReturn(cellStyle);
         // When
         final BigDecimal value = parser.getValue(cell, evaluator);
         // Then
@@ -89,6 +96,8 @@ class BigDecimalValueParserTest {
         when(cell.getSheet()).thenReturn(sheet);
         when(cell.getRowIndex()).thenReturn(0);
         when(cell.getColumnIndex()).thenReturn(0);
+        when(cellStyle.getDataFormat()).thenReturn(NUMBER_2.getCode());
+        when(cell.getCellStyle()).thenReturn(cellStyle);
         // When
         final BigDecimal value = parser.getValue(cell, evaluator);
         // Then
@@ -120,6 +129,8 @@ class BigDecimalValueParserTest {
         // Given
         final BigDecimalValueParser parser = new BigDecimalValueParser();
         when(cell.getCellType()).thenReturn(CellType.BLANK);
+        when(cellStyle.getDataFormat()).thenReturn(GENERIC.getCode());
+        when(cell.getCellStyle()).thenReturn(cellStyle);
         // When
         final BigDecimal value = parser.getValue(cell, evaluator);
         // Then
@@ -134,5 +145,31 @@ class BigDecimalValueParserTest {
         final BigDecimal value = parser.getValue(null, evaluator);
         // Then
         assertThat(value).isNull();
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+            "FORMAT_CURRENCY_1, ##0.00 €",
+            "FORMAT_CURRENCY_2, ##0.00 $",
+            "FORMAT_ACCOUNTING_1, ##0.00 £",
+            "FORMAT_ACCOUNTING_2, ##0.00 £"
+    })
+    final void testParseMonetary(final CellDataFormat dataFormat, final String formatString) {
+        // Given
+        final BigDecimalValueParser parser = new BigDecimalValueParser();
+        final double dblValue = 1.0;
+        final BigDecimal expected = BigDecimal.valueOf(dblValue).setScale(2, RoundingMode.HALF_UP);
+        when(cell.getNumericCellValue()).thenReturn(dblValue);
+        when(cell.getCellType()).thenReturn(CellType.NUMERIC);
+        when(cell.getSheet()).thenReturn(sheet);
+        when(cell.getRowIndex()).thenReturn(0);
+        when(cell.getColumnIndex()).thenReturn(0);
+        when(cellStyle.getDataFormat()).thenReturn(dataFormat.getCode());
+        when(cellStyle.getDataFormatString()).thenReturn(formatString);
+        when(cell.getCellStyle()).thenReturn(cellStyle);
+        // When
+        final BigDecimal value = parser.getValue(cell, evaluator);
+        // Then
+        assertThat(value).isNotNull().isEqualTo(expected);
     }
 }
