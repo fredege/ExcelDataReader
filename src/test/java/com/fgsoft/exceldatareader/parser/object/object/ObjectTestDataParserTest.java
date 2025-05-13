@@ -178,4 +178,10 @@ class ObjectTestDataParserTest {
         assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
     }
 
+    @Test
+    final void testObjectWithReference() {
+        // Given
+        // When
+        // Then
+    }
 }

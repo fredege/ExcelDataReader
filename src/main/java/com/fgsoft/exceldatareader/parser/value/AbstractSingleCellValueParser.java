@@ -46,7 +46,6 @@ abstract class AbstractSingleCellValueParser<T> implements  SingleCellValueParse
     public T getValue(final  Cell cell, @NonNull FormulaEvaluator evaluator) {
         T value;
         if (cell == null) {
-            log.warn("Null cell has been given, returning null");
             value = getValueForNullCell();
         } else {
             final int rowIndex = cell.getRowIndex();

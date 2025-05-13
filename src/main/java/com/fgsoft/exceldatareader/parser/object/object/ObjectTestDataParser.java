@@ -122,5 +122,4 @@ public class ObjectTestDataParser<T> extends AbstractTestDataParser<T> {
             if (!skipMissingHeader) throw exc;
         }
     }
-
 }

@@ -53,6 +53,18 @@ class UUIDValueParserTest {
     }
 
     @Test
+    final void testParseEmptyString() {
+        // Given
+        final UUIDValueParser parser = new UUIDValueParser();
+        when(cell.getStringCellValue()).thenReturn("");
+        when(cell.getCellType()).thenReturn(CellType.STRING);
+        // When
+        final UUID value = parser.getValue(cell, evaluator);
+        // Then
+        assertThat(value).isNull();
+    }
+
+    @Test
     final void testParseStringValueKO() {
         // Given
         final String strValue = "Not good";

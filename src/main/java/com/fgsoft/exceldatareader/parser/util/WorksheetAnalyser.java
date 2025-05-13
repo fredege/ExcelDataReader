@@ -182,10 +182,30 @@ public class WorksheetAnalyser {
         }
     }
 
+    /**
+     * A cell can be considered as empty if one of the following condition is met:
+     * <ul>
+     *     <li>the cell is null</li>
+     *     <li>the cell has a BLANK type</li>
+     *     <li>the cell has a FORMULA type and the result of the formula is an empty string</li>
+     * </ul>
+     * @param rowNum row number
+     * @param colNum column number
+     * @return true if the cell meets one of the above conditions
+     */
     public boolean isCellEmpty(int rowNum, int colNum) {
         final Row row = worksheet.getRow(rowNum);
         final Cell cell = row.getCell(colNum);
-        return (cell == null) || CellType.BLANK.equals(cell.getCellType());
+        return (cell == null) || CellType.BLANK.equals(cell.getCellType()) || isFormulaReturningEmptyString(cell);
+    }
+
+    private boolean isFormulaReturningEmptyString(Cell cell) {
+        if (cell.getCellType() == CellType.FORMULA) {
+            final CellValue cellValue = formulaEvaluator.evaluate(cell);
+            return cellValue == null || cellValue.getStringValue().isEmpty();
+        } else {
+            return false;
+        }
     }
 
     private List<Row> buildTitleRows() {

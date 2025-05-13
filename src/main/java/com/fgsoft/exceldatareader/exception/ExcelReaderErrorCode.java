@@ -32,6 +32,7 @@ public enum ExcelReaderErrorCode {
     UNEXPECTED_VALUE("Unexpected value in cell (%d, %d) of sheet '%s'"),
     UNSUPPORTED_TYPE("Unsupported type '%s'"),
     UNKNOWN("Unknown error code"),
+    WORKSHEET_NOT_FOUND("Unable to find a worksheet for class '%s'"),
     ;
 
     private final String message;
