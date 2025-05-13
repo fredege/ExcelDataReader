@@ -51,9 +51,13 @@ public class ObjectTestDataParser<T> extends AbstractTestDataParser<T> {
             if (cell != null && CellType.STRING.equals(cell.getCellType())) {
                 return getFromReference(reader, cell.getStringCellValue(), clazz, skipMissingHeader);
             } else if (cell != null && CellType.FORMULA.equals(cell.getCellType())) {
-                final FormulaEvaluator evaluator = worksheetAnalyser.getFormulaEvaluator();
-                final CellValue cellValue = evaluator.evaluate(cell);
-                return getFromReference(reader, cellValue.getStringValue(), clazz, skipMissingHeader);
+                final CellValue cellValue = worksheetAnalyser.getFormulaEvaluator().evaluate(cell);
+                if (CellType.STRING.equals(cellValue.getCellType())) {
+                    return getFromReference(reader, cellValue.getStringValue(), clazz, skipMissingHeader);
+                } else {
+                    throw new ExcelReaderException(ExcelReaderErrorCode.UNEXPECTED_VALUE, cell.getRowIndex(),
+                            cell.getColumnIndex(), worksheetAnalyser.getWorksheet().getSheetName());
+                }
             } else if (cell != null && CellType.BLANK.equals(cell.getCellType())) {
                 return null;
             } else {

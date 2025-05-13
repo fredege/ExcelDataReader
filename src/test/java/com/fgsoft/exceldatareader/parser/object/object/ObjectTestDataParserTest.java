@@ -52,7 +52,7 @@ class ObjectTestDataParserTest {
 
     @BeforeEach
     final void setUp() {
-        when(worksheetAnalyser.getFormulaEvaluator()).thenReturn(formulaEvaluator);
+        lenient().when(worksheetAnalyser.getFormulaEvaluator()).thenReturn(formulaEvaluator);
     }
 
     @Test
@@ -176,5 +176,12 @@ class ObjectTestDataParserTest {
         final SampleNonSingleCellFieldsOnly actual = parser.parse(reader, worksheetAnalyser, SampleNonSingleCellFieldsOnly.class, false, "fieldTwo");
         // Then
         assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
+    }
+
+    @Test
+    final void testObjectWithReference() {
+        // Given
+        // When
+        // Then
     }
 }

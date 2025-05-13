@@ -17,15 +17,13 @@ package com.fgsoft.exceldatareader.parser.value;
 import com.fgsoft.exceldatareader.exception.IncorrectValueForTypeException;
 import com.fgsoft.exceldatareader.parser.enums.CellDataFormat;
 import lombok.NonNull;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.FormulaEvaluator;
-import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.*;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
 /**
- * BigDecimal is not a format stored in Excel.Therefore, this parser will rely on a {@link DoubleValueParser} to parse
+ * BigDecimal is not a format stored in Excel. Therefore, this parser will rely on a {@link DoubleValueParser} to parse
  * values. The behavior of this parser is then:
  * <ul>
  *     <li>STRING type cell content is returned as the string parsing of the cell content. In case of
@@ -70,19 +68,37 @@ public class BigDecimalValueParser extends AbstractSingleCellValueParser<BigDeci
     @Override
     public BigDecimal getValue(final Cell cell, @NonNull FormulaEvaluator evaluator) {
         BigDecimal result = super.getValue(cell, evaluator);
-        if (result != null && isMonetaryFormat(cell)) {
+        if (result != null && isMonetaryFormat(cell, evaluator)) {
             result = result.setScale(2, RoundingMode.HALF_UP);
         }
         return result;
     }
 
-    private boolean isMonetaryFormat(Cell cell) {
-        return cell != null && switch (CellDataFormat.getFromCode(cell.getCellStyle().getDataFormat())) {
+    private boolean isMonetaryFormat(Cell cell, @NonNull FormulaEvaluator evaluator) {
+        final CellType cellType = computeCellType(cell, evaluator);
+        return cell != null && CellType.NUMERIC.equals(cellType)
+                && switch (CellDataFormat.getFromCode(cell.getCellStyle().getDataFormat())) {
             case FORMAT_CURRENCY_1, FORMAT_CURRENCY_2, FORMAT_ACCOUNTING_1, FORMAT_ACCOUNTING_2 -> {
                 final String dataFormatString = cell.getCellStyle().getDataFormatString();
                 yield dataFormatString.matches(".*[$€£].*");
             }
             default -> false;
+        };
+    }
+
+    private CellType computeCellType(Cell cell, @NonNull FormulaEvaluator evaluator) {
+        if (cell == null) {
+            return null;
+        } else return switch (cell.getCellType()) {
+            case NUMERIC -> CellType.NUMERIC;
+            case STRING -> CellType.STRING;
+            case BOOLEAN -> CellType.BOOLEAN;
+            case BLANK -> CellType.BLANK;
+            case FORMULA -> {
+                final CellValue cellValue = evaluator.evaluate(cell);
+                yield cellValue.getCellType();
+            }
+            default -> null;
         };
     }
 
