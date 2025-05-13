@@ -28,7 +28,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
-import static com.fgsoft.exceldatareader.parser.enums.CellDataFormat.GENERIC;
 import static com.fgsoft.exceldatareader.parser.enums.CellDataFormat.NUMBER_2;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -57,8 +56,6 @@ class BigDecimalValueParserTest {
         when(cell.getSheet()).thenReturn(sheet);
         when(cell.getRowIndex()).thenReturn(0);
         when(cell.getColumnIndex()).thenReturn(0);
-        when(cellStyle.getDataFormat()).thenReturn(GENERIC.getCode());
-        when(cell.getCellStyle()).thenReturn(cellStyle);
         // When
         final BigDecimal value = parser.getValue(cell, evaluator);
         // Then
@@ -129,8 +126,6 @@ class BigDecimalValueParserTest {
         // Given
         final BigDecimalValueParser parser = new BigDecimalValueParser();
         when(cell.getCellType()).thenReturn(CellType.BLANK);
-        when(cellStyle.getDataFormat()).thenReturn(GENERIC.getCode());
-        when(cell.getCellStyle()).thenReturn(cellStyle);
         // When
         final BigDecimal value = parser.getValue(cell, evaluator);
         // Then

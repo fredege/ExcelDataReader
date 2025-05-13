@@ -52,7 +52,7 @@ class ObjectTestDataParserTest {
 
     @BeforeEach
     final void setUp() {
-        when(worksheetAnalyser.getFormulaEvaluator()).thenReturn(formulaEvaluator);
+        lenient().when(worksheetAnalyser.getFormulaEvaluator()).thenReturn(formulaEvaluator);
     }
 
     @Test
