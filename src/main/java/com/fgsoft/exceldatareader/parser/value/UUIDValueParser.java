@@ -42,11 +42,7 @@ public class UUIDValueParser extends AbstractSingleCellValueParser<UUID> {
     @Override
     protected UUID getValueForCell(String value, int rowIndex, int colIndex, Sheet worksheet) {
         try {
-            if (StringUtils.isEmpty(value)) {
-                return null;
-            } else {
-                return UUID.fromString(value);
-            }
+            return StringUtils.isEmpty(value) ? null : UUID.fromString(value);
         } catch (IllegalArgumentException exc) {
             throw new IncorrectValueForTypeException(null, value, UUID.class.getName(),
                     rowIndex, colIndex, worksheet.getSheetName());

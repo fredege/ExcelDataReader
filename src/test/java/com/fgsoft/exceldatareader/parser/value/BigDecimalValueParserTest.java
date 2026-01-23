@@ -19,6 +19,8 @@ import com.fgsoft.exceldatareader.exception.ExcelReaderException;
 import org.apache.poi.ss.usermodel.*;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -80,8 +82,13 @@ class BigDecimalValueParserTest {
         assertThat(exception.getMessage()).isEqualTo(message);
     }
 
-    @Test
-    final void testParseBigDecimalValueOK() {
+    @ParameterizedTest
+    @ValueSource(strings = {
+            "##0.00 €",
+            "##0.00 $",
+            "##0.00 £",
+            "#,##0.00 \"€\""
+    })    final void testParseBigDecimalValueOK(String format) {
         // Given
         final double dblValue = 1.0;
         final BigDecimal expected = BigDecimal.valueOf(dblValue).setScale(2, RoundingMode.HALF_UP);
@@ -94,7 +101,7 @@ class BigDecimalValueParserTest {
         when(cell.getRowIndex()).thenReturn(0);
         when(cell.getColumnIndex()).thenReturn(0);
         when(cell.getCellStyle()).thenReturn(cellStyle);
-        when(cellStyle.getDataFormatString()).thenReturn("#,##0.00\\ \"€\"");
+        when(cellStyle.getDataFormatString()).thenReturn(format);
         // When
         final BigDecimal value = parser.getValue(cell, evaluator);
         // Then

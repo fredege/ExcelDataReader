@@ -144,7 +144,7 @@ class WorksheetAnalyserTest {
             final ExcelReaderException exception = assertThrows(ExcelReaderException.class,
                     ()-> analyser.getCellRange("NotFound", testDataRange, headerRange));
             // Then
-            assertThat(exception.getMessage()).isEqualTo(String.format(HEADER_NOT_FOUND.getMessage(), "NotFound"));
+            assertThat(exception.getMessage()).isEqualTo(String.format(HEADER_NOT_FOUND.getMessage(), "NotFound", "SampleInstanceComposite"));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -253,7 +253,7 @@ class WorksheetAnalyserTest {
             final ExcelReaderException exception = assertThrows(ExcelReaderException.class,
                     () -> analyser.getCell("NotFound", cellRange, headerRange));
             // Then
-            assertThat(exception.getMessage()).isEqualTo(String.format(HEADER_NOT_FOUND.getMessage(), "NotFound"));
+            assertThat(exception.getMessage()).isEqualTo(String.format(HEADER_NOT_FOUND.getMessage(), "NotFound", "SampleInstanceComposite"));
         }
     }
 }

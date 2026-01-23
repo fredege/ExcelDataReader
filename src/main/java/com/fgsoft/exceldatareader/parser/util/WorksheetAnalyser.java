@@ -127,7 +127,7 @@ public class WorksheetAnalyser {
                 return valueRow.getCell(columnIndex);
             }
         }
-        throw new HeaderNotFoundException(name);
+        throw new HeaderNotFoundException(name, worksheet.getSheetName());
     }
 
     /**
@@ -149,7 +149,7 @@ public class WorksheetAnalyser {
                 return headerCell.getColumnIndex();
             }
         }
-        throw new HeaderNotFoundException(name);
+        throw new HeaderNotFoundException(name, worksheet.getSheetName());
 
     }
 
@@ -273,7 +273,7 @@ public class WorksheetAnalyser {
                 return index;
             }
         }
-        throw new HeaderNotFoundException(name);
+        throw new HeaderNotFoundException(name, worksheet.getSheetName());
     }
 
     private CellRangeAddress removeTrailingEmptyRows(CellRangeAddress range) {

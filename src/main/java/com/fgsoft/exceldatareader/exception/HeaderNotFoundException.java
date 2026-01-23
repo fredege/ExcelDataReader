@@ -15,7 +15,8 @@
 package com.fgsoft.exceldatareader.exception;
 
 public class HeaderNotFoundException extends ExcelReaderException {
-    public HeaderNotFoundException(String header) {
-        super(ExcelReaderErrorCode.HEADER_NOT_FOUND, header);
+    public HeaderNotFoundException(String header, String worksheetName
+    ) {
+        super(ExcelReaderErrorCode.HEADER_NOT_FOUND, header, worksheetName);
     }
 }
