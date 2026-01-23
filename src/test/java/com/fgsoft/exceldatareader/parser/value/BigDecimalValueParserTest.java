@@ -16,16 +16,14 @@ package com.fgsoft.exceldatareader.parser.value;
 
 import com.fgsoft.exceldatareader.exception.ExcelReaderErrorCode;
 import com.fgsoft.exceldatareader.exception.ExcelReaderException;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellType;
-import org.apache.poi.ss.usermodel.FormulaEvaluator;
-import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.*;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -41,6 +39,10 @@ class BigDecimalValueParserTest {
     private Sheet sheet;
     @Mock
     private FormulaEvaluator evaluator;
+    @Mock
+    private CellStyle cellStyle;
+    @Mock
+    private Row row;
 
     @Test
     final void testParseStringValueOK() {
@@ -82,13 +84,17 @@ class BigDecimalValueParserTest {
     final void testParseBigDecimalValueOK() {
         // Given
         final double dblValue = 1.0;
-        final BigDecimal expected = BigDecimal.valueOf(dblValue);
+        final BigDecimal expected = BigDecimal.valueOf(dblValue).setScale(2, RoundingMode.HALF_UP);
         final BigDecimalValueParser parser = new BigDecimalValueParser();
         when(cell.getNumericCellValue()).thenReturn(dblValue);
         when(cell.getCellType()).thenReturn(CellType.NUMERIC);
         when(cell.getSheet()).thenReturn(sheet);
+        when(sheet.getRow(0)).thenReturn(row);
+        when(row.getCell(0)).thenReturn(cell);
         when(cell.getRowIndex()).thenReturn(0);
         when(cell.getColumnIndex()).thenReturn(0);
+        when(cell.getCellStyle()).thenReturn(cellStyle);
+        when(cellStyle.getDataFormatString()).thenReturn("#,##0.00\\ \"€\"");
         // When
         final BigDecimal value = parser.getValue(cell, evaluator);
         // Then
