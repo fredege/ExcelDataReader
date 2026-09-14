@@ -6,7 +6,7 @@
 
     <groupId>com.fgsoft</groupId>
     <artifactId>ExcelDataReader</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0.1</version>
     <packaging>jar</packaging>
     <name>Excel data reader</name>
     <description>
@@ -22,8 +22,9 @@
         <mockito.version>5.23.0</mockito.version>
         <assertj.version>3.27.7</assertj.version>
         <jakarta-validation.version>3.1.1</jakarta-validation.version>
+        <httpclient5.version>5.6.4</httpclient5.version>
 
-        <argLine>--sun-misc-unsafe-memory-access=allow -Xshare:off </argLine>
+        <argLine>--sun-misc-unsafe-memory-access=allow -Xshare:off</argLine>
 
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -62,11 +63,28 @@
             <groupId>org.apache.poi</groupId>
             <artifactId>poi</artifactId>
             <version>${apache.poi.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.logging.log4j</groupId>
+                    <artifactId>log4j-api</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.apache.poi</groupId>
             <artifactId>poi-ooxml</artifactId>
             <version>${apache.poi.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.logging.log4j</groupId>
+                    <artifactId>log4j-api</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-api</artifactId>
+            <version>2.26.1</version>
         </dependency>
         <dependency>
             <groupId>jakarta.validation</groupId>
@@ -101,6 +119,16 @@
             <version>${assertj.version}</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents.client5</groupId>
+            <artifactId>httpclient5</artifactId>
+            <version>${httpclient5.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents.client5</groupId>
+            <artifactId>httpclient5-cache</artifactId>
+            <version>${httpclient5.version}</version>
+        </dependency>
     </dependencies>
 
     <build>
@@ -108,9 +136,10 @@
             <plugin>
                 <groupId>org.owasp</groupId>
                 <artifactId>dependency-check-maven</artifactId>
-                <version>11.1.1</version>
+                <version>13.0.0</version>
                 <configuration>
-                    <nvdApiKey>7249a23d-fd87-48f2-a777-0755a1c71826</nvdApiKey>
+                    <ossindexAnalyzerEnabled>false</ossindexAnalyzerEnabled>
+                    <nvdApiKey>FF04CB2D-49B0-F111-8375-0EBF96DE670D</nvdApiKey>
                     <failBuildOnCVSS>7</failBuildOnCVSS>
                     <assemblyAnalyzerEnabled>false</assemblyAnalyzerEnabled>
                 </configuration>
